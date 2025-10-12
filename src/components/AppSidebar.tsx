@@ -31,7 +31,7 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
   return (
     <aside className="w-64 border-r border-border bg-background flex-shrink-0 h-screen overflow-y-auto">
       <div className="flex flex-col h-full py-8 px-6">
-        <Link to="/" className="mb-12">
+        <Link to="/" className="mb-12 flex justify-center">
           <div className="border border-foreground p-3 text-center w-20">
             <div className="text-lg font-light tracking-[0.2em]">AN</div>
             <div className="text-lg font-light tracking-[0.2em]">DO</div>
@@ -56,7 +56,7 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
           )}
 
           {isCatalogRelated && (
-            <nav className="space-y-2">
+            <nav className="space-y-2 pl-16">
               <button
                 onClick={() => onCategoryChange?.("Все товары")}
                 className={`w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${
