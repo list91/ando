@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { useFavorites } from "@/contexts/FavoritesContext";
 import { useProduct } from "@/hooks/useProducts";
 import { toast } from "sonner";
 
@@ -9,6 +10,7 @@ const Product = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const { data: product, isLoading } = useProduct(id || '');
   
   const [selectedSize, setSelectedSize] = useState("");
@@ -190,8 +192,14 @@ const Product = () => {
           >
             ДОБАВИТЬ В КОРЗИНУ
           </button>
-          <button className="w-12 h-12 border border-border hover:border-foreground transition-colors flex items-center justify-center flex-shrink-0">
-            <Heart className="w-5 h-5" />
+          <button 
+            onClick={() => toggleFavorite(product.id)}
+            className="w-12 h-12 border border-border hover:border-foreground transition-colors flex items-center justify-center flex-shrink-0"
+            aria-label={isFavorite(product.id) ? "Удалить из избранного" : "Добавить в избранное"}
+          >
+            <Heart className={`w-5 h-5 transition-colors ${
+              isFavorite(product.id) ? 'fill-red-500 text-red-500' : ''
+            }`} />
           </button>
         </div>
 
