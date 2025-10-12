@@ -178,7 +178,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                         className="text-sm cursor-pointer flex items-center gap-2"
                       >
                         <div 
-                          className="w-4 h-4 rounded-full border border-border"
+                          className="w-5 h-5 rounded-full border border-border flex-shrink-0"
                           style={{ backgroundColor: getColorHex(color) }}
                         />
                         {color}
@@ -390,11 +390,11 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                       {product.price} ₽
                     </span>
                     {product.available_colors && product.available_colors.length > 0 && (
-                      <div className="flex items-center gap-1.5 ml-auto">
+                      <div className="flex items-center gap-2 ml-auto">
                         {product.available_colors.slice(0, 4).map((color, idx) => (
                           <div
                             key={idx}
-                            className="w-3 h-3 rounded-full border border-border/50"
+                            className="w-5 h-5 rounded-full border border-border/50 flex-shrink-0"
                             style={{ backgroundColor: getColorHex(color) }}
                             title={color}
                           />
