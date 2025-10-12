@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      about_page: {
+        Row: {
+          content: string | null
+          created_at: string
+          display_order: number
+          id: string
+          image_url: string | null
+          is_visible: boolean
+          section_key: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_visible?: boolean
+          section_key: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_visible?: boolean
+          section_key?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
