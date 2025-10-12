@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useCategories } from '@/hooks/useProducts';
 import { Button } from '@/components/ui/button';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, X } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -54,6 +54,8 @@ const AdminProducts = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [customSizeInput, setCustomSizeInput] = useState('');
+  const [customColorInput, setCustomColorInput] = useState('');
   const { toast } = useToast();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
 
@@ -265,6 +267,44 @@ const AdminProducts = () => {
       available_colors: [],
     });
     setEditingProduct(null);
+    setCustomSizeInput('');
+    setCustomColorInput('');
+  };
+
+  const addCustomSize = () => {
+    const trimmed = customSizeInput.trim();
+    if (trimmed && !formData.available_sizes.includes(trimmed)) {
+      setFormData({
+        ...formData,
+        available_sizes: [...formData.available_sizes, trimmed]
+      });
+      setCustomSizeInput('');
+    }
+  };
+
+  const addCustomColor = () => {
+    const trimmed = customColorInput.trim();
+    if (trimmed && !formData.available_colors.includes(trimmed)) {
+      setFormData({
+        ...formData,
+        available_colors: [...formData.available_colors, trimmed]
+      });
+      setCustomColorInput('');
+    }
+  };
+
+  const removeSize = (size: string) => {
+    setFormData({
+      ...formData,
+      available_sizes: formData.available_sizes.filter(s => s !== size)
+    });
+  };
+
+  const removeColor = (color: string) => {
+    setFormData({
+      ...formData,
+      available_colors: formData.available_colors.filter(c => c !== color)
+    });
   };
 
   const handleEdit = async (product: Product) => {
@@ -536,10 +576,45 @@ const AdminProducts = () => {
                             </label>
                           ))}
                         </div>
+                        
+                        <div className="flex gap-2 mt-3">
+                          <Input
+                            placeholder="Добавить свой размер"
+                            value={customSizeInput}
+                            onChange={(e) => setCustomSizeInput(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                addCustomSize();
+                              }
+                            }}
+                          />
+                          <Button type="button" variant="outline" onClick={addCustomSize}>
+                            <Plus className="w-4 h-4" />
+                          </Button>
+                        </div>
+
                         {formData.available_sizes.length > 0 && (
-                          <p className="text-sm text-muted-foreground mt-2">
-                            Выбрано: {formData.available_sizes.join(', ')}
-                          </p>
+                          <div className="mt-3">
+                            <p className="text-sm text-muted-foreground mb-2">Выбрано:</p>
+                            <div className="flex flex-wrap gap-2">
+                              {formData.available_sizes.map((size) => (
+                                <div
+                                  key={size}
+                                  className="inline-flex items-center gap-1 bg-secondary px-2 py-1 rounded text-sm"
+                                >
+                                  {size}
+                                  <button
+                                    type="button"
+                                    onClick={() => removeSize(size)}
+                                    className="hover:text-destructive"
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         )}
                       </div>
 
@@ -571,10 +646,45 @@ const AdminProducts = () => {
                             </label>
                           ))}
                         </div>
+                        
+                        <div className="flex gap-2 mt-3">
+                          <Input
+                            placeholder="Добавить свой цвет"
+                            value={customColorInput}
+                            onChange={(e) => setCustomColorInput(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                addCustomColor();
+                              }
+                            }}
+                          />
+                          <Button type="button" variant="outline" onClick={addCustomColor}>
+                            <Plus className="w-4 h-4" />
+                          </Button>
+                        </div>
+
                         {formData.available_colors.length > 0 && (
-                          <p className="text-sm text-muted-foreground mt-2">
-                            Выбрано: {formData.available_colors.join(', ')}
-                          </p>
+                          <div className="mt-3">
+                            <p className="text-sm text-muted-foreground mb-2">Выбрано:</p>
+                            <div className="flex flex-wrap gap-2">
+                              {formData.available_colors.map((color) => (
+                                <div
+                                  key={color}
+                                  className="inline-flex items-center gap-1 bg-secondary px-2 py-1 rounded text-sm"
+                                >
+                                  {color}
+                                  <button
+                                    type="button"
+                                    onClick={() => removeColor(color)}
+                                    className="hover:text-destructive"
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         )}
                       </div>
 
