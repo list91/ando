@@ -9,14 +9,14 @@ export const useProducts = (categoryId?: string | null, isSale?: boolean) => {
         .from('products')
         .select(`
           *,
-          product_images!inner (
+          product_images (
             id,
             image_url,
             alt_text,
             display_order
           )
         `)
-        .order('display_order', { ascending: false })
+        .order('display_order', { ascending: true })
         .order('display_order', { referencedTable: 'product_images', ascending: true });
 
       if (categoryId) {
