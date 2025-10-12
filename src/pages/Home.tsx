@@ -5,6 +5,7 @@ import { ChevronDown } from "lucide-react";
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isFading, setIsFading] = useState(false);
   const navigate = useNavigate();
   const { data: slides, isLoading } = useHeroSlides();
   
@@ -19,6 +20,14 @@ const Home = () => {
     return () => clearInterval(timer);
   }, [activeSlides.length]);
 
+  const navigateToCatalog = () => {
+    if (isFading) return;
+    setIsFading(true);
+    setTimeout(() => {
+      navigate('/catalog');
+    }, 600);
+  };
+
   useEffect(() => {
     let touchStartY = 0;
     let scrollStartY = 0;
@@ -32,19 +41,19 @@ const Home = () => {
       const diff = touchStartY - touchEndY;
       
       if (diff > 50) {
-        navigate('/catalog');
+        navigateToCatalog();
       }
     };
 
     const handleWheel = (e: WheelEvent) => {
       if (e.deltaY > 50) {
-        navigate('/catalog');
+        navigateToCatalog();
       }
     };
 
     const handleScroll = () => {
       if (window.scrollY > scrollStartY + 50) {
-        navigate('/catalog');
+        navigateToCatalog();
       }
       scrollStartY = window.scrollY;
     };
@@ -71,7 +80,7 @@ const Home = () => {
   }
 
   return (
-    <div className="relative h-[calc(100vh-4rem)] overflow-hidden">
+    <div className={`relative h-[calc(100vh-4rem)] overflow-hidden transition-opacity duration-500 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
       {activeSlides.map((slide, index) => (
         <div
           key={slide.id}
@@ -117,7 +126,7 @@ const Home = () => {
 
       {/* Scroll down indicator */}
       <button
-        onClick={() => navigate('/catalog')}
+        onClick={navigateToCatalog}
         className="absolute bottom-20 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 text-white animate-fade-in hover:opacity-70 transition-opacity"
       >
         <span className="text-xs tracking-widest uppercase">Листайте вниз</span>
