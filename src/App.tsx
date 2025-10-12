@@ -29,6 +29,7 @@ import AdminInfoPages from "./pages/admin/InfoPages";
 import AdminHeroSlides from "./pages/admin/HeroSlides";
 import AdminAboutPage from "./pages/admin/AboutPage";
 import Favorites from "./pages/Favorites";
+import Orders from "./pages/Orders";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -59,6 +60,7 @@ const AppContent = () => {
         />
         <Route path="/auth" element={<Auth />} />
         <Route path="/favorites" element={<Favorites />} />
+        <Route path="/orders" element={<Orders />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/order-success" element={<OrderSuccess />} />
         
