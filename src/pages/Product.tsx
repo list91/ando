@@ -42,22 +42,6 @@ const Product = () => {
 
   return (
     <div className="flex min-h-screen">
-      <aside className="w-64 border-r border-border py-12 px-6">
-        <nav className="space-y-4">
-          {["Топы", "Блузки", "Рубашки", "Юбки", "Брюки", "Свитшот", "Куртки", "Жакеты", "Свитера", "Толстовки", "Худи", "SALE %"].map((cat) => (
-            <Link
-              key={cat}
-              to="/catalog"
-              className={`block text-sm tracking-wide hover:opacity-60 transition-opacity ${
-                cat === "Свитшот" ? "underline" : ""
-              } ${cat === "SALE %" ? "text-accent" : ""}`}
-            >
-              {cat}
-            </Link>
-          ))}
-        </nav>
-      </aside>
-
       <div className="flex-1 flex">
         <div className="flex-1 flex items-center justify-center py-16 px-8">
           <div className="relative max-w-xl">
