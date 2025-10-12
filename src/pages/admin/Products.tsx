@@ -72,10 +72,11 @@ const AdminProducts = () => {
     delivery_info: '',
     payment_info: '',
     available_sizes: [] as string[],
-    available_colors: '',
+    available_colors: [] as string[],
   });
 
   const availableSizeOptions = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '42', '44', '46', '48', '50', '52', '54'];
+  const availableColorOptions = ['Черный', 'Белый', 'Серый', 'Бежевый', 'Коричневый', 'Синий', 'Голубой', 'Зеленый', 'Красный', 'Розовый', 'Желтый', 'Оранжевый', 'Фиолетовый', 'Бордовый', 'Хаки'];
 
   useEffect(() => {
     fetchProducts();
@@ -166,10 +167,6 @@ const AdminProducts = () => {
     
     setSubmitting(true);
     try {
-      // Parse colors
-      const colors = formData.available_colors
-        ? formData.available_colors.split(',').map(c => c.trim()).filter(c => c)
-        : [];
 
       const productData = {
         name: formData.name.trim(),
@@ -186,7 +183,7 @@ const AdminProducts = () => {
         delivery_info: formData.delivery_info.trim() || null,
         payment_info: formData.payment_info.trim() || null,
         available_sizes: formData.available_sizes.length > 0 ? formData.available_sizes : null,
-        available_colors: colors.length > 0 ? colors : null,
+        available_colors: formData.available_colors.length > 0 ? formData.available_colors : null,
       };
 
       if (editingProduct) {
@@ -265,7 +262,7 @@ const AdminProducts = () => {
       delivery_info: '',
       payment_info: '',
       available_sizes: [],
-      available_colors: '',
+      available_colors: [],
     });
     setEditingProduct(null);
   };
@@ -304,7 +301,7 @@ const AdminProducts = () => {
       delivery_info: data.delivery_info || '',
       payment_info: data.payment_info || '',
       available_sizes: data.available_sizes || [],
-      available_colors: data.available_colors?.join(', ') || '',
+      available_colors: data.available_colors || [],
     });
     setDialogOpen(true);
   };
@@ -547,17 +544,38 @@ const AdminProducts = () => {
                       </div>
 
                       <div>
-                        <Label htmlFor="available_colors">
-                          Доступные цвета (через запятую)
-                        </Label>
-                        <Input
-                          id="available_colors"
-                          value={formData.available_colors}
-                          onChange={(e) =>
-                            setFormData({ ...formData, available_colors: e.target.value })
-                          }
-                          placeholder="Черный, Белый, Серый"
-                        />
+                        <Label>Доступные цвета</Label>
+                        <div className="flex flex-wrap gap-2 mt-2 p-3 border rounded-md">
+                          {availableColorOptions.map((color) => (
+                            <label
+                              key={color}
+                              className="flex items-center gap-2 cursor-pointer hover:bg-muted px-3 py-1.5 rounded"
+                            >
+                              <Checkbox
+                                checked={formData.available_colors.includes(color)}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    setFormData({
+                                      ...formData,
+                                      available_colors: [...formData.available_colors, color]
+                                    });
+                                  } else {
+                                    setFormData({
+                                      ...formData,
+                                      available_colors: formData.available_colors.filter(c => c !== color)
+                                    });
+                                  }
+                                }}
+                              />
+                              <span className="text-sm">{color}</span>
+                            </label>
+                          ))}
+                        </div>
+                        {formData.available_colors.length > 0 && (
+                          <p className="text-sm text-muted-foreground mt-2">
+                            Выбрано: {formData.available_colors.join(', ')}
+                          </p>
+                        )}
                       </div>
 
                       <div className="flex gap-2">
