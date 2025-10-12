@@ -49,12 +49,13 @@ const AdminProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const { toast } = useToast();
-  const { data: categories } = useCategories();
+  const { data: categories, isLoading: categoriesLoading } = useCategories();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -131,6 +132,8 @@ const AdminProducts = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (submitting) return; // Prevent double submission
+    
     // Validation
     if (!formData.name.trim()) {
       toast({
@@ -159,6 +162,7 @@ const AdminProducts = () => {
       return;
     }
     
+    setSubmitting(true);
     try {
       // Parse sizes and colors
       const sizes = formData.available_sizes
@@ -219,6 +223,8 @@ const AdminProducts = () => {
         description: error.message || 'Не удалось сохранить товар',
         variant: 'destructive',
       });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -321,13 +327,7 @@ const AdminProducts = () => {
                   Добавить товар
                 </Button>
               </DialogTrigger>
-            <DialogTrigger asChild>
-              <Button onClick={resetForm}>
-                <Plus className="w-4 h-4 mr-2" />
-                Добавить товар
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>
                   {editingProduct ? 'Редактировать товар' : 'Новый товар'}
@@ -538,8 +538,10 @@ const AdminProducts = () => {
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Button type="submit">
-                    {editingProduct ? 'Сохранить' : 'Создать'}
+                  <Button type="submit" disabled={submitting}>
+                    {submitting 
+                      ? 'Сохранение...' 
+                      : editingProduct ? 'Сохранить' : 'Создать'}
                   </Button>
                   <Button
                     type="button"
