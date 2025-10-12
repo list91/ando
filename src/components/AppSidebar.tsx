@@ -27,7 +27,9 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
   const location = useLocation();
   const isHomePage = location.pathname === "/";
   const isInfoPage = location.pathname === "/info";
-  const isCatalogRelated = !isHomePage && !isInfoPage;
+  const isProductPage = location.pathname.startsWith("/product/");
+  const isCatalogPage = location.pathname === "/catalog";
+  const isCatalogRelated = isCatalogPage || isProductPage;
   const { data: categories, isLoading } = useCategories();
   const { data: settings } = useSiteSettings();
   
