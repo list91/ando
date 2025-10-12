@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import heroSlide from "@/assets/hero-slide.jpeg";
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -6,11 +7,13 @@ const Home = () => {
   const slides = [
     {
       title: "THE ROW",
-      subtitle: "Когда в поисковой строке начинаем набирать текст она опускается ниже"
+      subtitle: "Когда в поисковой строке начинаем набирать текст она опускается ниже",
+      image: heroSlide
     },
     {
       title: "THE ROW",
-      subtitle: ""
+      subtitle: "",
+      image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1920&q=80"
     }
   ];
 
@@ -33,9 +36,7 @@ const Home = () => {
           <div 
             className="w-full h-full bg-cover bg-center"
             style={{
-              backgroundImage: index === 0 
-                ? "url('https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1920&q=80')"
-                : "url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1920&q=80')"
+              backgroundImage: `url('${slide.image}')`
             }}
           >
             <div className="absolute inset-0 bg-black/20" />
