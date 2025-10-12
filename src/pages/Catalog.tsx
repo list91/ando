@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
-import { useProducts, useCategories } from "@/hooks/useProducts";
+import { ChevronDown, X } from "lucide-react";
+import { useProducts, useCategories, useProductFilters, ProductFilters } from "@/hooks/useProducts";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 
 interface CatalogProps {
   selectedCategory: string;
@@ -9,29 +12,63 @@ interface CatalogProps {
 }
 
 const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
-  const [isSaleFilter, setIsSaleFilter] = useState(false);
+  const [filters, setFilters] = useState<ProductFilters>({});
+  const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState<{ min?: number; max?: number }>({});
   
   const { data: categories = [] } = useCategories();
-  const { data: products = [], isLoading } = useProducts(
-    selectedCategoryId,
-    isSaleFilter
-  );
+  const { data: filterOptions } = useProductFilters();
+  const { data: products = [], isLoading } = useProducts(filters);
 
   useEffect(() => {
+    const newFilters: ProductFilters = {};
+    
     if (selectedCategory === "Все товары") {
-      setSelectedCategoryId(null);
-      setIsSaleFilter(false);
+      newFilters.categoryId = null;
+      newFilters.isSale = false;
     } else if (selectedCategory === "SALE %") {
-      setSelectedCategoryId(null);
-      setIsSaleFilter(true);
+      newFilters.categoryId = null;
+      newFilters.isSale = true;
     } else {
       const category = categories.find((cat) => cat.name === selectedCategory);
-      setSelectedCategoryId(category?.id || null);
-      setIsSaleFilter(false);
+      newFilters.categoryId = category?.id || null;
+      newFilters.isSale = false;
     }
-  }, [selectedCategory, categories]);
 
+    if (selectedMaterials.length > 0) {
+      newFilters.materials = selectedMaterials;
+    }
+
+    if (selectedColors.length > 0) {
+      newFilters.colors = selectedColors;
+    }
+
+    if (selectedSizes.length > 0) {
+      newFilters.sizes = selectedSizes;
+    }
+
+    if (priceRange.min !== undefined) {
+      newFilters.minPrice = priceRange.min;
+    }
+
+    if (priceRange.max !== undefined) {
+      newFilters.maxPrice = priceRange.max;
+    }
+
+    setFilters(newFilters);
+  }, [selectedCategory, categories, selectedMaterials, selectedColors, selectedSizes, priceRange]);
+
+  const clearFilters = () => {
+    setSelectedMaterials([]);
+    setSelectedColors([]);
+    setSelectedSizes([]);
+    setPriceRange({});
+  };
+
+  const hasActiveFilters = selectedMaterials.length > 0 || selectedColors.length > 0 || 
+    selectedSizes.length > 0 || priceRange.min !== undefined || priceRange.max !== undefined;
 
   if (isLoading) {
     return (
@@ -43,25 +80,169 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
 
   return (
     <div className="min-h-full">
-      {/* Filters - Responsive */}
+      {/* Filters */}
       <div className="border-b border-border py-4 px-4 lg:px-8">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 text-sm">
-          <div className="flex flex-wrap gap-4 lg:gap-8">
-            <button className="flex items-center gap-2 hover:opacity-60 transition-opacity">
-              Материал <ChevronDown className="w-4 h-4" />
-            </button>
-            <button className="flex items-center gap-2 hover:opacity-60 transition-opacity">
-              Цвет <ChevronDown className="w-4 h-4" />
-            </button>
-            <button className="flex items-center gap-2 hover:opacity-60 transition-opacity">
-              Размер <ChevronDown className="w-4 h-4" />
-            </button>
-            <button className="flex items-center gap-2 hover:opacity-60 transition-opacity">
-              Цена <ChevronDown className="w-4 h-4" />
-            </button>
+          <div className="flex flex-wrap gap-4 lg:gap-8 items-center">
+            {/* Material Filter */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity">
+                  Материал {selectedMaterials.length > 0 && `(${selectedMaterials.length})`}
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64" align="start">
+                <div className="space-y-2">
+                  <p className="font-medium mb-3 text-sm">Выберите материал</p>
+                  {filterOptions?.materials.map((material) => (
+                    <div key={material} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`material-${material}`}
+                        checked={selectedMaterials.includes(material)}
+                        onCheckedChange={(checked) => {
+                          setSelectedMaterials(
+                            checked
+                              ? [...selectedMaterials, material]
+                              : selectedMaterials.filter((m) => m !== material)
+                          );
+                        }}
+                      />
+                      <label
+                        htmlFor={`material-${material}`}
+                        className="text-sm cursor-pointer"
+                      >
+                        {material}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* Color Filter */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity">
+                  Цвет {selectedColors.length > 0 && `(${selectedColors.length})`}
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64" align="start">
+                <div className="space-y-2">
+                  <p className="font-medium mb-3 text-sm">Выберите цвет</p>
+                  {filterOptions?.colors.map((color) => (
+                    <div key={color} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`color-${color}`}
+                        checked={selectedColors.includes(color)}
+                        onCheckedChange={(checked) => {
+                          setSelectedColors(
+                            checked
+                              ? [...selectedColors, color]
+                              : selectedColors.filter((c) => c !== color)
+                          );
+                        }}
+                      />
+                      <label
+                        htmlFor={`color-${color}`}
+                        className="text-sm cursor-pointer flex items-center gap-2"
+                      >
+                        <div 
+                          className="w-4 h-4 rounded-full border border-border"
+                          style={{ backgroundColor: color }}
+                        />
+                        {color}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* Size Filter */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity">
+                  Размер {selectedSizes.length > 0 && `(${selectedSizes.length})`}
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64" align="start">
+                <div className="space-y-2">
+                  <p className="font-medium mb-3 text-sm">Выберите размер</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {filterOptions?.sizes.map((size) => (
+                      <Button
+                        key={size}
+                        variant={selectedSizes.includes(size) ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => {
+                          setSelectedSizes(
+                            selectedSizes.includes(size)
+                              ? selectedSizes.filter((s) => s !== size)
+                              : [...selectedSizes, size]
+                          );
+                        }}
+                      >
+                        {size}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* Price Filter */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity">
+                  Цена {(priceRange.min || priceRange.max) && '•'}
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64" align="start">
+                <div className="space-y-4">
+                  <p className="font-medium text-sm">Диапазон цен</p>
+                  <div className="flex gap-2 items-center">
+                    <input
+                      type="number"
+                      placeholder="От"
+                      className="w-full px-3 py-2 text-sm border border-input rounded-md bg-background"
+                      value={priceRange.min || ''}
+                      onChange={(e) => setPriceRange({ ...priceRange, min: e.target.value ? Number(e.target.value) : undefined })}
+                    />
+                    <span className="text-muted-foreground">—</span>
+                    <input
+                      type="number"
+                      placeholder="До"
+                      className="w-full px-3 py-2 text-sm border border-input rounded-md bg-background"
+                      value={priceRange.max || ''}
+                      onChange={(e) => setPriceRange({ ...priceRange, max: e.target.value ? Number(e.target.value) : undefined })}
+                    />
+                  </div>
+                  {filterOptions?.priceRange && (
+                    <p className="text-xs text-muted-foreground">
+                      Цены: {filterOptions.priceRange.min} — {filterOptions.priceRange.max} ₽
+                    </p>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {hasActiveFilters && (
+              <button
+                onClick={clearFilters}
+                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="w-3 h-3" />
+                Очистить фильтры
+              </button>
+            )}
           </div>
+
           <div className="text-muted-foreground text-xs lg:text-sm">
-            Сортировать по: Цена по возрастанию
+            Найдено товаров: {products.length}
           </div>
         </div>
       </div>
@@ -69,6 +250,14 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
       {products.length === 0 ? (
         <div className="p-8 lg:p-16 text-center">
           <p className="text-muted-foreground">Товары не найдены</p>
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="mt-4 text-sm underline hover:no-underline"
+            >
+              Сбросить фильтры
+            </button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 p-4 lg:p-8">
