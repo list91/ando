@@ -205,6 +205,25 @@ export default function SiteSettings() {
               </Button>
             </div>
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="vk">VKontakte</Label>
+            <div className="flex gap-2">
+              <Input
+                id="vk"
+                value={getSettingValue('social_vk')}
+                onChange={(e) => handleInputChange('social_vk', e.target.value)}
+                placeholder="https://vk.com/..."
+              />
+              <Button
+                onClick={() => handleSave('social_vk')}
+                disabled={!formData.social_vk}
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Сохранить
+              </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

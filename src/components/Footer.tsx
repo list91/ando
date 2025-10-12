@@ -12,6 +12,7 @@ const Footer = () => {
 
   const instagramUrl = getSetting('social_instagram', 'https://instagram.com');
   const telegramUrl = getSetting('social_telegram', 'https://t.me');
+  const vkUrl = getSetting('social_vk', 'https://vk.com');
   const contactEmail = getSetting('contact_email', 'hello@jnby.com.ru');
   const contactPhone = getSetting('contact_phone', '+7 (921) 909-39-67');
   const contactAddress = getSetting('contact_address', '192522, Санкт-Петербург');
@@ -41,6 +42,7 @@ const Footer = () => {
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="w-10 h-10 border border-border flex items-center justify-center hover:border-foreground transition-colors"
+                  aria-label="Instagram"
                 >
                   <Instagram className="w-4 h-4" />
                 </a>
@@ -51,8 +53,23 @@ const Footer = () => {
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="w-10 h-10 border border-border flex items-center justify-center hover:border-foreground transition-colors"
+                  aria-label="Telegram"
                 >
                   <Send className="w-4 h-4" />
+                </a>
+              )}
+              {vkUrl && (
+                <a 
+                  href={vkUrl}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 border border-border flex items-center justify-center hover:border-foreground transition-colors"
+                  aria-label="VKontakte"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M2.5 5.5h3.75L8 11.5l-2.5 1.5c0 2.5 2.5 5 5 5s5-2.5 5-5L13 11.5l1.75-6h3.75" />
+                    <path d="M2.5 5.5c0-.828.672-1.5 1.5-1.5h16c.828 0 1.5.672 1.5 1.5v13c0 .828-.672 1.5-1.5 1.5H4c-.828 0-1.5-.672-1.5-1.5v-13z" />
+                  </svg>
                 </a>
               )}
             </div>
@@ -127,7 +144,10 @@ const Footer = () => {
 
         {/* Bottom Section */}
         <div className="mt-12 pt-8 border-t border-border flex justify-between items-center text-xs text-muted-foreground">
-          <p>© 2024 ANDO JV. Все права защищены.</p>
+          <div>
+            <p className="mb-1">© 2025 ANDO JV. Все права защищены.</p>
+            <p className="text-[10px]">Не является публичной офертой.</p>
+          </div>
           <div className="flex gap-6">
             <Link to="/info?section=agreement" className="hover:text-foreground transition-colors">
               Пользовательское соглашение
