@@ -1,34 +1,34 @@
 import { useState, useEffect } from "react";
-import heroSlide from "@/assets/hero-slide.jpeg";
+import { useHeroSlides } from "@/hooks/useHeroSlides";
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { data: slides, isLoading } = useHeroSlides();
   
-  const slides = [
-    {
-      title: "THE ROW",
-      subtitle: "Когда в поисковой строке начинаем набирать текст она опускается ниже",
-      image: heroSlide
-    },
-    {
-      title: "THE ROW",
-      subtitle: "",
-      image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1920&q=80"
-    }
-  ];
+  const activeSlides = slides?.filter(s => s.is_active) || [];
 
   useEffect(() => {
+    if (activeSlides.length === 0) return;
+    
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      setCurrentSlide((prev) => (prev + 1) % activeSlides.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [activeSlides.length]);
+
+  if (isLoading || activeSlides.length === 0) {
+    return (
+      <div className="relative h-[calc(100vh-4rem)] overflow-hidden">
+        <div className="absolute inset-0 bg-muted animate-pulse" />
+      </div>
+    );
+  }
 
   return (
     <div className="relative h-[calc(100vh-4rem)] overflow-hidden">
-      {slides.map((slide, index) => (
+      {activeSlides.map((slide, index) => (
         <div
-          key={index}
+          key={slide.id}
           className={`absolute inset-0 transition-opacity duration-1000 ${
             index === currentSlide ? "opacity-100" : "opacity-0"
           }`}
@@ -36,7 +36,7 @@ const Home = () => {
           <div 
             className="w-full h-full bg-cover bg-center"
             style={{
-              backgroundImage: `url('${slide.image}')`
+              backgroundImage: `url('${slide.image_url}')`
             }}
           >
             <div className="absolute inset-0 bg-black/20" />
@@ -58,7 +58,7 @@ const Home = () => {
       ))}
 
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-2">
-        {slides.map((_, index) => (
+        {activeSlides.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
