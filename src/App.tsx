@@ -18,12 +18,14 @@ const queryClient = new QueryClient();
 
 const AppContent = () => {
   const [selectedCategory, setSelectedCategory] = useState("Все товары");
-  const location = useLocation();
+  const [activeInfoSection, setActiveInfoSection] = useState("delivery");
 
   return (
     <Layout 
-      selectedCategory={location.pathname === "/catalog" ? selectedCategory : undefined}
+      selectedCategory={selectedCategory}
       onCategoryChange={setSelectedCategory}
+      activeInfoSection={activeInfoSection}
+      onInfoSectionChange={setActiveInfoSection}
     >
       <Routes>
         <Route path="/" element={<Home />} />
@@ -34,7 +36,10 @@ const AppContent = () => {
         <Route path="/product/:id" element={<Product />} />
         <Route path="/lookbook" element={<Lookbook />} />
         <Route path="/about" element={<About />} />
-        <Route path="/info" element={<Info />} />
+        <Route 
+          path="/info" 
+          element={<Info activeSection={activeInfoSection} setActiveSection={setActiveInfoSection} />} 
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Layout>

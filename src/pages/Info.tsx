@@ -13,28 +13,14 @@ const menuItems = [
   { id: "stores", label: "Магазины" }
 ];
 
-const Info = () => {
-  const [activeSection, setActiveSection] = useState("delivery");
+interface InfoProps {
+  activeSection: string;
+  setActiveSection: (section: string) => void;
+}
 
+const Info = ({ activeSection, setActiveSection }: InfoProps) => {
   return (
-    <div className="flex min-h-screen">
-      <aside className="w-64 border-r border-border py-12 px-6">
-        <nav className="space-y-4">
-          {menuItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveSection(item.id)}
-              className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${
-                activeSection === item.id ? "underline" : ""
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
-        </nav>
-      </aside>
-
-      <div className="flex-1 py-16 px-16 max-w-4xl">
+    <div className="flex-1 py-16 px-16 max-w-4xl">
         {activeSection === "brand" && (
           <div className="space-y-8">
             <h2 className="text-2xl mb-6 tracking-[0.15em] uppercase">О Бренде</h2>
@@ -342,7 +328,6 @@ const Info = () => {
             </section>
           </div>
         )}
-      </div>
     </div>
   );
 };

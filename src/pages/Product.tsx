@@ -41,8 +41,7 @@ const Product = () => {
   };
 
   return (
-    <div className="flex min-h-screen">
-      <div className="flex-1 flex">
+    <div className="flex-1 flex">
         <div className="flex-1 flex items-center justify-center py-16 px-8">
           <div className="relative max-w-xl">
             <button 
@@ -172,7 +171,6 @@ const Product = () => {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 };

@@ -13,7 +13,22 @@ import {
 interface AppSidebarProps {
   selectedCategory?: string;
   onCategoryChange?: (category: string) => void;
+  activeInfoSection?: string;
+  onInfoSectionChange?: (section: string) => void;
 }
+
+const infoMenuItems = [
+  { id: "brand", label: "О Бренде" },
+  { id: "cooperation", label: "Сотрудничество" },
+  { id: "delivery", label: "Оплата и доставка" },
+  { id: "returns", label: "Возврат" },
+  { id: "size-guide", label: "Гид по размерам" },
+  { id: "agreement", label: "Пользовательское соглашение" },
+  { id: "warranty", label: "Гарантия" },
+  { id: "loyalty", label: "Программа лояльности и бонусы" },
+  { id: "contacts", label: "Контакты" },
+  { id: "stores", label: "Магазины" }
+];
 
 const categories = [
   "Топы",
@@ -30,9 +45,11 @@ const categories = [
   "SALE %"
 ];
 
-export function AppSidebar({ selectedCategory, onCategoryChange }: AppSidebarProps) {
+export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSection, onInfoSectionChange }: AppSidebarProps) {
   const location = useLocation();
-  const isCatalogPage = location.pathname === "/catalog";
+  const isHomePage = location.pathname === "/";
+  const isInfoPage = location.pathname === "/info";
+  const isCatalogRelated = !isHomePage && !isInfoPage;
 
   return (
     <Sidebar className="border-r border-border">
@@ -49,7 +66,21 @@ export function AppSidebar({ selectedCategory, onCategoryChange }: AppSidebarPro
         <SidebarContent className="flex-1">
           <SidebarGroup>
             <SidebarGroupContent>
-              {isCatalogPage ? (
+              {isHomePage && (
+                <div className="flex items-center justify-center h-full">
+                  <p 
+                    className="text-xs tracking-[0.3em] uppercase"
+                    style={{ 
+                      writingMode: 'vertical-rl',
+                      textOrientation: 'mixed'
+                    }}
+                  >
+                    Feel the moment
+                  </p>
+                </div>
+              )}
+
+              {isCatalogRelated && (
                 <SidebarMenu className="space-y-4 px-6">
                   <SidebarMenuItem>
                     <SidebarMenuButton
@@ -74,18 +105,23 @@ export function AppSidebar({ selectedCategory, onCategoryChange }: AppSidebarPro
                     </SidebarMenuItem>
                   ))}
                 </SidebarMenu>
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <p 
-                    className="text-xs tracking-[0.3em] uppercase"
-                    style={{ 
-                      writingMode: 'vertical-rl',
-                      textOrientation: 'mixed'
-                    }}
-                  >
-                    Feel the moment
-                  </p>
-                </div>
+              )}
+
+              {isInfoPage && (
+                <SidebarMenu className="space-y-4 px-6">
+                  {infoMenuItems.map((item) => (
+                    <SidebarMenuItem key={item.id}>
+                      <SidebarMenuButton
+                        onClick={() => onInfoSectionChange?.(item.id)}
+                        className={`w-full justify-start text-sm tracking-wide hover:opacity-60 transition-opacity ${
+                          activeInfoSection === item.id ? "underline" : ""
+                        }`}
+                      >
+                        {item.label}
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
               )}
             </SidebarGroupContent>
           </SidebarGroup>
