@@ -71,24 +71,26 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
 
           {isCatalogRelated && (
             <nav className="space-y-2 pl-16">
-              <button
+              <Link
+                to="/catalog"
                 onClick={() => onCategoryChange?.("Все товары")}
-                className={`w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${
+                className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${
                   selectedCategory === "Все товары" ? "underline" : ""
                 }`}
               >
                 Все товары
-              </button>
+              </Link>
               {!isLoading && categories?.map((category) => (
-                <button
+                <Link
                   key={category.id}
+                  to="/catalog"
                   onClick={() => onCategoryChange?.(category.name)}
-                  className={`w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${
+                  className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${
                     category.name === selectedCategory ? "underline" : ""
                   }`}
                 >
                   {category.name}
-                </button>
+                </Link>
               ))}
             </nav>
           )}
@@ -96,15 +98,16 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
           {isInfoPage && (
             <nav className="space-y-2">
               {infoMenuItems.map((item) => (
-                <button
+                <Link
                   key={item.id}
+                  to="/info"
                   onClick={() => onInfoSectionChange?.(item.id)}
-                  className={`w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${
+                  className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${
                     activeInfoSection === item.id ? "underline" : ""
                   }`}
                 >
                   {item.label}
-                </button>
+                </Link>
               ))}
             </nav>
           )}
