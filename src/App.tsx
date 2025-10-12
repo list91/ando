@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "@/contexts/CartContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useState } from "react";
 import Layout from "./components/Layout";
@@ -27,6 +28,7 @@ import AdminLookbook from "./pages/admin/Lookbook";
 import AdminInfoPages from "./pages/admin/InfoPages";
 import AdminHeroSlides from "./pages/admin/HeroSlides";
 import AdminAboutPage from "./pages/admin/AboutPage";
+import Favorites from "./pages/Favorites";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +58,7 @@ const AppContent = () => {
           element={<Info activeSection={activeInfoSection} setActiveSection={setActiveInfoSection} />} 
         />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/favorites" element={<Favorites />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/order-success" element={<OrderSuccess />} />
         
@@ -85,15 +88,17 @@ const AppContent = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <CartProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AppContent />
-          </BrowserRouter>
-        </TooltipProvider>
-      </CartProvider>
+      <FavoritesProvider>
+        <CartProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <AppContent />
+            </BrowserRouter>
+          </TooltipProvider>
+        </CartProvider>
+      </FavoritesProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

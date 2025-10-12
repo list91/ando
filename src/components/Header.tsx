@@ -122,9 +122,12 @@ const Header = () => {
             </button>
 
             {/* Favorites - hidden on small mobile */}
-            <button className="hidden sm:block hover:opacity-60 transition-opacity">
+            <Link 
+              to="/favorites"
+              className="hidden sm:block hover:opacity-60 transition-opacity"
+            >
               <Heart className="w-5 h-5" />
-            </button>
+            </Link>
             
             {/* User Menu */}
             {user ? (
@@ -142,6 +145,10 @@ const Header = () => {
                       Админ-панель
                     </DropdownMenuItem>
                   )}
+                  <DropdownMenuItem onClick={() => navigate('/favorites')}>
+                    <Heart className="w-4 h-4 mr-2" />
+                    Избранное
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/orders')}>
                     Мои заказы
                   </DropdownMenuItem>

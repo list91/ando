@@ -1,8 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
-import { ChevronDown, X } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { ChevronDown, X, Heart } from "lucide-react";
 import { useProducts, useCategories, useProductFilters, ProductFilters } from "@/hooks/useProducts";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useAuth } from "@/contexts/AuthContext";
+import { useFavorites } from "@/contexts/FavoritesContext";
+import { useToast } from "@/hooks/use-toast";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -27,6 +30,10 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   const { data: filterOptions } = useProductFilters();
   const { data: products = [], isLoading } = useProducts(filters);
   const { data: settings } = useSiteSettings();
+  const { user } = useAuth();
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Get color map from settings
   const colorMap = settings?.find(s => s.key === 'product_colors')?.value as Record<string, string> || {};
@@ -380,8 +387,28 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
               }));
             };
 
+            const handleFavoriteClick = async (e: React.MouseEvent) => {
+              e.preventDefault();
+              e.stopPropagation();
+              
+              if (!user) {
+                toast({
+                  title: "Требуется авторизация",
+                  description: "Войдите в аккаунт, чтобы добавить товар в избранное",
+                });
+                navigate('/auth', { state: { from: '/catalog' } });
+                return;
+              }
+              
+              await toggleFavorite(product.id);
+              toast({
+                title: isFavorite(product.id) ? "Удалено из избранного" : "Добавлено в избранное",
+                description: product.name,
+              });
+            };
+
             return (
-              <div key={product.id} className="group">
+              <div key={product.id} className="group relative">
                 <Link to={`/product/${product.slug}`}>
                   <div 
                     className="relative aspect-[3/4] mb-3 overflow-hidden bg-muted"
@@ -416,6 +443,24 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                       </div>
                     )}
                   </div>
+                </Link>
+
+                {/* Favorite button */}
+                <button
+                  onClick={handleFavoriteClick}
+                  className="absolute top-3 right-3 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors z-20"
+                  aria-label={isFavorite(product.id) ? "Удалить из избранного" : "Добавить в избранное"}
+                >
+                  <Heart 
+                    className={`h-5 w-5 transition-all ${
+                      isFavorite(product.id) 
+                        ? 'fill-red-500 text-red-500' 
+                        : 'text-foreground hover:text-red-500'
+                    }`}
+                  />
+                </button>
+
+                <Link to={`/product/${product.slug}`}>
                   
                   <h3 className="text-sm mb-2 tracking-wide text-foreground">{product.name}</h3>
                   
