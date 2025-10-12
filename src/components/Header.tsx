@@ -1,9 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Search, ShoppingCart, Heart, User, LogOut } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CartDrawer from "./CartDrawer";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,6 +20,30 @@ const Header = () => {
   const { totalItems } = useCart();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdminRole = async () => {
+      if (!user) {
+        setIsAdmin(false);
+        return;
+      }
+
+      const { data } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .in('role', ['admin', 'manager']);
+
+      setIsAdmin(data && data.length > 0);
+    };
+
+    if (user) {
+      setTimeout(() => {
+        checkAdminRole();
+      }, 0);
+    }
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -92,6 +117,11 @@ const Header = () => {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Мой аккаунт</DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                {isAdmin && (
+                  <DropdownMenuItem onClick={() => navigate('/admin/orders')}>
+                    Админ-панель
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={() => navigate('/orders')}>
                   Мои заказы
                 </DropdownMenuItem>
