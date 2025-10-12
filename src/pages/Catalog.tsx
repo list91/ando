@@ -430,14 +430,20 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                     </span>
                     {product.available_colors && product.available_colors.length > 0 && (
                       <div className="flex items-center gap-2 ml-auto">
-                        {product.available_colors.slice(0, 4).map((color, idx) => (
-                          <div
-                            key={idx}
-                            className="w-5 h-5 rounded-full border border-border/50 flex-shrink-0"
-                            style={{ backgroundColor: getColorHex(color) }}
-                            title={color}
-                          />
-                        ))}
+                        {product.available_colors.slice(0, 4).map((color, idx) => {
+                          const colorHex = getColorHex(color);
+                          return (
+                            <div
+                              key={idx}
+                              className="w-5 h-5 rounded-full border-2 border-border flex-shrink-0"
+                              style={{ 
+                                backgroundColor: colorHex,
+                                boxShadow: colorHex.toLowerCase() === '#ffffff' ? 'inset 0 0 0 1px rgba(0,0,0,0.1)' : 'none'
+                              }}
+                              title={color}
+                            />
+                          );
+                        })}
                       </div>
                     )}
                   </div>
