@@ -7,21 +7,17 @@ const About = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin" />
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }
 
-  const getSection = (key: string) => sections?.find((s) => s.section_key === key);
-
-  const brandTitle = getSection("brand_title");
-  const desc1 = getSection("description_1");
-  const desc2 = getSection("description_2");
-  const desc3 = getSection("description_3");
-  const philosophy = getSection("philosophy");
-  const production = getSection("production");
-  const contacts = getSection("contacts");
-  const founderImage = getSection("founder_image");
+  const brandTitle = sections?.find((s) => s.section_key === "brand_title");
+  const descriptions = sections?.filter((s) => s.section_key.startsWith("description_"));
+  const philosophy = sections?.find((s) => s.section_key === "philosophy");
+  const production = sections?.find((s) => s.section_key === "production");
+  const contacts = sections?.find((s) => s.section_key === "contacts");
+  const founderImage = sections?.find((s) => s.section_key === "founder_image");
 
   return (
     <div className="min-h-screen flex items-center py-8 px-8">
@@ -34,17 +30,11 @@ const About = () => {
             </h1>
             
             <div className="space-y-3 text-xs leading-relaxed">
-              {desc1?.content && (
-                <p className="text-muted-foreground">{desc1.content}</p>
-              )}
-
-              {desc2?.content && (
-                <p className="text-muted-foreground">{desc2.content}</p>
-              )}
-
-              {desc3?.content && (
-                <p className="text-muted-foreground">{desc3.content}</p>
-              )}
+              {descriptions?.map((desc) => (
+                <p key={desc.id} className="text-muted-foreground">
+                  {desc.content}
+                </p>
+              ))}
             </div>
 
             <div className="grid grid-cols-2 gap-6 pt-4">
@@ -87,10 +77,7 @@ const About = () => {
           <div>
             <div className="aspect-[3/4] overflow-hidden bg-muted">
               <img
-                src={
-                  founderImage?.image_url ||
-                  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80"
-                }
+                src={founderImage?.image_url || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80"}
                 alt={founderImage?.title || "Основатели бренда"}
                 className="w-full h-full object-cover grayscale"
               />
