@@ -71,9 +71,11 @@ const AdminProducts = () => {
     care_instructions: '',
     delivery_info: '',
     payment_info: '',
-    available_sizes: '',
+    available_sizes: [] as string[],
     available_colors: '',
   });
+
+  const availableSizeOptions = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '42', '44', '46', '48', '50', '52', '54'];
 
   useEffect(() => {
     fetchProducts();
@@ -164,10 +166,7 @@ const AdminProducts = () => {
     
     setSubmitting(true);
     try {
-      // Parse sizes and colors
-      const sizes = formData.available_sizes
-        ? formData.available_sizes.split(',').map(s => s.trim()).filter(s => s)
-        : [];
+      // Parse colors
       const colors = formData.available_colors
         ? formData.available_colors.split(',').map(c => c.trim()).filter(c => c)
         : [];
@@ -186,7 +185,7 @@ const AdminProducts = () => {
         care_instructions: formData.care_instructions.trim() || null,
         delivery_info: formData.delivery_info.trim() || null,
         payment_info: formData.payment_info.trim() || null,
-        available_sizes: sizes.length > 0 ? sizes : null,
+        available_sizes: formData.available_sizes.length > 0 ? formData.available_sizes : null,
         available_colors: colors.length > 0 ? colors : null,
       };
 
@@ -265,7 +264,7 @@ const AdminProducts = () => {
       care_instructions: '',
       delivery_info: '',
       payment_info: '',
-      available_sizes: '',
+      available_sizes: [],
       available_colors: '',
     });
     setEditingProduct(null);
@@ -304,7 +303,7 @@ const AdminProducts = () => {
       care_instructions: data.care_instructions || '',
       delivery_info: data.delivery_info || '',
       payment_info: data.payment_info || '',
-      available_sizes: data.available_sizes?.join(', ') || '',
+      available_sizes: data.available_sizes || [],
       available_colors: data.available_colors?.join(', ') || '',
     });
     setDialogOpen(true);
@@ -513,17 +512,38 @@ const AdminProducts = () => {
                       </div>
 
                       <div>
-                        <Label htmlFor="available_sizes">
-                          Доступные размеры (через запятую)
-                        </Label>
-                        <Input
-                          id="available_sizes"
-                          value={formData.available_sizes}
-                          onChange={(e) =>
-                            setFormData({ ...formData, available_sizes: e.target.value })
-                          }
-                          placeholder="S, M, L, XL"
-                        />
+                        <Label>Доступные размеры</Label>
+                        <div className="flex flex-wrap gap-2 mt-2 p-3 border rounded-md">
+                          {availableSizeOptions.map((size) => (
+                            <label
+                              key={size}
+                              className="flex items-center gap-2 cursor-pointer hover:bg-muted px-3 py-1.5 rounded"
+                            >
+                              <Checkbox
+                                checked={formData.available_sizes.includes(size)}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    setFormData({
+                                      ...formData,
+                                      available_sizes: [...formData.available_sizes, size]
+                                    });
+                                  } else {
+                                    setFormData({
+                                      ...formData,
+                                      available_sizes: formData.available_sizes.filter(s => s !== size)
+                                    });
+                                  }
+                                }}
+                              />
+                              <span className="text-sm">{size}</span>
+                            </label>
+                          ))}
+                        </div>
+                        {formData.available_sizes.length > 0 && (
+                          <p className="text-sm text-muted-foreground mt-2">
+                            Выбрано: {formData.available_sizes.join(', ')}
+                          </p>
+                        )}
                       </div>
 
                       <div>
