@@ -1,26 +1,38 @@
-import { useState } from "react";
-
-const menuItems = [
-  { id: "brand", label: "О Бренде" },
-  { id: "cooperation", label: "Сотрудничество" },
-  { id: "delivery", label: "Оплата и доставка" },
-  { id: "returns", label: "Возврат" },
-  { id: "size-guide", label: "Гид по размерам" },
-  { id: "agreement", label: "Пользовательское соглашение" },
-  { id: "warranty", label: "Гарантия" },
-  { id: "loyalty", label: "Программа лояльности и бонусы" },
-  { id: "contacts", label: "Контакты" },
-  { id: "stores", label: "Магазины" }
-];
+import { useInfoPages } from "@/hooks/useInfoPages";
+import { Loader2 } from "lucide-react";
 
 interface InfoProps {
   activeSection: string;
   setActiveSection: (section: string) => void;
 }
 
-const Info = ({ activeSection, setActiveSection }: InfoProps) => {
+const Info = ({ activeSection }: InfoProps) => {
+  const { data: pages, isLoading } = useInfoPages();
+  const visiblePages = pages?.filter(p => p.is_visible);
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 flex items-center justify-center min-h-full">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  // Try to find the active page from database
+  const activePage = visiblePages?.find(p => p.page_key === activeSection);
   return (
     <div className="flex-1 py-20 px-16 max-w-4xl min-h-full">
+      {activePage ? (
+        <div className="space-y-8">
+          <h2 className="text-2xl mb-6 tracking-[0.15em] uppercase">{activePage.title}</h2>
+          <div 
+            className="text-sm leading-relaxed whitespace-pre-wrap"
+            dangerouslySetInnerHTML={{ __html: activePage.content }}
+          />
+        </div>
+      ) : (
+        <>
+          {/* Keep old static content as fallback */}
         {activeSection === "brand" && (
           <div className="space-y-8">
             <h2 className="text-2xl mb-6 tracking-[0.15em] uppercase">О Бренде</h2>
@@ -328,6 +340,8 @@ const Info = ({ activeSection, setActiveSection }: InfoProps) => {
             </section>
           </div>
         )}
+        </>
+      )}
     </div>
   );
 };

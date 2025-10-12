@@ -1,39 +1,51 @@
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
-
-const lookbooks = [
-  {
-    season: "Весна/Лето 25",
-    images: [
-      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1920&q=80",
-      "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1920&q=80"
-    ]
-  },
-  {
-    season: "Осень/Зима 25-26",
-    images: [
-      "https://images.unsplash.com/photo-1558769132-cb1aea5f6ae8?w=1920&q=80",
-      "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1920&q=80"
-    ]
-  }
-];
+import { ChevronDown, Loader2 } from "lucide-react";
+import { useLookbookSeasons, useLookbookImages } from "@/hooks/useLookbook";
 
 const Lookbook = () => {
-  const [selectedSeason, setSelectedSeason] = useState("Весна/Лето 25");
-  const [currentLookbook] = lookbooks.filter(lb => lb.season === selectedSeason);
+  const { data: seasons, isLoading: seasonsLoading } = useLookbookSeasons();
+  const activeSeasons = seasons?.filter(s => s.is_active);
+  
+  const [selectedSeasonId, setSelectedSeasonId] = useState<string | undefined>();
+  const { data: images, isLoading: imagesLoading } = useLookbookImages(
+    selectedSeasonId || activeSeasons?.[0]?.id
+  );
+
+  // Auto-select first active season
+  const currentSeasonId = selectedSeasonId || activeSeasons?.[0]?.id;
+  const currentSeason = seasons?.find(s => s.id === currentSeasonId);
+  
+  // Get photographer credit from first image (they all share the same credit per season)
+  const photographerCredit = images?.[0]?.photographer_credit;
+
+  if (seasonsLoading) {
+    return (
+      <div className="min-h-full flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!activeSeasons || activeSeasons.length === 0) {
+    return (
+      <div className="min-h-full flex items-center justify-center p-8">
+        <p className="text-muted-foreground">Сезоны скоро появятся</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-full">
       <div className="border-b border-border py-4 px-8 flex justify-end">
         <div className="relative">
           <select
-            value={selectedSeason}
-            onChange={(e) => setSelectedSeason(e.target.value)}
+            value={currentSeasonId}
+            onChange={(e) => setSelectedSeasonId(e.target.value)}
             className="appearance-none bg-transparent pr-8 text-sm tracking-wide cursor-pointer focus:outline-none"
           >
-            {lookbooks.map((lb) => (
-              <option key={lb.season} value={lb.season}>
-                LookBook / {lb.season}
+            {activeSeasons.map((season) => (
+              <option key={season.id} value={season.id}>
+                LookBook / {season.season_name}
               </option>
             ))}
           </select>
@@ -41,23 +53,37 @@ const Lookbook = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2">
-        {currentLookbook?.images.map((image, idx) => (
-          <div key={idx} className="aspect-[3/4] relative overflow-hidden group">
-            <img
-              src={image}
-              alt={`Lookbook ${idx + 1}`}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-            />
+      {imagesLoading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      ) : images && images.length > 0 ? (
+        <>
+          <div className="grid grid-cols-2">
+            {images.map((image) => (
+              <div key={image.id} className="aspect-[3/4] relative overflow-hidden group">
+                <img
+                  src={image.image_url}
+                  alt={`Lookbook ${currentSeason?.season_name}`}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      <div className="py-16 text-center">
-        <p className="text-sm tracking-wide text-muted-foreground">
-          Фотография: Имя Фотографа
-        </p>
-      </div>
+          {photographerCredit && (
+            <div className="py-16 text-center">
+              <p className="text-sm tracking-wide text-muted-foreground">
+                Фотография: {photographerCredit}
+              </p>
+            </div>
+          )}
+        </>
+      ) : (
+        <div className="py-20 text-center">
+          <p className="text-muted-foreground">Изображения скоро появятся</p>
+        </div>
+      )}
     </div>
   );
 };

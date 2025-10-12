@@ -1,7 +1,21 @@
 import { Link } from "react-router-dom";
-import { Instagram, Facebook, Youtube, Twitter } from "lucide-react";
+import { Instagram, Send } from "lucide-react";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Footer = () => {
+  const { data: settings } = useSiteSettings();
+  
+  const getSetting = (key: string, defaultValue: any = '') => {
+    const setting = settings?.find(s => s.key === key);
+    return setting?.value || defaultValue;
+  };
+
+  const instagramUrl = getSetting('social_instagram', 'https://instagram.com');
+  const telegramUrl = getSetting('social_telegram', 'https://t.me');
+  const contactEmail = getSetting('contact_email', 'hello@jnby.com.ru');
+  const contactPhone = getSetting('contact_phone', '+7 (921) 909-39-67');
+  const contactAddress = getSetting('contact_address', '192522, Санкт-Петербург');
+
   return (
     <footer className="border-t border-border bg-background">
       <div className="max-w-7xl mx-auto px-16 py-16">
@@ -21,38 +35,26 @@ const Footer = () => {
               Качественные материалы и продуманный дизайн.
             </p>
             <div className="flex gap-4">
-              <a 
-                href="https://instagram.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-10 h-10 border border-border flex items-center justify-center hover:border-foreground transition-colors"
-              >
-                <Instagram className="w-4 h-4" />
-              </a>
-              <a 
-                href="https://facebook.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-10 h-10 border border-border flex items-center justify-center hover:border-foreground transition-colors"
-              >
-                <Facebook className="w-4 h-4" />
-              </a>
-              <a 
-                href="https://youtube.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-10 h-10 border border-border flex items-center justify-center hover:border-foreground transition-colors"
-              >
-                <Youtube className="w-4 h-4" />
-              </a>
-              <a 
-                href="https://twitter.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-10 h-10 border border-border flex items-center justify-center hover:border-foreground transition-colors"
-              >
-                <Twitter className="w-4 h-4" />
-              </a>
+              {instagramUrl && (
+                <a 
+                  href={instagramUrl}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 border border-border flex items-center justify-center hover:border-foreground transition-colors"
+                >
+                  <Instagram className="w-4 h-4" />
+                </a>
+              )}
+              {telegramUrl && (
+                <a 
+                  href={telegramUrl}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 border border-border flex items-center justify-center hover:border-foreground transition-colors"
+                >
+                  <Send className="w-4 h-4" />
+                </a>
+              )}
             </div>
           </div>
 
