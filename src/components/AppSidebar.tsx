@@ -1,5 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useCategories } from "@/hooks/useProducts";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { Instagram, Send } from "lucide-react";
 
 interface AppSidebarProps {
   selectedCategory?: string;
@@ -27,6 +29,16 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
   const isInfoPage = location.pathname === "/info";
   const isCatalogRelated = !isHomePage && !isInfoPage;
   const { data: categories, isLoading } = useCategories();
+  const { data: settings } = useSiteSettings();
+  
+  const getSetting = (key: string, defaultValue: any = '') => {
+    const setting = settings?.find(s => s.key === key);
+    return setting?.value || defaultValue;
+  };
+
+  const instagramUrl = getSetting('social_instagram', 'https://instagram.com');
+  const telegramUrl = getSetting('social_telegram', 'https://t.me');
+  const vkUrl = getSetting('social_vk', 'https://vk.com');
 
   return (
     <aside className="w-64 border-r border-border bg-background flex-shrink-0 h-screen overflow-y-auto">
@@ -96,7 +108,46 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
           )}
         </div>
 
-        <div className="text-[8px] text-center leading-relaxed text-muted-foreground mt-8">
+        <div className="flex gap-3 justify-center mb-4">
+          {instagramUrl && (
+            <a 
+              href={instagramUrl}
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-8 h-8 border border-border flex items-center justify-center hover:border-foreground transition-colors"
+              aria-label="Instagram"
+            >
+              <Instagram className="w-3 h-3" />
+            </a>
+          )}
+          {telegramUrl && (
+            <a 
+              href={telegramUrl}
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-8 h-8 border border-border flex items-center justify-center hover:border-foreground transition-colors"
+              aria-label="Telegram"
+            >
+              <Send className="w-3 h-3" />
+            </a>
+          )}
+          {vkUrl && (
+            <a 
+              href={vkUrl}
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-8 h-8 border border-border flex items-center justify-center hover:border-foreground transition-colors"
+              aria-label="VKontakte"
+            >
+              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2.5 5.5h3.75L8 11.5l-2.5 1.5c0 2.5 2.5 5 5 5s5-2.5 5-5L13 11.5l1.75-6h3.75" />
+                <path d="M2.5 5.5c0-.828.672-1.5 1.5-1.5h16c.828 0 1.5.672 1.5 1.5v13c0 .828-.672 1.5-1.5 1.5H4c-.828 0-1.5-.672-1.5-1.5v-13z" />
+              </svg>
+            </a>
+          )}
+        </div>
+
+        <div className="text-[8px] text-center leading-relaxed text-muted-foreground">
           © 2025 ANDO JV. Все права<br />
           защищены. Не является публичной<br />
           офертой.
