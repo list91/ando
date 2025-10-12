@@ -445,23 +445,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                   </div>
                 </Link>
 
-                {/* Favorite button */}
-                <button
-                  onClick={handleFavoriteClick}
-                  className="absolute top-3 right-3 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors z-20"
-                  aria-label={isFavorite(product.id) ? "Удалить из избранного" : "Добавить в избранное"}
-                >
-                  <Heart 
-                    className={`h-5 w-5 transition-all ${
-                      isFavorite(product.id) 
-                        ? 'fill-red-500 text-red-500' 
-                        : 'text-foreground hover:text-red-500'
-                    }`}
-                  />
-                </button>
-
                 <Link to={`/product/${product.slug}`}>
-                  
                   <h3 className="text-sm mb-2 tracking-wide text-foreground">{product.name}</h3>
                   
                   <div className="flex items-center gap-2 mb-2">
@@ -491,6 +475,21 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                         })}
                       </div>
                     )}
+                    
+                    {/* Favorite button */}
+                    <button
+                      onClick={handleFavoriteClick}
+                      className="ml-2 hover:opacity-60 transition-opacity"
+                      aria-label={isFavorite(product.id) ? "Удалить из избранного" : "Добавить в избранное"}
+                    >
+                      <Heart 
+                        className={`h-5 w-5 transition-all ${
+                          isFavorite(product.id) 
+                            ? 'fill-red-500 text-red-500' 
+                            : 'text-foreground hover:text-red-500'
+                        }`}
+                      />
+                    </button>
                   </div>
 
                   {product.available_sizes && product.available_sizes.length > 0 && (
