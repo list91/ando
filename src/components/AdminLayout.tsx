@@ -14,16 +14,31 @@ const AdminLayout = () => {
     return location.pathname === path;
   };
 
-  const navItems = [
-    { path: '/admin', label: 'Главная', icon: LayoutDashboard },
-    { path: '/admin/orders', label: 'Заказы', icon: ShoppingCart },
-    { path: '/admin/products', label: 'Товары', icon: Package },
-    { path: '/admin/categories', label: 'Категории', icon: Folder },
-    { path: '/admin/hero-slides', label: 'Слайды', icon: ImagePlay },
-    { path: '/admin/lookbook', label: 'Лукбук', icon: ImageIcon },
-    { path: '/admin/info-pages', label: 'Инфо страницы', icon: FileText },
-    { path: '/admin/about-page', label: 'О бренде', icon: Info },
-    { path: '/admin/site-settings', label: 'Настройки сайта', icon: Settings },
+  const navSections = [
+    {
+      title: null,
+      items: [
+        { path: '/admin', label: 'Главная', icon: LayoutDashboard },
+      ]
+    },
+    {
+      title: 'Управление заказами',
+      items: [
+        { path: '/admin/orders', label: 'Заказы', icon: ShoppingCart },
+      ]
+    },
+    {
+      title: 'Управление контентом',
+      items: [
+        { path: '/admin/products', label: 'Товары', icon: Package },
+        { path: '/admin/categories', label: 'Категории', icon: Folder },
+        { path: '/admin/hero-slides', label: 'Слайды', icon: ImagePlay },
+        { path: '/admin/lookbook', label: 'Лукбук', icon: ImageIcon },
+        { path: '/admin/about-page', label: 'О бренде', icon: Info },
+        { path: '/admin/info-pages', label: 'Инфо страницы', icon: FileText },
+        { path: '/admin/site-settings', label: 'Настройки сайта', icon: Settings },
+      ]
+    }
   ];
 
   return (
@@ -36,24 +51,35 @@ const AdminLayout = () => {
           </Link>
         </div>
 
-        <nav className="flex-1 p-4">
-          <ul className="space-y-2">
-            {navItems.map((item) => (
-              <li key={item.path}>
-                <Link
-                  to={item.path}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                    isActive(item.path)
-                      ? 'bg-primary text-primary-foreground'
-                      : 'hover:bg-secondary'
-                  }`}
-                >
-                  <item.icon className="w-5 h-5" />
-                  <span>{item.label}</span>
-                </Link>
-              </li>
+        <nav className="flex-1 p-4 overflow-y-auto">
+          <div className="space-y-6">
+            {navSections.map((section, sectionIndex) => (
+              <div key={sectionIndex}>
+                {section.title && (
+                  <h3 className="px-4 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    {section.title}
+                  </h3>
+                )}
+                <ul className="space-y-1">
+                  {section.items.map((item) => (
+                    <li key={item.path}>
+                      <Link
+                        to={item.path}
+                        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors text-sm ${
+                          isActive(item.path)
+                            ? 'bg-primary text-primary-foreground font-medium'
+                            : 'hover:bg-secondary'
+                        }`}
+                      >
+                        <item.icon className="w-4 h-4" />
+                        <span>{item.label}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
-          </ul>
+          </div>
         </nav>
 
         <div className="p-4 border-t">
