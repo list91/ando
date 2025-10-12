@@ -53,13 +53,13 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
 
   return (
     <Sidebar className="border-r border-border">
-      <div className="flex flex-col h-full pt-8 pb-8">
-        <Link to="/" className="mb-32 px-6 flex justify-center">
-          <div className="border border-foreground p-4 text-center">
-            <div className="text-xl font-light tracking-[0.2em]">AN</div>
-            <div className="text-xl font-light tracking-[0.2em]">DO</div>
+      <div className="flex flex-col h-full pt-6 pb-6">
+        <Link to="/" className="mb-12 px-6 flex justify-center">
+          <div className="border border-foreground p-3 text-center w-20">
+            <div className="text-lg font-light tracking-[0.2em]">AN</div>
+            <div className="text-lg font-light tracking-[0.2em]">DO</div>
             <div className="w-full h-[1px] bg-foreground my-1" />
-            <div className="text-xs tracking-[0.3em]">JV</div>
+            <div className="text-[10px] tracking-[0.3em]">JV</div>
           </div>
         </Link>
 
@@ -81,7 +81,7 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
               )}
 
               {isCatalogRelated && (
-                <SidebarMenu className="space-y-4 px-6">
+                <SidebarMenu className="space-y-2 px-6">
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       onClick={() => onCategoryChange?.("Все товары")}
@@ -108,7 +108,7 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
               )}
 
               {isInfoPage && (
-                <SidebarMenu className="space-y-4 px-6">
+                <SidebarMenu className="space-y-2 px-6">
                   {infoMenuItems.map((item) => (
                     <SidebarMenuItem key={item.id}>
                       <SidebarMenuButton
