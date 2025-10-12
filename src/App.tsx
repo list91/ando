@@ -26,6 +26,7 @@ import AdminSiteSettings from "./pages/admin/SiteSettings";
 import AdminLookbook from "./pages/admin/Lookbook";
 import AdminInfoPages from "./pages/admin/InfoPages";
 import AdminHeroSlides from "./pages/admin/HeroSlides";
+import AdminAboutPage from "./pages/admin/AboutPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -72,6 +73,7 @@ const AppContent = () => {
           <Route path="lookbook" element={<AdminLookbook />} />
           <Route path="info-pages" element={<AdminInfoPages />} />
           <Route path="hero-slides" element={<AdminHeroSlides />} />
+          <Route path="about-page" element={<AdminAboutPage />} />
         </Route>
         
         <Route path="*" element={<NotFound />} />
