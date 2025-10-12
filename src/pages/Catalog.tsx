@@ -4,6 +4,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { Heart } from "lucide-react";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useToast } from "@/hooks/use-toast";
+import { useCategories } from "@/hooks/useProducts";
 
 interface CatalogProps {
   selectedCategory: string;
@@ -15,6 +16,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   const [imageIndices, setImageIndices] = useState<Record<string, number>>({});
   const [fadeIn, setFadeIn] = useState(false);
   const { data: products, isLoading } = useProducts();
+  const { data: categories } = useCategories();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { toast } = useToast();
 
@@ -31,7 +33,27 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
     setImageIndices({});
   }, [selectedCategory]);
 
-  const filteredProducts = products;
+  const getColorClass = (color: string) => {
+    const colorLower = color.toLowerCase();
+    if (colorLower === 'белый') return 'bg-white';
+    if (colorLower === 'черный') return 'bg-black';
+    if (colorLower === 'серый') return 'bg-gray-400';
+    if (colorLower === 'бежевый') return 'bg-[#F5F5DC]';
+    if (colorLower === 'коричневый') return 'bg-[#8B4513]';
+    if (colorLower === 'синий') return 'bg-blue-600';
+    if (colorLower === 'красный') return 'bg-red-600';
+    if (colorLower === 'зеленый') return 'bg-green-600';
+    if (colorLower === 'розовый') return 'bg-pink-400';
+    return 'bg-muted';
+  };
+
+  // Filter products by selected category
+  const filteredProducts = selectedCategory === "Все товары" 
+    ? products 
+    : products?.filter(p => {
+        const categoryMatch = categories?.find(cat => cat.id === p.category_id);
+        return categoryMatch?.name === selectedCategory;
+      });
 
   if (isLoading) {
     return (
@@ -56,7 +78,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
 
         {/* Products Grid */}
         {filteredProducts && filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProducts.map((product) => {
               const images = product.product_images?.sort((a, b) => a.display_order - b.display_order) || [];
               const mainImages = images.length > 0 
@@ -69,20 +91,6 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
               const discount = product.old_price 
                 ? Math.round(((product.old_price - product.price) / product.old_price) * 100)
                 : 0;
-
-              const getColorClass = (color: string) => {
-                const colorLower = color.toLowerCase();
-                if (colorLower === 'белый') return 'bg-white';
-                if (colorLower === 'черный') return 'bg-black';
-                if (colorLower === 'серый') return 'bg-gray-400';
-                if (colorLower === 'бежевый') return 'bg-[#F5F5DC]';
-                if (colorLower === 'коричневый') return 'bg-[#8B4513]';
-                if (colorLower === 'синий') return 'bg-blue-600';
-                if (colorLower === 'красный') return 'bg-red-600';
-                if (colorLower === 'зеленый') return 'bg-green-600';
-                if (colorLower === 'розовый') return 'bg-pink-400';
-                return 'bg-muted';
-              };
 
               const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
                 if (images.length <= 1) return;
@@ -201,7 +209,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                             key={idx}
                             className={`w-5 h-5 rounded-full border border-border ${getColorClass(color)}`}
                           />
-                         ))}
+                        ))}
                       </div>
                     )}
                   </Link>
