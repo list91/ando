@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { useCategories } from "@/hooks/useProducts";
 
 interface AppSidebarProps {
   selectedCategory?: string;
@@ -20,31 +21,17 @@ const infoMenuItems = [
   { id: "stores", label: "Магазины" }
 ];
 
-const categories = [
-  "Топы",
-  "Блузки",
-  "Рубашки",
-  "Юбки",
-  "Брюки",
-  "Свитшот",
-  "Куртки",
-  "Жакеты",
-  "Свитера",
-  "Толстовки",
-  "Худи",
-  "SALE %"
-];
-
 export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSection, onInfoSectionChange }: AppSidebarProps) {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
   const isInfoPage = location.pathname === "/info";
   const isCatalogRelated = !isHomePage && !isInfoPage;
+  const { data: categories, isLoading } = useCategories();
 
   return (
     <aside className="w-64 border-r border-border bg-background flex-shrink-0 h-screen overflow-y-auto">
       <div className="flex flex-col h-full py-8 px-6">
-        <Link to="/" className="mb-12 flex justify-center">
+        <Link to="/" className="mb-12">
           <div className="border border-foreground p-3 text-center w-20">
             <div className="text-lg font-light tracking-[0.2em]">AN</div>
             <div className="text-lg font-light tracking-[0.2em]">DO</div>
@@ -78,15 +65,15 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
               >
                 Все товары
               </button>
-              {categories.map((category) => (
+              {!isLoading && categories?.map((category) => (
                 <button
-                  key={category}
-                  onClick={() => onCategoryChange?.(category)}
+                  key={category.id}
+                  onClick={() => onCategoryChange?.(category.name)}
                   className={`w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${
-                    category === selectedCategory ? "underline" : ""
-                  } ${category === "SALE %" ? "text-accent" : ""}`}
+                    category.name === selectedCategory ? "underline" : ""
+                  }`}
                 >
-                  {category}
+                  {category.name}
                 </button>
               ))}
             </nav>
