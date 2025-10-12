@@ -62,148 +62,184 @@ const Product = () => {
 
   return (
     <div className="flex h-full">
-      <div className="flex-1 flex items-center justify-center py-16 px-8">
-        <div className="relative max-w-xl">
-          {mainImages.length > 1 && (
-            <button 
-              onClick={() => setCurrentImage((prev) => (prev - 1 + mainImages.length) % mainImages.length)}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 hover:opacity-60 transition-opacity"
-            >
-              <ChevronLeft className="w-8 h-8" />
-            </button>
-          )}
+      {/* Left side - Product images */}
+      <div className="flex-1 flex items-center justify-center py-16 px-8 relative">
+        {/* Left arrow - outside image */}
+        {mainImages.length > 1 && (
+          <button 
+            onClick={() => setCurrentImage((prev) => (prev - 1 + mainImages.length) % mainImages.length)}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 hover:opacity-60 transition-opacity"
+          >
+            <ChevronLeft className="w-8 h-8" />
+          </button>
+        )}
+
+        {/* Image container */}
+        <div className="max-w-xl">
           <img
             src={mainImages[currentImage]}
             alt={product.name}
             className="w-full"
           />
 
+          {/* Color dots below image */}
           {mainImages.length > 1 && (
-            <button 
-              onClick={() => setCurrentImage((prev) => (prev + 1) % mainImages.length)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hover:opacity-60 transition-opacity"
-            >
-              <ChevronRight className="w-8 h-8" />
-            </button>
-          )}
-
-          {product.available_colors && product.available_colors.length > 0 && (
-            <div className="flex gap-2 justify-center mt-4">
-              {product.available_colors.map((color, idx) => (
+            <div className="flex gap-2 justify-center mt-6">
+              {mainImages.map((_, idx) => (
                 <button
                   key={idx}
-                  onClick={() => setSelectedColor(idx)}
-                  className={`w-6 h-6 rounded-full border-2 ${
-                    idx === selectedColor ? "border-foreground" : "border-border"
+                  onClick={() => setCurrentImage(idx)}
+                  className={`w-2.5 h-2.5 rounded-full transition-all ${
+                    idx === currentImage ? "bg-primary w-8" : "bg-muted"
                   }`}
-                  style={{ backgroundColor: color }}
                 />
               ))}
             </div>
           )}
         </div>
+
+        {/* Right arrow - outside image */}
+        {mainImages.length > 1 && (
+          <button 
+            onClick={() => setCurrentImage((prev) => (prev + 1) % mainImages.length)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hover:opacity-60 transition-opacity"
+          >
+            <ChevronRight className="w-8 h-8" />
+          </button>
+        )}
       </div>
 
-      <div className="w-96 border-l border-border py-16 px-8">
-        <div className="flex items-start justify-between mb-8">
-          <h1 className="text-xl tracking-[0.15em] uppercase">
+      {/* Right side - Product info */}
+      <div className="w-[480px] border-l border-border py-16 px-12 overflow-y-auto">
+        {/* Title and discount badge */}
+        <div className="flex items-start justify-between mb-6">
+          <h1 className="text-sm tracking-[0.15em] uppercase font-light flex-1">
             {product.name}
           </h1>
           {product.is_sale && discount > 0 && (
-            <div className="bg-black text-white w-12 h-12 rounded-full flex items-center justify-center text-xs flex-shrink-0">
-              -{discount}%
+            <div className="bg-black text-white w-14 h-14 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0 ml-4">
+              {discount}%
             </div>
           )}
         </div>
 
+        {/* Price */}
         <div className="flex items-center gap-3 mb-8">
           {product.old_price && (
-            <span className="text-lg text-muted-foreground line-through">
+            <span className="text-base text-muted-foreground line-through">
               {product.old_price} ₽
             </span>
           )}
-          <span className="text-2xl font-medium">
+          <span className="text-xl font-medium">
             {product.price} ₽
           </span>
         </div>
 
-        <div className="space-y-4 mb-8 text-sm">
-          {product.article && (
-            <div>
-              <span className="text-muted-foreground">Артикул:</span> {product.article}
-            </div>
-          )}
-          {product.material && (
-            <div>
-              <span className="text-muted-foreground">Состав:</span> {product.material}
-            </div>
-          )}
-          {product.description && (
-            <div>
-              <p className="text-muted-foreground leading-relaxed">{product.description}</p>
-            </div>
-          )}
-        </div>
+        {/* Article */}
+        {product.article && (
+          <div className="mb-6 text-sm text-muted-foreground">
+            Артикул: {product.article}
+          </div>
+        )}
 
+        {/* Color and Material */}
+        {(product.available_colors?.[selectedColor] || product.material) && (
+          <div className="space-y-1 mb-6 text-sm">
+            {product.available_colors?.[selectedColor] && (
+              <div>Цвет: {product.available_colors[selectedColor]}</div>
+            )}
+            {product.material && (
+              <div>Состав: {product.material}</div>
+            )}
+          </div>
+        )}
+
+        {/* Size selection */}
         {product.available_sizes && product.available_sizes.length > 0 && (
-          <div className="mb-6">
+          <div className="mb-4">
             <div className="text-sm mb-3">Размер:</div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 mb-3">
               {product.available_sizes.map((size) => (
                 <button
                   key={size}
                   onClick={() => setSelectedSize(size)}
-                  className={`w-12 h-12 border border-border hover:border-foreground transition-colors ${
-                    selectedSize === size ? "bg-foreground text-background" : ""
+                  className={`px-4 py-2 border text-sm transition-colors ${
+                    selectedSize === size 
+                      ? "border-foreground bg-foreground text-background" 
+                      : "border-border hover:border-foreground"
                   }`}
                 >
                   {size}
                 </button>
               ))}
             </div>
-            <Link to="#" className="text-xs underline mt-2 inline-block">
+            <Link 
+              to="/info?section=size-guide" 
+              className="text-xs underline hover:no-underline inline-block"
+            >
               Информация о размерах товара
             </Link>
           </div>
         )}
 
-          <div className="flex gap-3 mb-8">
-            <button 
-              onClick={handleAddToCart}
-              className="flex-1 bg-foreground text-background py-4 px-6 text-sm tracking-wide uppercase hover:opacity-90 transition-opacity"
-            >
-              ДОБАВИТЬ В КОРЗИНУ
-            </button>
-            <button className="w-12 h-12 border border-border hover:border-foreground transition-colors flex items-center justify-center">
-              <Heart className="w-5 h-5" />
-            </button>
-          </div>
-
-          <div className="text-sm mb-3">
-            В другом цвете: <Link to="#" className="underline">Голубой</Link>
-          </div>
-
-          <div className="space-y-6 text-sm pt-8 border-t border-border">
-            <div>
-              <h3 className="font-medium mb-2">ДОСТАВКА</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Доставка по России за 1-7 дней, бесплатно<br />
-                По Санкт-Петербургу и Москве доставка заказа возможна доставка на следующий день. 
-                Стоимость доставки от 1500 руб.<br />
-                Подробнее на странице <Link to="/info" className="underline">Доставка</Link>
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-medium mb-2">ОПЛАТА</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Онлайн оплата через платежную систему CloudPayments<br />
-                Принимаются карты VISA, MasterCard, платежная система «Мир»<br />
-                Подробнее на странице <Link to="/info" className="underline">Оплата</Link>
-              </p>
-            </div>
-          </div>
+        {/* Add to cart button and favorite */}
+        <div className="flex gap-3 my-8">
+          <button 
+            onClick={handleAddToCart}
+            className="flex-1 bg-foreground text-background py-3.5 px-6 text-xs tracking-[0.1em] uppercase hover:opacity-90 transition-opacity"
+          >
+            ДОБАВИТЬ В КОРЗИНУ
+          </button>
+          <button className="w-12 h-12 border border-border hover:border-foreground transition-colors flex items-center justify-center flex-shrink-0">
+            <Heart className="w-5 h-5" />
+          </button>
         </div>
+
+        {/* Other colors */}
+        {product.available_colors && product.available_colors.length > 1 && (
+          <div className="text-sm mb-8">
+            В другом цвете:{" "}
+            <Link to="#" className="underline hover:no-underline">
+              {product.available_colors.filter((_, idx) => idx !== selectedColor)[0]}
+            </Link>
+          </div>
+        )}
+
+        {/* Delivery section */}
+        <div className="pt-6 border-t border-border">
+          <h3 className="text-sm font-medium mb-2 tracking-wide">ДОСТАВКА</h3>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-1">
+            Доставка по России за 1-7 дней, бесплатно
+          </p>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-1">
+            По Санкт-Петербургу и Москве доставка заказа возможна доставка на следующий день. 
+            Стоимость доставки от 1500 руб.
+          </p>
+          <Link 
+            to="/info?section=delivery" 
+            className="text-sm underline hover:no-underline inline-block"
+          >
+            Подробнее на странице Доставка
+          </Link>
+        </div>
+
+        {/* Payment section */}
+        <div className="pt-6">
+          <h3 className="text-sm font-medium mb-2 tracking-wide">ОПЛАТА</h3>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-1">
+            Онлайн оплата через платежную систему CloudPayments
+          </p>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-1">
+            Принимаются карты VISA, MasterCard, платежная система «Мир»
+          </p>
+          <Link 
+            to="/info?section=delivery" 
+            className="text-sm underline hover:no-underline inline-block"
+          >
+            Подробнее на странице Оплата
+          </Link>
+        </div>
+      </div>
     </div>
   );
 };
