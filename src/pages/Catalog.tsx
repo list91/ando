@@ -2,35 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, X } from "lucide-react";
 import { useProducts, useCategories, useProductFilters, ProductFilters } from "@/hooks/useProducts";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-
-// Color name to hex mapping
-const colorMap: Record<string, string> = {
-  'черный': '#000000',
-  'белый': '#FFFFFF',
-  'серый': '#808080',
-  'бежевый': '#F5F5DC',
-  'коричневый': '#8B4513',
-  'красный': '#DC143C',
-  'синий': '#4169E1',
-  'зеленый': '#228B22',
-  'желтый': '#FFD700',
-  'оранжевый': '#FF8C00',
-  'розовый': '#FFB6C1',
-  'фиолетовый': '#8A2BE2',
-  'голубой': '#87CEEB',
-  'бордовый': '#800020',
-  'хаки': '#C3B091',
-  'navy': '#000080',
-  'olive': '#808000',
-};
-
-const getColorHex = (colorName: string): string => {
-  const lowerName = colorName.toLowerCase().trim();
-  return colorMap[lowerName] || colorName;
-};
 
 interface CatalogProps {
   selectedCategory: string;
@@ -51,6 +26,15 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   const { data: categories = [] } = useCategories();
   const { data: filterOptions } = useProductFilters();
   const { data: products = [], isLoading } = useProducts(filters);
+  const { data: settings } = useSiteSettings();
+
+  // Get color map from settings
+  const colorMap = settings?.find(s => s.key === 'product_colors')?.value as Record<string, string> || {};
+
+  const getColorHex = (colorName: string): string => {
+    const lowerName = colorName.toLowerCase().trim();
+    return colorMap[lowerName] || '#CCCCCC'; // Default gray if color not found
+  };
 
   useEffect(() => {
     const newFilters: ProductFilters = {};

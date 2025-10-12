@@ -5,14 +5,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Save } from 'lucide-react';
+import { Loader2, Save, Plus, Trash2 } from 'lucide-react';
 import { ImageUploader } from '@/components/admin/ImageUploader';
+import { toast } from 'sonner';
 
 export default function SiteSettings() {
   const { data: settings, isLoading } = useSiteSettings();
   const updateSetting = useUpdateSiteSetting();
 
   const [formData, setFormData] = useState<Record<string, any>>({});
+  const [newColorName, setNewColorName] = useState('');
+  const [newColorHex, setNewColorHex] = useState('#000000');
 
   const handleInputChange = (key: string, value: any) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -38,6 +41,51 @@ export default function SiteSettings() {
     if (formData[key] !== undefined) return formData[key];
     const setting = settings?.find((s) => s.key === key);
     return setting?.value || defaultValue;
+  };
+
+  const productColors = getSettingValue('product_colors', {}) as Record<string, string>;
+
+  const handleAddColor = () => {
+    if (!newColorName.trim() || !newColorHex) {
+      toast.error('Заполните название и выберите цвет');
+      return;
+    }
+
+    const setting = settings?.find((s) => s.key === 'product_colors');
+    const updatedColors = {
+      ...productColors,
+      [newColorName.toLowerCase().trim()]: newColorHex
+    };
+
+    if (setting) {
+      updateSetting.mutate(
+        { id: setting.id, value: updatedColors },
+        {
+          onSuccess: () => {
+            setNewColorName('');
+            setNewColorHex('#000000');
+            toast.success('Цвет добавлен');
+          }
+        }
+      );
+    }
+  };
+
+  const handleDeleteColor = (colorName: string) => {
+    const setting = settings?.find((s) => s.key === 'product_colors');
+    const updatedColors = { ...productColors };
+    delete updatedColors[colorName];
+
+    if (setting) {
+      updateSetting.mutate(
+        { id: setting.id, value: updatedColors },
+        {
+          onSuccess: () => {
+            toast.success('Цвет удален');
+          }
+        }
+      );
+    }
   };
 
   if (isLoading) {
@@ -222,6 +270,76 @@ export default function SiteSettings() {
                 <Save className="h-4 w-4 mr-2" />
                 Сохранить
               </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Цвета товаров</CardTitle>
+          <CardDescription>Управление доступными цветами для товаров</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="color-name">Название цвета</Label>
+                <Input
+                  id="color-name"
+                  value={newColorName}
+                  onChange={(e) => setNewColorName(e.target.value)}
+                  placeholder="Например: темно-синий"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="color-hex">Hex код цвета</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="color-hex"
+                    type="color"
+                    value={newColorHex}
+                    onChange={(e) => setNewColorHex(e.target.value)}
+                    className="w-20 h-10 p-1"
+                  />
+                  <Input
+                    value={newColorHex}
+                    onChange={(e) => setNewColorHex(e.target.value)}
+                    placeholder="#000000"
+                  />
+                </div>
+              </div>
+            </div>
+            <Button onClick={handleAddColor} className="w-full">
+              <Plus className="h-4 w-4 mr-2" />
+              Добавить цвет
+            </Button>
+          </div>
+
+          <div className="border-t pt-4">
+            <p className="text-sm font-medium mb-3">Существующие цвета</p>
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {Object.entries(productColors).map(([name, hex]) => (
+                <div key={name} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-8 h-8 rounded-full border border-border flex-shrink-0"
+                      style={{ backgroundColor: hex }}
+                    />
+                    <div>
+                      <p className="font-medium text-sm capitalize">{name}</p>
+                      <p className="text-xs text-muted-foreground">{hex}</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDeleteColor(name)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
             </div>
           </div>
         </CardContent>
