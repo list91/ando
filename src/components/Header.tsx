@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Search, ShoppingCart, Heart, User, LogOut, Menu as MenuIcon } from "lucide-react";
+import { Search, ShoppingCart, Heart, User, LogOut, Menu as MenuIcon, ShieldCheck, Package } from "lucide-react";
 import { useState, useEffect } from "react";
 import CartDrawer from "./CartDrawer";
 import { useCart } from "@/contexts/CartContext";
@@ -138,10 +138,14 @@ const Header = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-background z-50">
-                  <DropdownMenuLabel>Мой аккаунт</DropdownMenuLabel>
+                  <DropdownMenuLabel>
+                    <User className="w-4 h-4 inline mr-2" />
+                    Мой аккаунт
+                  </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {isAdmin && (
                     <DropdownMenuItem onClick={() => navigate('/admin/orders')}>
+                      <ShieldCheck className="w-4 h-4 mr-2" />
                       Админ-панель
                     </DropdownMenuItem>
                   )}
@@ -150,6 +154,7 @@ const Header = () => {
                     Избранное
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/orders')}>
+                    <Package className="w-4 h-4 mr-2" />
                     Мои заказы
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleSignOut}>
