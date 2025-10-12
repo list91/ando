@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, X } from "lucide-react";
 import { useProducts, useCategories, useProductFilters, ProductFilters } from "@/hooks/useProducts";
@@ -17,6 +17,9 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<{ min?: number; max?: number }>({});
+  const [hoveredProduct, setHoveredProduct] = useState<string | null>(null);
+  const [currentImageIndexes, setCurrentImageIndexes] = useState<Record<string, number>>({});
+  const mouseXRef = useRef<number>(0);
   
   const { data: categories = [] } = useCategories();
   const { data: filterOptions } = useProductFilters();
@@ -262,66 +265,128 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 p-4 lg:p-8">
           {products.map((product) => {
-            const mainImage = product.product_images?.[0]?.image_url || 
-              'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&q=80';
+            const images = product.product_images && product.product_images.length > 0
+              ? product.product_images.map(img => img.image_url)
+              : ['https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&q=80'];
+            
+            const currentIndex = currentImageIndexes[product.id] || 0;
+            const currentImage = images[currentIndex] || images[0];
             
             const discount = product.old_price 
               ? Math.round(((product.old_price - product.price) / product.old_price) * 100)
               : 0;
 
+            const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+              if (images.length <= 1) return;
+              
+              const rect = e.currentTarget.getBoundingClientRect();
+              const x = e.clientX - rect.left;
+              const delta = x - mouseXRef.current;
+              
+              if (Math.abs(delta) > 50) { // Threshold for swipe
+                if (delta > 0) {
+                  // Moving right - next image
+                  setCurrentImageIndexes(prev => ({
+                    ...prev,
+                    [product.id]: Math.min((prev[product.id] || 0) + 1, images.length - 1)
+                  }));
+                } else {
+                  // Moving left - previous image
+                  setCurrentImageIndexes(prev => ({
+                    ...prev,
+                    [product.id]: Math.max((prev[product.id] || 0) - 1, 0)
+                  }));
+                }
+                mouseXRef.current = x;
+              }
+            };
+
+            const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+              setHoveredProduct(product.id);
+              const rect = e.currentTarget.getBoundingClientRect();
+              mouseXRef.current = e.clientX - rect.left;
+            };
+
+            const handleMouseLeave = () => {
+              setHoveredProduct(null);
+              setCurrentImageIndexes(prev => ({
+                ...prev,
+                [product.id]: 0
+              }));
+            };
+
             return (
-              <Link
-                key={product.id}
-                to={`/product/${product.slug}`}
-                className="group"
-              >
-                <div className="relative aspect-[3/4] mb-3 overflow-hidden bg-muted">
-                  {product.is_sale && discount > 0 && (
-                    <div className="absolute top-4 right-4 z-10 bg-primary text-primary-foreground w-14 h-14 rounded-full flex items-center justify-center text-xs font-normal">
-                      {discount}%
-                    </div>
-                  )}
-                  <img
-                    src={mainImage}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                
-                <h3 className="text-sm mb-2 tracking-wide text-foreground">{product.name}</h3>
-                
-                <div className="flex items-center gap-2 mb-2">
-                  {product.old_price && (
-                    <span className="text-sm text-muted-foreground line-through">
-                      {product.old_price} ₽
+              <div key={product.id} className="group">
+                <Link to={`/product/${product.slug}`}>
+                  <div 
+                    className="relative aspect-[3/4] mb-3 overflow-hidden bg-muted"
+                    onMouseMove={handleMouseMove}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    {product.is_sale && discount > 0 && (
+                      <div className="absolute top-4 right-4 z-10 bg-primary text-primary-foreground w-14 h-14 rounded-full flex items-center justify-center text-xs font-normal">
+                        {discount}%
+                      </div>
+                    )}
+                    <img
+                      src={currentImage}
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    
+                    {/* Image indicators */}
+                    {images.length > 1 && hoveredProduct === product.id && (
+                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                        {images.map((_, idx) => (
+                          <div
+                            key={idx}
+                            className={`w-1.5 h-1.5 rounded-full transition-all ${
+                              idx === currentIndex
+                                ? 'bg-white w-4'
+                                : 'bg-white/50'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <h3 className="text-sm mb-2 tracking-wide text-foreground">{product.name}</h3>
+                  
+                  <div className="flex items-center gap-2 mb-2">
+                    {product.old_price && (
+                      <span className="text-sm text-muted-foreground line-through">
+                        {product.old_price} ₽
+                      </span>
+                    )}
+                    <span className="text-sm text-foreground">
+                      {product.price} ₽
                     </span>
-                  )}
-                  <span className="text-sm text-foreground">
-                    {product.price} ₽
-                  </span>
-                  {product.available_colors && product.available_colors.length > 0 && (
-                    <div className="flex items-center gap-1.5 ml-auto">
-                      {product.available_colors.slice(0, 4).map((color, idx) => (
-                        <div
-                          key={idx}
-                          className="w-3 h-3 rounded-full border border-border/50"
-                          style={{ backgroundColor: color }}
-                        />
+                    {product.available_colors && product.available_colors.length > 0 && (
+                      <div className="flex items-center gap-1.5 ml-auto">
+                        {product.available_colors.slice(0, 4).map((color, idx) => (
+                          <div
+                            key={idx}
+                            className="w-3 h-3 rounded-full border border-border/50"
+                            style={{ backgroundColor: color }}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {product.available_sizes && product.available_sizes.length > 0 && (
+                    <div className="flex gap-3 text-xs text-muted-foreground">
+                      {product.available_sizes.map((size) => (
+                        <span key={size}>
+                          {size}
+                        </span>
                       ))}
                     </div>
                   )}
-                </div>
-
-                {product.available_sizes && product.available_sizes.length > 0 && (
-                  <div className="flex gap-3 text-xs text-muted-foreground">
-                    {product.available_sizes.map((size) => (
-                      <span key={size}>
-                        {size}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </Link>
+                </Link>
+              </div>
             );
           })}
         </div>
