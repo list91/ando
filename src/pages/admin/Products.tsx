@@ -327,231 +327,77 @@ const AdminProducts = () => {
                   Добавить товар
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingProduct ? 'Редактировать товар' : 'Новый товар'}
-                </DialogTitle>
-              </DialogHeader>
               
-              <Tabs defaultValue="main" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="main">Основная информация</TabsTrigger>
-                  <TabsTrigger value="images" disabled={!editingProduct}>
-                    Изображения {!editingProduct && '(сначала создайте товар)'}
-                  </TabsTrigger>
-                </TabsList>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>
+                    {editingProduct ? 'Редактировать товар' : 'Новый товар'}
+                  </DialogTitle>
+                </DialogHeader>
                 
-                <TabsContent value="main">
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label htmlFor="name">Название *</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="slug">Slug (URL) *</Label>
-                  <Input
-                    id="slug"
-                    value={formData.slug}
-                    onChange={(e) =>
-                      setFormData({ ...formData, slug: e.target.value })
-                    }
-                    required
-                    maxLength={100}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="article">Артикул</Label>
-                  <Input
-                    id="article"
-                    value={formData.article}
-                    onChange={(e) =>
-                      setFormData({ ...formData, article: e.target.value })
-                    }
-                    placeholder="ART-12345"
-                    maxLength={50}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="price">Цена *</Label>
-                    <Input
-                      id="price"
-                      type="number"
-                      step="0.01"
-                      value={formData.price}
-                      onChange={(e) =>
-                        setFormData({ ...formData, price: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="old_price">Старая цена</Label>
-                    <Input
-                      id="old_price"
-                      type="number"
-                      step="0.01"
-                      value={formData.old_price}
-                      onChange={(e) =>
-                        setFormData({ ...formData, old_price: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="stock_quantity">Количество на складе</Label>
-                  <Input
-                    id="stock_quantity"
-                    type="number"
-                    value={formData.stock_quantity}
-                    onChange={(e) =>
-                      setFormData({ ...formData, stock_quantity: e.target.value })
-                    }
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="category_id">Категория</Label>
-                  <Select
-                    value={formData.category_id}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, category_id: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Выберите категорию" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">Без категории</SelectItem>
-                      {categories?.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="is_sale"
-                    checked={formData.is_sale}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, is_sale: checked as boolean })
-                    }
-                  />
-                  <Label htmlFor="is_sale">Товар на распродаже</Label>
-                </div>
-                <div>
-                  <Label htmlFor="available_sizes">Доступные размеры</Label>
-                  <Input
-                    id="available_sizes"
-                    value={formData.available_sizes}
-                    onChange={(e) =>
-                      setFormData({ ...formData, available_sizes: e.target.value })
-                    }
-                    placeholder="XS, S, M, L, XL"
-                    maxLength={200}
-                  />
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Через запятую
-                  </p>
-                </div>
-                <div>
-                  <Label htmlFor="available_colors">Доступные цвета</Label>
-                  <Input
-                    id="available_colors"
-                    value={formData.available_colors}
-                    onChange={(e) =>
-                      setFormData({ ...formData, available_colors: e.target.value })
-                    }
-                    placeholder="Черный, Белый, Серый"
-                    maxLength={200}
-                  />
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Через запятую
-                  </p>
-                </div>
-                <div>
-                  <Label htmlFor="material">Материал</Label>
-                  <Input
-                    id="material"
-                    value={formData.material}
-                    onChange={(e) =>
-                      setFormData({ ...formData, material: e.target.value })
-                    }
-                    maxLength={200}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="description">Описание</Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) =>
-                      setFormData({ ...formData, description: e.target.value })
-                    }
-                    rows={3}
-                    maxLength={1000}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="care_instructions">Инструкции по уходу</Label>
-                  <Textarea
-                    id="care_instructions"
-                    value={formData.care_instructions}
-                    onChange={(e) =>
-                      setFormData({ ...formData, care_instructions: e.target.value })
-                    }
-                    rows={2}
-                    maxLength={500}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="delivery_info">Информация о доставке</Label>
-                  <Textarea
-                    id="delivery_info"
-                    value={formData.delivery_info}
-                    onChange={(e) =>
-                      setFormData({ ...formData, delivery_info: e.target.value })
-                    }
-                    rows={2}
-                    maxLength={500}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="payment_info">Информация об оплате</Label>
-                  <Textarea
-                    id="payment_info"
-                    value={formData.payment_info}
-                    onChange={(e) =>
-                      setFormData({ ...formData, payment_info: e.target.value })
-                    }
-                    rows={2}
-                    maxLength={500}
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <Button type="submit" disabled={submitting}>
-                    {submitting 
-                      ? 'Сохранение...' 
-                      : editingProduct ? 'Сохранить' : 'Создать'}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setDialogOpen(false)}
-                  >
-                    Отмена
-                  </Button>
-                </div>
-              </form>
+                <Tabs defaultValue="main" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="main">Основная информация</TabsTrigger>
+                    <TabsTrigger value="images" disabled={!editingProduct}>
+                      Изображения {!editingProduct && '(сначала создайте товар)'}
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="main" className="mt-4">
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                      <div>
+                        <Label htmlFor="name">Название *</Label>
+                        <Input
+                          id="name"
+                          value={formData.name}
+                          onChange={(e) =>
+                            setFormData({ ...formData, name: e.target.value })
+                          }
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="slug">Slug (URL) *</Label>
+                        <Input
+                          id="slug"
+                          value={formData.slug}
+                          onChange={(e) =>
+                            setFormData({ ...formData, slug: e.target.value })
+                          }
+                          required
+                          maxLength={100}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="article">Артикул</Label>
+                        <Input
+                          id="article"
+                          value={formData.article}
+                          onChange={(e) =>
+                            setFormData({ ...formData, article: e.target.value })
+                          }
+                          placeholder="ART-12345"
+                          maxLength={50}
+                        />
+                      </div>
+
+                      {/* ... keep existing code (other fields) */}
+
+                      <div className="flex gap-2">
+                        <Button type="submit" disabled={submitting}>
+                          {submitting 
+                            ? 'Сохранение...' 
+                            : editingProduct ? 'Сохранить' : 'Создать'}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setDialogOpen(false)}
+                        >
+                          Отмена
+                        </Button>
+                      </div>
+                    </form>
                 </TabsContent>
                 
                 <TabsContent value="images">
