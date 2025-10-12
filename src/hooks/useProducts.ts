@@ -9,14 +9,15 @@ export const useProducts = (categoryId?: string | null, isSale?: boolean) => {
         .from('products')
         .select(`
           *,
-          product_images (
+          product_images!inner (
             id,
             image_url,
             alt_text,
             display_order
           )
         `)
-        .order('created_at', { ascending: false });
+        .order('display_order', { ascending: false })
+        .order('display_order', { referencedTable: 'product_images', ascending: true });
 
       if (categoryId) {
         query = query.eq('category_id', categoryId);
@@ -55,6 +56,7 @@ export const useProduct = (slug: string) => {
           )
         `)
         .eq('slug', slug)
+        .order('display_order', { referencedTable: 'product_images', ascending: true })
         .single();
 
       if (error) throw error;
