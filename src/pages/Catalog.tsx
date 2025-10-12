@@ -14,7 +14,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   const [hoveredProduct, setHoveredProduct] = useState<string | null>(null);
   const [imageIndices, setImageIndices] = useState<Record<string, number>>({});
   const [fadeIn, setFadeIn] = useState(false);
-  const { data: products, isLoading } = useProducts(selectedCategory);
+  const { data: products, isLoading } = useProducts();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { toast } = useToast();
 
@@ -31,9 +31,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
     setImageIndices({});
   }, [selectedCategory]);
 
-  const filteredProducts = selectedCategory === "Все товары" 
-    ? products 
-    : products?.filter(p => p.categories?.name === selectedCategory);
+  const filteredProducts = products;
 
   if (isLoading) {
     return (
@@ -72,6 +70,20 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                 ? Math.round(((product.old_price - product.price) / product.old_price) * 100)
                 : 0;
 
+              const getColorClass = (color: string) => {
+                const colorLower = color.toLowerCase();
+                if (colorLower === 'белый') return 'bg-white';
+                if (colorLower === 'черный') return 'bg-black';
+                if (colorLower === 'серый') return 'bg-gray-400';
+                if (colorLower === 'бежевый') return 'bg-[#F5F5DC]';
+                if (colorLower === 'коричневый') return 'bg-[#8B4513]';
+                if (colorLower === 'синий') return 'bg-blue-600';
+                if (colorLower === 'красный') return 'bg-red-600';
+                if (colorLower === 'зеленый') return 'bg-green-600';
+                if (colorLower === 'розовый') return 'bg-pink-400';
+                return 'bg-muted';
+              };
+
               const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
                 if (images.length <= 1) return;
                 
@@ -103,16 +115,6 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
               const handleFavoriteClick = async (e: React.MouseEvent) => {
                 e.preventDefault();
                 e.stopPropagation();
-                
-                const user = null; // You'll need to get user from auth context
-                if (!user) {
-                  toast({
-                    title: "Требуется авторизация",
-                    description: "Войдите в аккаунт, чтобы добавить товар в избранное",
-                    variant: "destructive",
-                  });
-                  return;
-                }
                 
                 await toggleFavorite(product.id);
                 toast({
@@ -197,20 +199,9 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                         {product.available_colors.slice(0, 5).map((color, idx) => (
                           <div
                             key={idx}
-                            className={`w-5 h-5 rounded-full border border-border ${
-                              color.toLowerCase() === 'белый' ? 'bg-white' :
-                              color.toLowerCase() === 'черный' ? 'bg-black' :
-                              color.toLowerCase() === 'серый' ? 'bg-gray-400' :
-                              color.toLowerCase() === 'бежевый' ? 'bg-[#F5F5DC]' :
-                              color.toLowerCase() === 'коричневый' ? 'bg-[#8B4513]' :
-                              color.toLowerCase() === 'синий' ? 'bg-blue-600' :
-                              color.toLowerCase() === 'красный' ? 'bg-red-600' :
-                              color.toLowerCase() === 'зеленый' ? 'bg-green-600' :
-                              color.toLowerCase() === 'розовый' ? 'bg-pink-400' :
-                              'bg-muted'
-                            }`}
+                            className={`w-5 h-5 rounded-full border border-border ${getColorClass(color)}`}
                           />
-                        ))
+                         ))}
                       </div>
                     )}
                   </Link>
