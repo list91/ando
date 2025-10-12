@@ -45,6 +45,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   const [priceRange, setPriceRange] = useState<{ min?: number; max?: number }>({});
   const [hoveredProduct, setHoveredProduct] = useState<string | null>(null);
   const [currentImageIndexes, setCurrentImageIndexes] = useState<Record<string, number>>({});
+  const [sortBy, setSortBy] = useState<string>('default');
   const mouseXRef = useRef<number>(0);
   
   const { data: categories = [] } = useCategories();
@@ -98,6 +99,24 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
 
   const hasActiveFilters = selectedMaterials.length > 0 || selectedColors.length > 0 || 
     selectedSizes.length > 0 || priceRange.min !== undefined || priceRange.max !== undefined;
+
+  // Sort products
+  const sortedProducts = [...products].sort((a, b) => {
+    switch (sortBy) {
+      case 'price-asc':
+        return a.price - b.price;
+      case 'price-desc':
+        return b.price - a.price;
+      case 'name-asc':
+        return a.name.localeCompare(b.name);
+      case 'name-desc':
+        return b.name.localeCompare(a.name);
+      case 'newest':
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      default:
+        return 0;
+    }
+  });
 
   if (isLoading) {
     return (
@@ -270,13 +289,49 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
             )}
           </div>
 
-          <div className="text-muted-foreground text-xs lg:text-sm">
-            Найдено товаров: {products.length}
+          {/* Sorting */}
+          <div className="flex items-center gap-4">
+            <span className="text-muted-foreground text-xs lg:text-sm">
+              Найдено: {products.length}
+            </span>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity text-xs lg:text-sm">
+                  Сортировка
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56" align="end">
+                <div className="space-y-2">
+                  <p className="font-medium mb-3 text-sm">Сортировать по</p>
+                  {[
+                    { value: 'default', label: 'По умолчанию' },
+                    { value: 'price-asc', label: 'Цена: по возрастанию' },
+                    { value: 'price-desc', label: 'Цена: по убыванию' },
+                    { value: 'name-asc', label: 'Название: А-Я' },
+                    { value: 'name-desc', label: 'Название: Я-А' },
+                    { value: 'newest', label: 'Сначала новые' },
+                  ].map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => setSortBy(option.value)}
+                      className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors ${
+                        sortBy === option.value
+                          ? 'bg-primary text-primary-foreground'
+                          : 'hover:bg-secondary'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </div>
 
-      {products.length === 0 ? (
+      {sortedProducts.length === 0 ? (
         <div className="p-8 lg:p-16 text-center">
           <p className="text-muted-foreground">Товары не найдены</p>
           {hasActiveFilters && (
@@ -290,7 +345,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 p-4 lg:p-8">
-          {products.map((product) => {
+          {sortedProducts.map((product) => {
             const images = product.product_images && product.product_images.length > 0
               ? product.product_images.map(img => img.image_url)
               : ['https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&q=80'];
