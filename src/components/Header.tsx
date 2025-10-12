@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Search, ShoppingCart, Heart, User, LogOut } from "lucide-react";
+import { Search, ShoppingCart, Heart, User, LogOut, Menu as MenuIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 import CartDrawer from "./CartDrawer";
 import { useCart } from "@/contexts/CartContext";
@@ -17,6 +17,7 @@ import {
 
 const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { totalItems } = useCart();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -52,100 +53,164 @@ const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-background border-b border-border">
-      <div className="flex items-center justify-between h-16 px-8">
-        <div className="flex-1" />
-        
-        <nav className="flex items-center gap-12">
-          <Link 
-            to="/about" 
-            className="text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-opacity"
-          >
-            О БРЕНДЕ
-          </Link>
-          <Link 
-            to="/catalog" 
-            className="text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-opacity"
-          >
-            КАТАЛОГ
-          </Link>
-          <Link 
-            to="/lookbook" 
-            className="text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-opacity"
-          >
-            LOOKBOOK
-          </Link>
-          <Link 
-            to="/info" 
-            className="text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-opacity"
-          >
-            INFO +
-          </Link>
-        </nav>
-
-        <div className="flex-1 flex items-center justify-end gap-6">
-          <input
-            type="text"
-            placeholder=""
-            className="w-32 bg-transparent border-b border-border focus:outline-none text-sm"
-          />
-          <button className="hover:opacity-60 transition-opacity">
-            <Search className="w-5 h-5" />
-          </button>
-          <button 
-            onClick={() => setIsCartOpen(true)}
-            className="hover:opacity-60 transition-opacity relative"
-          >
-            <ShoppingCart className="w-5 h-5" />
-            {totalItems > 0 && (
-              <span className="absolute -top-2 -right-2 bg-foreground text-background text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                {totalItems}
-              </span>
-            )}
-          </button>
-          <button className="hover:opacity-60 transition-opacity">
-            <Heart className="w-5 h-5" />
-          </button>
+      <header className="sticky top-0 z-40 bg-background border-b border-border">
+        <div className="flex items-center justify-between h-16 px-4 lg:px-8">
+          {/* Left spacer - hidden on mobile */}
+          <div className="hidden lg:block flex-1" />
           
-          {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="hover:opacity-60 transition-opacity">
-                  <User className="w-5 h-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Мой аккаунт</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {isAdmin && (
-                  <DropdownMenuItem onClick={() => navigate('/admin/orders')}>
-                    Админ-панель
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem onClick={() => navigate('/orders')}>
-                  Мои заказы
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleSignOut}>
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Выйти
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => navigate('/auth')}
-              className="hover:opacity-60 transition-opacity"
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center gap-12">
+            <Link 
+              to="/about" 
+              className="text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-opacity"
             >
-              <User className="w-5 h-5" />
-            </Button>
-          )}
+              О БРЕНДЕ
+            </Link>
+            <Link 
+              to="/catalog" 
+              className="text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-opacity"
+            >
+              КАТАЛОГ
+            </Link>
+            <Link 
+              to="/lookbook" 
+              className="text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-opacity"
+            >
+              LOOKBOOK
+            </Link>
+            <Link 
+              to="/info" 
+              className="text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-opacity"
+            >
+              INFO +
+            </Link>
+          </nav>
+
+          {/* Mobile Menu Button */}
+          <button 
+            className="lg:hidden hover:opacity-60 transition-opacity"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            <MenuIcon className="w-5 h-5" />
+          </button>
+
+          {/* Right Icons */}
+          <div className="flex-1 flex items-center justify-end gap-3 lg:gap-6">
+            {/* Search - hidden on mobile */}
+            <div className="hidden md:flex items-center gap-2">
+              <input
+                type="text"
+                placeholder=""
+                className="w-32 bg-transparent border-b border-border focus:outline-none text-sm"
+              />
+              <button className="hover:opacity-60 transition-opacity">
+                <Search className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Cart */}
+            <button 
+              onClick={() => setIsCartOpen(true)}
+              className="hover:opacity-60 transition-opacity relative"
+            >
+              <ShoppingCart className="w-5 h-5" />
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-foreground text-background text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
+            </button>
+
+            {/* Favorites - hidden on small mobile */}
+            <button className="hidden sm:block hover:opacity-60 transition-opacity">
+              <Heart className="w-5 h-5" />
+            </button>
+            
+            {/* User Menu */}
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="hover:opacity-60 transition-opacity">
+                    <User className="w-5 h-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-background z-50">
+                  <DropdownMenuLabel>Мой аккаунт</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {isAdmin && (
+                    <DropdownMenuItem onClick={() => navigate('/admin/orders')}>
+                      Админ-панель
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem onClick={() => navigate('/orders')}>
+                    Мои заказы
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Выйти
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => navigate('/auth')}
+                className="hover:opacity-60 transition-opacity"
+              >
+                <User className="w-5 h-5" />
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
-    </header>
+
+        {/* Mobile Navigation Menu */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden border-t border-border bg-background">
+            <nav className="flex flex-col py-4">
+              <Link 
+                to="/about" 
+                className="px-6 py-3 text-sm uppercase tracking-[0.2em] hover:bg-muted transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                О БРЕНДЕ
+              </Link>
+              <Link 
+                to="/catalog" 
+                className="px-6 py-3 text-sm uppercase tracking-[0.2em] hover:bg-muted transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                КАТАЛОГ
+              </Link>
+              <Link 
+                to="/lookbook" 
+                className="px-6 py-3 text-sm uppercase tracking-[0.2em] hover:bg-muted transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                LOOKBOOK
+              </Link>
+              <Link 
+                to="/info" 
+                className="px-6 py-3 text-sm uppercase tracking-[0.2em] hover:bg-muted transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                INFO +
+              </Link>
+              {/* Mobile Search */}
+              <div className="px-6 py-3 flex items-center gap-2 md:hidden">
+                <input
+                  type="text"
+                  placeholder="Поиск..."
+                  className="flex-1 bg-transparent border-b border-border focus:outline-none text-sm py-2"
+                />
+                <Search className="w-5 h-5" />
+              </div>
+            </nav>
+          </div>
+        )}
+      </header>
     
-    <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );
 };
