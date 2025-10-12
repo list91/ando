@@ -131,7 +131,43 @@ const AdminProducts = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validation
+    if (!formData.name.trim()) {
+      toast({
+        title: 'Ошибка',
+        description: 'Название товара обязательно',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!formData.slug.trim()) {
+      toast({
+        title: 'Ошибка',
+        description: 'Slug обязателен',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!formData.price || parseFloat(formData.price) <= 0) {
+      toast({
+        title: 'Ошибка',
+        description: 'Цена должна быть больше 0',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
     try {
+      // Parse sizes and colors
+      const sizes = formData.available_sizes
+        ? formData.available_sizes.split(',').map(s => s.trim()).filter(s => s)
+        : [];
+      const colors = formData.available_colors
+        ? formData.available_colors.split(',').map(c => c.trim()).filter(c => c)
+        : [];
+
       const productData = {
         name: formData.name.trim(),
         slug: formData.slug.trim(),
@@ -146,12 +182,8 @@ const AdminProducts = () => {
         care_instructions: formData.care_instructions.trim() || null,
         delivery_info: formData.delivery_info.trim() || null,
         payment_info: formData.payment_info.trim() || null,
-        available_sizes: formData.available_sizes
-          ? formData.available_sizes.split(',').map(s => s.trim()).filter(s => s)
-          : [],
-        available_colors: formData.available_colors
-          ? formData.available_colors.split(',').map(c => c.trim()).filter(c => c)
-          : [],
+        available_sizes: sizes.length > 0 ? sizes : null,
+        available_colors: colors.length > 0 ? colors : null,
       };
 
       if (editingProduct) {
@@ -160,25 +192,31 @@ const AdminProducts = () => {
           .update(productData)
           .eq('id', editingProduct.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Update error:', error);
+          throw error;
+        }
         toast({ title: 'Товар обновлен' });
       } else {
         const { error } = await supabase
           .from('products')
           .insert(productData);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Insert error:', error);
+          throw error;
+        }
         toast({ title: 'Товар создан' });
       }
 
       setDialogOpen(false);
       resetForm();
       fetchProducts();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving product:', error);
       toast({
         title: 'Ошибка',
-        description: 'Не удалось сохранить товар',
+        description: error.message || 'Не удалось сохранить товар',
         variant: 'destructive',
       });
     }
