@@ -75,26 +75,37 @@ const Home = () => {
       {activeSlides.map((slide, index) => (
         <div
           key={slide.id}
-          className={`absolute inset-0 transition-opacity duration-1000 ${
-            index === currentSlide ? "opacity-100" : "opacity-0"
+          className={`absolute inset-0 transition-all duration-[1500ms] ease-in-out ${
+            index === currentSlide 
+              ? "opacity-100 scale-100" 
+              : "opacity-0 scale-105"
           }`}
         >
           <div 
-            className="w-full h-full bg-cover bg-center"
+            className="w-full h-full bg-cover bg-center transition-transform duration-[1500ms] ease-out"
             style={{
-              backgroundImage: `url('${slide.image_url}')`
+              backgroundImage: `url('${slide.image_url}')`,
+              transform: index === currentSlide ? 'scale(1)' : 'scale(1.1)'
             }}
           >
             <div className="absolute inset-0 bg-black/20" />
             <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
               <h1 
-                className="text-8xl mb-4 font-extralight tracking-[0.3em]"
+                className={`text-8xl mb-4 font-extralight tracking-[0.3em] transition-all duration-1000 delay-300 ${
+                  index === currentSlide 
+                    ? 'opacity-100 translate-y-0' 
+                    : 'opacity-0 translate-y-8'
+                }`}
                 style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}
               >
                 {slide.title}
               </h1>
               {slide.subtitle && (
-                <p className="text-sm tracking-[0.2em] max-w-md text-center opacity-80">
+                <p className={`text-sm tracking-[0.2em] max-w-md text-center transition-all duration-1000 delay-500 ${
+                  index === currentSlide 
+                    ? 'opacity-80 translate-y-0' 
+                    : 'opacity-0 translate-y-8'
+                }`}>
                   {slide.subtitle}
                 </p>
               )}
@@ -103,13 +114,15 @@ const Home = () => {
         </div>
       ))}
 
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-2">
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
         {activeSlides.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-2 h-2 rounded-full transition-all ${
-              index === currentSlide ? "bg-white w-8" : "bg-white/50"
+            className={`rounded-full transition-all duration-500 ease-out ${
+              index === currentSlide 
+                ? "bg-white w-8 h-2" 
+                : "bg-white/50 w-2 h-2 hover:bg-white/70"
             }`}
           />
         ))}
