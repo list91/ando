@@ -381,7 +381,164 @@ const AdminProducts = () => {
                         />
                       </div>
 
-                      {/* ... keep existing code (other fields) */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="price">Цена *</Label>
+                          <Input
+                            id="price"
+                            type="number"
+                            step="0.01"
+                            value={formData.price}
+                            onChange={(e) =>
+                              setFormData({ ...formData, price: e.target.value })
+                            }
+                            required
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="old_price">Старая цена</Label>
+                          <Input
+                            id="old_price"
+                            type="number"
+                            step="0.01"
+                            value={formData.old_price}
+                            onChange={(e) =>
+                              setFormData({ ...formData, old_price: e.target.value })
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="is_sale"
+                          checked={formData.is_sale}
+                          onCheckedChange={(checked) =>
+                            setFormData({ ...formData, is_sale: checked as boolean })
+                          }
+                        />
+                        <Label htmlFor="is_sale">Распродажа</Label>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="stock_quantity">Количество на складе</Label>
+                        <Input
+                          id="stock_quantity"
+                          type="number"
+                          value={formData.stock_quantity}
+                          onChange={(e) =>
+                            setFormData({ ...formData, stock_quantity: e.target.value })
+                          }
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="category_id">Категория</Label>
+                        <Select
+                          value={formData.category_id}
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, category_id: value })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Выберите категорию" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {categories?.map((category) => (
+                              <SelectItem key={category.id} value={category.id}>
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="material">Материал</Label>
+                        <Input
+                          id="material"
+                          value={formData.material}
+                          onChange={(e) =>
+                            setFormData({ ...formData, material: e.target.value })
+                          }
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="description">Описание</Label>
+                        <Textarea
+                          id="description"
+                          value={formData.description}
+                          onChange={(e) =>
+                            setFormData({ ...formData, description: e.target.value })
+                          }
+                          rows={4}
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="care_instructions">Инструкции по уходу</Label>
+                        <Textarea
+                          id="care_instructions"
+                          value={formData.care_instructions}
+                          onChange={(e) =>
+                            setFormData({ ...formData, care_instructions: e.target.value })
+                          }
+                          rows={3}
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="delivery_info">Информация о доставке</Label>
+                        <Textarea
+                          id="delivery_info"
+                          value={formData.delivery_info}
+                          onChange={(e) =>
+                            setFormData({ ...formData, delivery_info: e.target.value })
+                          }
+                          rows={3}
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="payment_info">Информация об оплате</Label>
+                        <Textarea
+                          id="payment_info"
+                          value={formData.payment_info}
+                          onChange={(e) =>
+                            setFormData({ ...formData, payment_info: e.target.value })
+                          }
+                          rows={3}
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="available_sizes">
+                          Доступные размеры (через запятую)
+                        </Label>
+                        <Input
+                          id="available_sizes"
+                          value={formData.available_sizes}
+                          onChange={(e) =>
+                            setFormData({ ...formData, available_sizes: e.target.value })
+                          }
+                          placeholder="S, M, L, XL"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="available_colors">
+                          Доступные цвета (через запятую)
+                        </Label>
+                        <Input
+                          id="available_colors"
+                          value={formData.available_colors}
+                          onChange={(e) =>
+                            setFormData({ ...formData, available_colors: e.target.value })
+                          }
+                          placeholder="Черный, Белый, Серый"
+                        />
+                      </div>
 
                       <div className="flex gap-2">
                         <Button type="submit" disabled={submitting}>
