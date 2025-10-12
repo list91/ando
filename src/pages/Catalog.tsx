@@ -445,6 +445,21 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                   </div>
                 </Link>
 
+                {/* Favorite button */}
+                <button
+                  onClick={handleFavoriteClick}
+                  className="absolute top-3 right-3 z-20 hover:scale-110 transition-transform"
+                  aria-label={isFavorite(product.id) ? "Удалить из избранного" : "Добавить в избранное"}
+                >
+                  <Heart 
+                    className={`h-6 w-6 transition-all ${
+                      isFavorite(product.id) 
+                        ? 'fill-red-500 text-red-500' 
+                        : 'text-white stroke-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]'
+                    }`}
+                  />
+                </button>
+
                 <Link to={`/product/${product.slug}`}>
                   <h3 className="text-sm mb-2 tracking-wide text-foreground">{product.name}</h3>
                   
@@ -475,21 +490,6 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                         })}
                       </div>
                     )}
-                    
-                    {/* Favorite button */}
-                    <button
-                      onClick={handleFavoriteClick}
-                      className="ml-2 hover:opacity-60 transition-opacity"
-                      aria-label={isFavorite(product.id) ? "Удалить из избранного" : "Добавить в избранное"}
-                    >
-                      <Heart 
-                        className={`h-5 w-5 transition-all ${
-                          isFavorite(product.id) 
-                            ? 'fill-red-500 text-red-500' 
-                            : 'text-foreground hover:text-red-500'
-                        }`}
-                      />
-                    </button>
                   </div>
 
                   {product.available_sizes && product.available_sizes.length > 0 && (
