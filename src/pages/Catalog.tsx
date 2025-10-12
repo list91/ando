@@ -1,10 +1,14 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { useProducts } from "@/hooks/useProducts";
-import { Heart } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ChevronDown, X, Heart } from "lucide-react";
+import { useProducts, useCategories, useProductFilters, ProductFilters } from "@/hooks/useProducts";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useAuth } from "@/contexts/AuthContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useToast } from "@/hooks/use-toast";
-import { useCategories } from "@/hooks/useProducts";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 
 interface CatalogProps {
   selectedCategory: string;
@@ -12,217 +16,501 @@ interface CatalogProps {
 }
 
 const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
+  const [filters, setFilters] = useState<ProductFilters>({});
+  const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState<{ min?: number; max?: number }>({});
   const [hoveredProduct, setHoveredProduct] = useState<string | null>(null);
-  const [imageIndices, setImageIndices] = useState<Record<string, number>>({});
-  const [fadeIn, setFadeIn] = useState(false);
-  const { data: products, isLoading } = useProducts();
-  const { data: categories } = useCategories();
+  const [currentImageIndexes, setCurrentImageIndexes] = useState<Record<string, number>>({});
+  const [sortBy, setSortBy] = useState<string>('default');
+  const mouseXRef = useRef<number>(0);
+  
+  const { data: categories = [] } = useCategories();
+  const { data: filterOptions } = useProductFilters();
+  const { data: products = [], isLoading } = useProducts(filters);
+  const { data: settings } = useSiteSettings();
+  const { user } = useAuth();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    // Trigger fade-in animation on mount
-    const timer = setTimeout(() => setFadeIn(true), 50);
-    return () => clearTimeout(timer);
-  }, []);
+  // Get color map from settings
+  const colorMap = settings?.find(s => s.key === 'product_colors')?.value as Record<string, string> || {};
 
-  useEffect(() => {
-    // Reset hoveredProduct when the category changes
-    setHoveredProduct(null);
-    // Reset image indices when the category changes
-    setImageIndices({});
-  }, [selectedCategory]);
-
-  const getColorClass = (color: string) => {
-    const colorLower = color.toLowerCase();
-    if (colorLower === 'белый') return 'bg-white';
-    if (colorLower === 'черный') return 'bg-black';
-    if (colorLower === 'серый') return 'bg-gray-400';
-    if (colorLower === 'бежевый') return 'bg-[#F5F5DC]';
-    if (colorLower === 'коричневый') return 'bg-[#8B4513]';
-    if (colorLower === 'синий') return 'bg-blue-600';
-    if (colorLower === 'красный') return 'bg-red-600';
-    if (colorLower === 'зеленый') return 'bg-green-600';
-    if (colorLower === 'розовый') return 'bg-pink-400';
-    return 'bg-muted';
+  const getColorHex = (colorName: string): string => {
+    const lowerName = colorName.toLowerCase().trim();
+    return colorMap[lowerName] || '#CCCCCC'; // Default gray if color not found
   };
 
-  // Filter products by selected category
-  const filteredProducts = selectedCategory === "Все товары" 
-    ? products 
-    : products?.filter(p => {
-        const categoryMatch = categories?.find(cat => cat.id === p.category_id);
-        return categoryMatch?.name === selectedCategory;
-      });
+  useEffect(() => {
+    const newFilters: ProductFilters = {};
+    
+    if (selectedCategory === "Все товары") {
+      newFilters.categoryId = null;
+      newFilters.isSale = false;
+    } else if (selectedCategory === "SALE %") {
+      newFilters.categoryId = null;
+      newFilters.isSale = true;
+    } else {
+      const category = categories.find((cat) => cat.name === selectedCategory);
+      newFilters.categoryId = category?.id || null;
+      newFilters.isSale = false;
+    }
+
+    if (selectedMaterials.length > 0) {
+      newFilters.materials = selectedMaterials;
+    }
+
+    if (selectedColors.length > 0) {
+      newFilters.colors = selectedColors;
+    }
+
+    if (selectedSizes.length > 0) {
+      newFilters.sizes = selectedSizes;
+    }
+
+    if (priceRange.min !== undefined) {
+      newFilters.minPrice = priceRange.min;
+    }
+
+    if (priceRange.max !== undefined) {
+      newFilters.maxPrice = priceRange.max;
+    }
+
+    setFilters(newFilters);
+  }, [selectedCategory, categories, selectedMaterials, selectedColors, selectedSizes, priceRange]);
+
+  const clearFilters = () => {
+    setSelectedMaterials([]);
+    setSelectedColors([]);
+    setSelectedSizes([]);
+    setPriceRange({});
+  };
+
+  const hasActiveFilters = selectedMaterials.length > 0 || selectedColors.length > 0 || 
+    selectedSizes.length > 0 || priceRange.min !== undefined || priceRange.max !== undefined;
+
+  // Sort products
+  const sortedProducts = [...products].sort((a, b) => {
+    switch (sortBy) {
+      case 'price-asc':
+        return a.price - b.price;
+      case 'price-desc':
+        return b.price - a.price;
+      case 'name-asc':
+        return a.name.localeCompare(b.name);
+      case 'name-desc':
+        return b.name.localeCompare(a.name);
+      case 'newest':
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      default:
+        return 0;
+    }
+  });
 
   if (isLoading) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <p className="text-muted-foreground">Загрузка...</p>
+      <div className="min-h-full flex items-center justify-center">
+        <p className="text-muted-foreground">Загрузка товаров...</p>
       </div>
     );
   }
 
   return (
-    <div className={`transition-all duration-700 ease-out ${
-      fadeIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-    }`}>
-      <div className="container mx-auto px-4 py-8">
-        {/* Category Title */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-light tracking-wide">{selectedCategory}</h1>
-          <p className="text-sm text-muted-foreground mt-2">
-            {filteredProducts?.length || 0} {filteredProducts?.length === 1 ? 'товар' : 'товаров'}
-          </p>
+    <div className="min-h-full">
+      {/* Filters */}
+      <div className="border-b border-border py-4 px-4 lg:px-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 text-sm">
+          <div className="flex flex-wrap gap-4 lg:gap-8 items-center">
+            {/* Material Filter */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity">
+                  Материал {selectedMaterials.length > 0 && `(${selectedMaterials.length})`}
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64" align="start">
+                <div className="space-y-2">
+                  <p className="font-medium mb-3 text-sm">Выберите материал</p>
+                  {filterOptions?.materials.map((material) => (
+                    <div key={material} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`material-${material}`}
+                        checked={selectedMaterials.includes(material)}
+                        onCheckedChange={(checked) => {
+                          setSelectedMaterials(
+                            checked
+                              ? [...selectedMaterials, material]
+                              : selectedMaterials.filter((m) => m !== material)
+                          );
+                        }}
+                      />
+                      <label
+                        htmlFor={`material-${material}`}
+                        className="text-sm cursor-pointer"
+                      >
+                        {material}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* Color Filter */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity">
+                  Цвет {selectedColors.length > 0 && `(${selectedColors.length})`}
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64" align="start">
+                <div className="space-y-2">
+                  <p className="font-medium mb-3 text-sm">Выберите цвет</p>
+                  {filterOptions?.colors.map((color) => (
+                    <div key={color} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`color-${color}`}
+                        checked={selectedColors.includes(color)}
+                        onCheckedChange={(checked) => {
+                          setSelectedColors(
+                            checked
+                              ? [...selectedColors, color]
+                              : selectedColors.filter((c) => c !== color)
+                          );
+                        }}
+                      />
+                      <label
+                        htmlFor={`color-${color}`}
+                        className="text-sm cursor-pointer flex items-center gap-2"
+                      >
+                        <div 
+                          className="w-5 h-5 rounded-full border border-border flex-shrink-0"
+                          style={{ backgroundColor: getColorHex(color) }}
+                        />
+                        {color}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* Size Filter */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity">
+                  Размер {selectedSizes.length > 0 && `(${selectedSizes.length})`}
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64" align="start">
+                <div className="space-y-2">
+                  <p className="font-medium mb-3 text-sm">Выберите размер</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {filterOptions?.sizes.map((size) => (
+                      <Button
+                        key={size}
+                        variant={selectedSizes.includes(size) ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => {
+                          setSelectedSizes(
+                            selectedSizes.includes(size)
+                              ? selectedSizes.filter((s) => s !== size)
+                              : [...selectedSizes, size]
+                          );
+                        }}
+                      >
+                        {size}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* Price Filter */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity">
+                  Цена {(priceRange.min || priceRange.max) && '•'}
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64" align="start">
+                <div className="space-y-4">
+                  <p className="font-medium text-sm">Диапазон цен</p>
+                  <div className="flex gap-2 items-center">
+                    <input
+                      type="number"
+                      placeholder="От"
+                      className="w-full px-3 py-2 text-sm border border-input rounded-md bg-background"
+                      value={priceRange.min || ''}
+                      onChange={(e) => setPriceRange({ ...priceRange, min: e.target.value ? Number(e.target.value) : undefined })}
+                    />
+                    <span className="text-muted-foreground">—</span>
+                    <input
+                      type="number"
+                      placeholder="До"
+                      className="w-full px-3 py-2 text-sm border border-input rounded-md bg-background"
+                      value={priceRange.max || ''}
+                      onChange={(e) => setPriceRange({ ...priceRange, max: e.target.value ? Number(e.target.value) : undefined })}
+                    />
+                  </div>
+                  {filterOptions?.priceRange && (
+                    <p className="text-xs text-muted-foreground">
+                      Цены: {filterOptions.priceRange.min} — {filterOptions.priceRange.max} ₽
+                    </p>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {hasActiveFilters && (
+              <button
+                onClick={clearFilters}
+                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="w-3 h-3" />
+                Очистить фильтры
+              </button>
+            )}
+          </div>
+
+          {/* Sorting */}
+          <div className="flex items-center gap-4">
+            <span className="text-muted-foreground text-xs lg:text-sm">
+              Найдено: {products.length}
+            </span>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity text-xs lg:text-sm">
+                  Сортировка
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56" align="end">
+                <div className="space-y-2">
+                  <p className="font-medium mb-3 text-sm">Сортировать по</p>
+                  {[
+                    { value: 'default', label: 'По умолчанию' },
+                    { value: 'price-asc', label: 'Цена: по возрастанию' },
+                    { value: 'price-desc', label: 'Цена: по убыванию' },
+                    { value: 'name-asc', label: 'Название: А-Я' },
+                    { value: 'name-desc', label: 'Название: Я-А' },
+                    { value: 'newest', label: 'Сначала новые' },
+                  ].map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => setSortBy(option.value)}
+                      className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors ${
+                        sortBy === option.value
+                          ? 'bg-primary text-primary-foreground'
+                          : 'hover:bg-secondary'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
+      </div>
 
-        {/* Products Grid */}
-        {filteredProducts && filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map((product) => {
-              const images = product.product_images?.sort((a, b) => a.display_order - b.display_order) || [];
-              const mainImages = images.length > 0 
-                ? images.map(img => img.image_url)
-                : ['https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&q=80'];
+      {sortedProducts.length === 0 ? (
+        <div className="p-8 lg:p-16 text-center">
+          <p className="text-muted-foreground">Товары не найдены</p>
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="mt-4 text-sm underline hover:no-underline"
+            >
+              Сбросить фильтры
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 p-4 lg:p-8">
+          {sortedProducts.map((product) => {
+            const images = product.product_images && product.product_images.length > 0
+              ? product.product_images.map(img => img.image_url)
+              : ['https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&q=80'];
+            
+            const currentIndex = currentImageIndexes[product.id] || 0;
+            const currentImage = images[currentIndex] || images[0];
+            
+            const discount = product.old_price 
+              ? Math.round(((product.old_price - product.price) / product.old_price) * 100)
+              : 0;
+
+            const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+              if (images.length <= 1) return;
               
-              const currentIndex = imageIndices[product.id] || 0;
-              const currentImage = mainImages[currentIndex] || mainImages[0];
-
-              const discount = product.old_price 
-                ? Math.round(((product.old_price - product.price) / product.old_price) * 100)
-                : 0;
-
-              const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-                if (images.length <= 1) return;
-                
-                const rect = e.currentTarget.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const sectionWidth = rect.width / images.length;
-                const newIndex = Math.floor(x / sectionWidth);
-                
-                if (newIndex !== currentIndex && newIndex >= 0 && newIndex < images.length) {
-                  setImageIndices(prev => ({
+              const rect = e.currentTarget.getBoundingClientRect();
+              const x = e.clientX - rect.left;
+              const delta = x - mouseXRef.current;
+              
+              if (Math.abs(delta) > 50) { // Threshold for swipe
+                if (delta > 0) {
+                  // Moving right - next image
+                  setCurrentImageIndexes(prev => ({
                     ...prev,
-                    [product.id]: newIndex
+                    [product.id]: Math.min((prev[product.id] || 0) + 1, images.length - 1)
+                  }));
+                } else {
+                  // Moving left - previous image
+                  setCurrentImageIndexes(prev => ({
+                    ...prev,
+                    [product.id]: Math.max((prev[product.id] || 0) - 1, 0)
                   }));
                 }
-              };
+                mouseXRef.current = x;
+              }
+            };
 
-              const handleMouseEnter = () => {
-                setHoveredProduct(product.id);
-              };
+            const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+              setHoveredProduct(product.id);
+              const rect = e.currentTarget.getBoundingClientRect();
+              mouseXRef.current = e.clientX - rect.left;
+            };
 
-              const handleMouseLeave = () => {
-                setHoveredProduct(null);
-                setImageIndices(prev => ({
-                  ...prev,
-                  [product.id]: 0
-                }));
-              };
+            const handleMouseLeave = () => {
+              setHoveredProduct(null);
+              setCurrentImageIndexes(prev => ({
+                ...prev,
+                [product.id]: 0
+              }));
+            };
 
-              const handleFavoriteClick = async (e: React.MouseEvent) => {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                await toggleFavorite(product.id);
+            const handleFavoriteClick = async (e: React.MouseEvent) => {
+              e.preventDefault();
+              e.stopPropagation();
+              
+              if (!user) {
                 toast({
-                  title: isFavorite(product.id) ? "Удалено из избранного" : "Добавлено в избранное",
-                  description: product.name,
+                  title: "Требуется авторизация",
+                  description: "Войдите в аккаунт, чтобы добавить товар в избранное",
                 });
-              };
+                navigate('/auth', { state: { from: '/catalog' } });
+                return;
+              }
+              
+              await toggleFavorite(product.id);
+              toast({
+                title: isFavorite(product.id) ? "Удалено из избранного" : "Добавлено в избранное",
+                description: product.name,
+              });
+            };
 
-              return (
-                <div key={product.id} className="group relative">
-                  <Link to={`/product/${product.slug}`}>
-                    <div 
-                      className="relative aspect-[3/4] mb-3 overflow-hidden bg-muted"
-                      onMouseMove={handleMouseMove}
-                      onMouseEnter={handleMouseEnter}
-                      onMouseLeave={handleMouseLeave}
-                    >
-                      {product.is_sale && discount > 0 && (
-                        <div className="absolute bottom-4 left-4 z-10 bg-primary text-primary-foreground w-14 h-14 rounded-full flex items-center justify-center text-xs font-normal">
-                          {discount}%
-                        </div>
-                      )}
-                      <img
-                        src={currentImage}
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      
-                      {/* Image indicators */}
-                      {images.length > 1 && hoveredProduct === product.id && (
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                          {images.map((_, idx) => (
-                            <div
-                              key={idx}
-                              className={`w-1.5 h-1.5 rounded-full transition-all ${
-                                idx === currentIndex
-                                  ? 'bg-white w-4'
-                                  : 'bg-white/50'
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </Link>
-
-                  {/* Favorite button */}
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleFavoriteClick(e);
-                    }}
-                    className="absolute top-3 right-3 z-20 hover:scale-110 transition-transform"
-                    aria-label={isFavorite(product.id) ? "Удалить из избранного" : "Добавить в избранное"}
+            return (
+              <div key={product.id} className="group relative">
+                <Link to={`/product/${product.slug}`}>
+                  <div 
+                    className="relative aspect-[3/4] mb-3 overflow-hidden bg-muted"
+                    onMouseMove={handleMouseMove}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
                   >
-                    <Heart 
-                      className={`h-6 w-6 transition-all ${
-                        isFavorite(product.id) 
-                          ? 'fill-red-500 text-red-500' 
-                          : 'text-white stroke-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]'
-                      }`}
+                    {product.is_sale && discount > 0 && (
+                      <div className="absolute bottom-4 left-4 z-10 bg-primary text-primary-foreground w-14 h-14 rounded-full flex items-center justify-center text-xs font-normal">
+                        {discount}%
+                      </div>
+                    )}
+                    <img
+                      src={currentImage}
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                  </button>
-
-                  <Link to={`/product/${product.slug}`}>
-                    <h3 className="text-sm mb-2 tracking-wide text-foreground">{product.name}</h3>
                     
-                    <div className="flex items-center gap-3 mb-2">
-                      {product.old_price && (
-                        <span className="text-sm text-muted-foreground line-through">
-                          {product.old_price} ₽
-                        </span>
-                      )}
-                      <span className="font-medium">
-                        {product.price} ₽
-                      </span>
-                    </div>
-
-                    {product.available_colors && product.available_colors.length > 0 && (
-                      <div className="flex gap-1.5">
-                        {product.available_colors.slice(0, 5).map((color, idx) => (
+                    {/* Image indicators */}
+                    {images.length > 1 && hoveredProduct === product.id && (
+                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                        {images.map((_, idx) => (
                           <div
                             key={idx}
-                            className={`w-5 h-5 rounded-full border border-border ${getColorClass(color)}`}
+                            className={`w-1.5 h-1.5 rounded-full transition-all ${
+                              idx === currentIndex
+                                ? 'bg-white w-4'
+                                : 'bg-white/50'
+                            }`}
                           />
                         ))}
                       </div>
                     )}
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">Товары не найдены</p>
-          </div>
-        )}
-      </div>
+                  </div>
+                </Link>
+
+                {/* Favorite button */}
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleFavoriteClick(e);
+                  }}
+                  className="absolute top-3 right-3 z-20 hover:scale-110 transition-transform"
+                  aria-label={isFavorite(product.id) ? "Удалить из избранного" : "Добавить в избранное"}
+                >
+                  <Heart 
+                    className={`h-6 w-6 transition-all ${
+                      isFavorite(product.id) 
+                        ? 'fill-red-500 text-red-500' 
+                        : 'text-white stroke-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]'
+                    }`}
+                  />
+                </button>
+
+                <Link to={`/product/${product.slug}`}>
+                  <h3 className="text-sm mb-2 tracking-wide text-foreground">{product.name}</h3>
+                  
+                  <div className="flex items-center gap-2 mb-2">
+                    {product.old_price && (
+                      <span className="text-sm text-muted-foreground line-through">
+                        {product.old_price} ₽
+                      </span>
+                    )}
+                    <span className="text-sm text-foreground">
+                      {product.price} ₽
+                    </span>
+                    {product.available_colors && product.available_colors.length > 0 && (
+                      <div className="flex items-center gap-2 ml-auto">
+                        {product.available_colors.slice(0, 4).map((color, idx) => {
+                          const colorHex = getColorHex(color);
+                          return (
+                            <div
+                              key={idx}
+                              className="w-5 h-5 rounded-full border-2 border-border flex-shrink-0"
+                              style={{ 
+                                backgroundColor: colorHex,
+                                boxShadow: colorHex.toLowerCase() === '#ffffff' ? 'inset 0 0 0 1px rgba(0,0,0,0.1)' : 'none'
+                              }}
+                              title={color}
+                            />
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  {product.available_sizes && product.available_sizes.length > 0 && (
+                    <div className="flex gap-3 text-xs text-muted-foreground">
+                      {product.available_sizes.map((size) => (
+                        <span key={size}>
+                          {size}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

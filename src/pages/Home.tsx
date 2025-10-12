@@ -5,7 +5,6 @@ import { ChevronDown } from "lucide-react";
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const navigate = useNavigate();
   const { data: slides, isLoading } = useHeroSlides();
   
@@ -20,15 +19,9 @@ const Home = () => {
     return () => clearInterval(timer);
   }, [activeSlides.length]);
 
-  const handleNavigateToCatalog = () => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      navigate('/catalog');
-    }, 600);
-  };
-
   useEffect(() => {
     let touchStartY = 0;
+    let scrollStartY = 0;
 
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY = e.touches[0].clientY;
@@ -38,27 +31,36 @@ const Home = () => {
       const touchEndY = e.touches[0].clientY;
       const diff = touchStartY - touchEndY;
       
-      if (diff > 50 && !isTransitioning) {
-        handleNavigateToCatalog();
+      if (diff > 50) {
+        navigate('/catalog');
       }
     };
 
     const handleWheel = (e: WheelEvent) => {
-      if (e.deltaY > 50 && !isTransitioning) {
-        handleNavigateToCatalog();
+      if (e.deltaY > 50) {
+        navigate('/catalog');
       }
+    };
+
+    const handleScroll = () => {
+      if (window.scrollY > scrollStartY + 50) {
+        navigate('/catalog');
+      }
+      scrollStartY = window.scrollY;
     };
 
     document.addEventListener('touchstart', handleTouchStart);
     document.addEventListener('touchmove', handleTouchMove);
     document.addEventListener('wheel', handleWheel, { passive: true });
+    document.addEventListener('scroll', handleScroll);
 
     return () => {
       document.removeEventListener('touchstart', handleTouchStart);
       document.removeEventListener('touchmove', handleTouchMove);
       document.removeEventListener('wheel', handleWheel);
+      document.removeEventListener('scroll', handleScroll);
     };
-  }, [navigate, isTransitioning]);
+  }, [navigate]);
 
   if (isLoading || activeSlides.length === 0) {
     return (
@@ -69,43 +71,30 @@ const Home = () => {
   }
 
   return (
-    <div className={`relative h-[calc(100vh-4rem)] overflow-hidden transition-all duration-700 ease-in-out ${
-      isTransitioning ? 'opacity-0 translate-y-[-20px]' : 'opacity-100 translate-y-0'
-    }`}>
+    <div className="relative h-[calc(100vh-4rem)] overflow-hidden">
       {activeSlides.map((slide, index) => (
         <div
           key={slide.id}
-          className={`absolute inset-0 transition-all duration-[1500ms] ease-in-out ${
-            index === currentSlide 
-              ? "opacity-100 scale-100" 
-              : "opacity-0 scale-105"
+          className={`absolute inset-0 transition-opacity duration-1000 ${
+            index === currentSlide ? "opacity-100" : "opacity-0"
           }`}
         >
           <div 
-            className="w-full h-full bg-cover bg-center transition-transform duration-[1500ms] ease-out"
+            className="w-full h-full bg-cover bg-center"
             style={{
-              backgroundImage: `url('${slide.image_url}')`,
-              transform: index === currentSlide ? 'scale(1)' : 'scale(1.1)'
+              backgroundImage: `url('${slide.image_url}')`
             }}
           >
             <div className="absolute inset-0 bg-black/20" />
             <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
               <h1 
-                className={`text-8xl mb-4 font-extralight tracking-[0.3em] transition-all duration-1000 delay-300 ${
-                  index === currentSlide 
-                    ? 'opacity-100 translate-y-0' 
-                    : 'opacity-0 translate-y-8'
-                }`}
+                className="text-8xl mb-4 font-extralight tracking-[0.3em]"
                 style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}
               >
                 {slide.title}
               </h1>
               {slide.subtitle && (
-                <p className={`text-sm tracking-[0.2em] max-w-md text-center transition-all duration-1000 delay-500 ${
-                  index === currentSlide 
-                    ? 'opacity-80 translate-y-0' 
-                    : 'opacity-0 translate-y-8'
-                }`}>
+                <p className="text-sm tracking-[0.2em] max-w-md text-center opacity-80">
                   {slide.subtitle}
                 </p>
               )}
@@ -114,15 +103,13 @@ const Home = () => {
         </div>
       ))}
 
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-2">
         {activeSlides.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`rounded-full transition-all duration-500 ease-out ${
-              index === currentSlide 
-                ? "bg-white w-8 h-2" 
-                : "bg-white/50 w-2 h-2 hover:bg-white/70"
+            className={`w-2 h-2 rounded-full transition-all ${
+              index === currentSlide ? "bg-white w-8" : "bg-white/50"
             }`}
           />
         ))}
@@ -130,8 +117,8 @@ const Home = () => {
 
       {/* Scroll down indicator */}
       <button
-        onClick={handleNavigateToCatalog}
-        className="absolute bottom-20 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 text-white animate-fade-in hover:opacity-70 transition-opacity z-10"
+        onClick={() => navigate('/catalog')}
+        className="absolute bottom-20 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 text-white animate-fade-in hover:opacity-70 transition-opacity"
       >
         <span className="text-xs tracking-widest uppercase">Листайте вниз</span>
         <ChevronDown className="w-6 h-6 animate-bounce" />
