@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useHeroSlides } from "@/hooks/useHeroSlides";
+import { ChevronDown } from "lucide-react";
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const navigate = useNavigate();
   const { data: slides, isLoading } = useHeroSlides();
   
   const activeSlides = slides?.filter(s => s.is_active) || [];
@@ -15,6 +18,49 @@ const Home = () => {
     }, 5000);
     return () => clearInterval(timer);
   }, [activeSlides.length]);
+
+  useEffect(() => {
+    let touchStartY = 0;
+    let scrollStartY = 0;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const touchEndY = e.touches[0].clientY;
+      const diff = touchStartY - touchEndY;
+      
+      if (diff > 50) {
+        navigate('/catalog');
+      }
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY > 50) {
+        navigate('/catalog');
+      }
+    };
+
+    const handleScroll = () => {
+      if (window.scrollY > scrollStartY + 50) {
+        navigate('/catalog');
+      }
+      scrollStartY = window.scrollY;
+    };
+
+    document.addEventListener('touchstart', handleTouchStart);
+    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('wheel', handleWheel, { passive: true });
+    document.addEventListener('scroll', handleScroll);
+
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('wheel', handleWheel);
+      document.removeEventListener('scroll', handleScroll);
+    };
+  }, [navigate]);
 
   if (isLoading || activeSlides.length === 0) {
     return (
@@ -68,6 +114,15 @@ const Home = () => {
           />
         ))}
       </div>
+
+      {/* Scroll down indicator */}
+      <button
+        onClick={() => navigate('/catalog')}
+        className="absolute bottom-20 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 text-white animate-fade-in hover:opacity-70 transition-opacity"
+      >
+        <span className="text-xs tracking-widest uppercase">Листайте вниз</span>
+        <ChevronDown className="w-6 h-6 animate-bounce" />
+      </button>
     </div>
   );
 };

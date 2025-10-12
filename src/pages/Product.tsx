@@ -61,21 +61,21 @@ const Product = () => {
   };
 
   return (
-    <div className="flex h-full">
+    <div className="flex flex-col lg:flex-row h-full">
       {/* Left side - Product images */}
-      <div className="flex-1 flex items-center justify-center py-16 px-8 relative">
+      <div className="flex-1 flex items-center justify-center py-8 lg:py-16 px-4 lg:px-8 relative">
         {/* Left arrow - outside image */}
         {mainImages.length > 1 && (
           <button 
             onClick={() => setCurrentImage((prev) => (prev - 1 + mainImages.length) % mainImages.length)}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 hover:opacity-60 transition-opacity"
+            className="absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 z-10 hover:opacity-60 transition-opacity"
           >
-            <ChevronLeft className="w-8 h-8" />
+            <ChevronLeft className="w-6 h-6 lg:w-8 lg:h-8" />
           </button>
         )}
 
         {/* Image container */}
-        <div className="max-w-xl">
+        <div className="max-w-xl w-full">
           <img
             src={mainImages[currentImage]}
             alt={product.name}
@@ -84,7 +84,7 @@ const Product = () => {
 
           {/* Color dots below image */}
           {mainImages.length > 1 && (
-            <div className="flex gap-2 justify-center mt-6">
+            <div className="flex gap-2 justify-center mt-4 lg:mt-6">
               {mainImages.map((_, idx) => (
                 <button
                   key={idx}
@@ -102,15 +102,15 @@ const Product = () => {
         {mainImages.length > 1 && (
           <button 
             onClick={() => setCurrentImage((prev) => (prev + 1) % mainImages.length)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hover:opacity-60 transition-opacity"
+            className="absolute right-2 lg:right-4 top-1/2 -translate-y-1/2 z-10 hover:opacity-60 transition-opacity"
           >
-            <ChevronRight className="w-8 h-8" />
+            <ChevronRight className="w-6 h-6 lg:w-8 lg:h-8" />
           </button>
         )}
       </div>
 
       {/* Right side - Product info */}
-      <div className="w-[480px] border-l border-border py-16 px-12 overflow-y-auto">
+      <div className="w-full lg:w-[480px] border-t lg:border-t-0 lg:border-l border-border py-8 lg:py-16 px-6 lg:px-12 overflow-y-auto">
         {/* Title and discount badge */}
         <div className="flex items-start justify-between mb-6">
           <h1 className="text-sm tracking-[0.15em] uppercase font-light flex-1">
