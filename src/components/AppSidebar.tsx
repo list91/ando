@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useCategories } from "@/hooks/useProducts";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import logoImage from "@/assets/logo.jpg";
+import { Instagram, Send } from "lucide-react";
 
 interface AppSidebarProps {
   selectedCategory?: string;
@@ -46,7 +46,12 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
     <aside className="w-64 border-r border-border bg-muted flex-shrink-0 h-screen overflow-y-auto">
       <div className="flex flex-col h-full py-8 px-6">
         <Link to="/" className="mb-12 flex justify-center">
-          <img src={logoImage} alt="ANDO JV" className="w-20 h-auto" />
+          <div className="border border-foreground p-3 text-center w-20">
+            <div className="text-lg font-light tracking-[0.2em]">AN</div>
+            <div className="text-lg font-light tracking-[0.2em]">DO</div>
+            <div className="w-full h-[1px] bg-foreground my-1" />
+            <div className="text-[10px] tracking-[0.3em]">JV</div>
+          </div>
         </Link>
 
         <div className="flex-1">
