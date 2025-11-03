@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Search, ShoppingCart, Heart, User, LogOut, Menu as MenuIcon, ShieldCheck, Package } from "lucide-react";
+import { ShoppingCart, Heart, User, LogOut, Menu as MenuIcon, ShieldCheck, Package } from "lucide-react";
 import { useState, useEffect } from "react";
 import CartDrawer from "./CartDrawer";
 import { useCart } from "@/contexts/CartContext";
@@ -113,18 +113,6 @@ const Header = () => {
 
           {/* Right Icons */}
           <div className="flex-1 flex items-center justify-end gap-3 lg:gap-6">
-            {/* Search - hidden on mobile */}
-            <div className="hidden md:flex items-center gap-2">
-              <input
-                type="text"
-                placeholder=""
-                className="w-32 bg-transparent border-b border-border focus:outline-none text-sm"
-              />
-              <button className="hover:opacity-60 transition-opacity">
-                <Search className="w-5 h-5" />
-              </button>
-            </div>
-
             {/* Cart */}
             <button 
               onClick={() => setIsCartOpen(true)}
@@ -225,15 +213,6 @@ const Header = () => {
               >
                 INFO +
               </Link>
-              {/* Mobile Search */}
-              <div className="px-6 py-3 flex items-center gap-2 md:hidden">
-                <input
-                  type="text"
-                  placeholder="Поиск..."
-                  className="flex-1 bg-transparent border-b border-border focus:outline-none text-sm py-2"
-                />
-                <Search className="w-5 h-5" />
-              </div>
             </nav>
           </div>
         )}
