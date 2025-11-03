@@ -45,8 +45,8 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
   return (
     <aside className="w-64 border-r border-border bg-muted flex-shrink-0 h-screen overflow-y-auto">
       <div className="flex flex-col h-full py-8 px-6">
-        <Link to="/" className="mb-12 flex justify-center">
-          <img src={logoImage} alt="ANDO JV" className="w-80" />
+        <Link to="/" className="mb-8 flex justify-center">
+          <img src={logoImage} alt="ANDO JV" className="w-96" />
         </Link>
 
         <div className="flex-1">
