@@ -113,43 +113,6 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
           )}
         </div>
 
-        <div className="flex gap-3 justify-center mb-4">
-          {instagramUrl && (
-            <a 
-              href={instagramUrl}
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="w-8 h-8 border border-border flex items-center justify-center hover:border-foreground transition-colors"
-              aria-label="Instagram"
-            >
-              <Instagram className="w-3 h-3" />
-            </a>
-          )}
-          {telegramUrl && (
-            <a 
-              href={telegramUrl}
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="w-8 h-8 border border-border flex items-center justify-center hover:border-foreground transition-colors"
-              aria-label="Telegram"
-            >
-              <Send className="w-3 h-3" />
-            </a>
-          )}
-          {vkUrl && (
-            <a 
-              href={vkUrl}
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="w-8 h-8 border border-border flex items-center justify-center hover:border-foreground transition-colors"
-              aria-label="VKontakte"
-            >
-              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12.785 16.241s.288-.032.436-.194c.136-.148.132-.427.132-.427s-.02-1.304.572-1.497c.583-.19 1.332 1.26 2.127 1.818.6.422 1.056.329 1.056.329l2.123-.03s1.11-.07.584-.963c-.043-.073-.308-.663-1.588-1.876-1.34-1.27-1.16-1.065.453-3.263.983-1.34 1.375-2.158 1.252-2.508-.117-.334-.84-.246-.84-.246l-2.39.015s-.177-.025-.308.056c-.128.079-.21.263-.21.263s-.377 1.025-.88 1.897c-1.06 1.836-1.484 1.933-1.658 1.818-.405-.267-.304-1.075-.304-1.648 0-1.792.265-2.54-.517-2.732-.26-.064-.452-.106-1.118-.113-.854-.009-1.577.003-1.988.208-.273.137-.484.441-.355.458.159.022.52.1.711.365.247.343.238 1.113.238 1.113s.142 2.11-.331 2.372c-.325.18-.77-.187-1.726-1.865-.49-.849-.86-1.787-.86-1.787s-.071-.178-.198-.274c-.154-.116-.37-.153-.37-.153l-2.271.015s-.341.01-.466.161c-.111.134-.009.411-.009.411s1.78 4.257 3.795 6.403c1.85 1.968 3.95 1.838 3.95 1.838h.953z"/>
-              </svg>
-            </a>
-          )}
-        </div>
 
         <div className="text-[8px] text-center leading-relaxed text-muted-foreground">
           © 2025 ANDO JV. Все права<br />
