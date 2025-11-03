@@ -55,7 +55,7 @@ const Header = () => {
   return (
     <>
       <header className="sticky top-0 z-40 bg-background border-b border-border">
-        <div className="flex items-center justify-between h-16 px-4 lg:px-8">
+        <div className="flex items-center justify-between h-20 px-4 lg:px-8">
           {/* Left spacer - hidden on mobile */}
           <div className="hidden lg:block flex-1" />
           

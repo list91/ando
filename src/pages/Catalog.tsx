@@ -120,7 +120,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   return (
     <div className="min-h-full">
       {/* Filters */}
-      <div className="border-b border-border py-4 px-4 lg:px-8">
+      <div className="border-b border-border py-4 px-4 lg:pl-8">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 text-sm">
           <div className="flex flex-wrap gap-4 lg:gap-8 items-center">
             {/* Material Filter */}
@@ -335,7 +335,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 p-4 lg:p-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 p-4 lg:pl-8 lg:pr-8">
           {sortedProducts.map((product) => {
             const images = product.product_images && product.product_images.length > 0
               ? product.product_images.map(img => img.image_url)
