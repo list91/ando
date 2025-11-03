@@ -43,10 +43,10 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
   const vkUrl = getSetting('social_vk', 'https://vk.com');
 
   return (
-    <aside className="w-64 border-r border-border bg-muted flex-shrink-0 h-screen overflow-y-auto">
+    <aside className="w-80 border-r border-border bg-muted flex-shrink-0 h-screen overflow-y-auto">
       <div className="flex flex-col h-full py-8 px-6">
-        <Link to="/" className="mb-8 flex justify-center">
-          <img src={logoImage} alt="ANDO JV" className="w-96" />
+        <Link to="/" className="mb-4 flex justify-center">
+          <img src={logoImage} alt="ANDO JV" className="w-full" />
         </Link>
 
         <div className="flex-1">
