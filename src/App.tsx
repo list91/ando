@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "@/contexts/CartContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
+import { CookieBanner } from "@/components/CookieBanner";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useState } from "react";
 import Layout from "./components/Layout";
@@ -97,6 +98,7 @@ const App = () => (
             <Sonner />
             <BrowserRouter>
               <AppContent />
+              <CookieBanner />
             </BrowserRouter>
           </TooltipProvider>
         </CartProvider>
