@@ -54,7 +54,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-background border-b border-border">
+      <header className="sticky top-0 z-40 bg-background">
         <div className="flex items-center justify-between h-20 px-4 lg:px-8">
           {/* Left spacer - hidden on mobile */}
           <div className="hidden lg:block flex-1" />
@@ -118,7 +118,7 @@ const Header = () => {
               <input
                 type="text"
                 placeholder=""
-                className="w-32 bg-transparent border-b border-border focus:outline-none text-sm"
+                className="w-32 bg-transparent focus:outline-none text-sm"
               />
               <button className="hover:opacity-60 transition-opacity">
                 <Search className="w-5 h-5" />
@@ -195,7 +195,7 @@ const Header = () => {
 
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-border bg-background">
+          <div className="lg:hidden bg-background">
             <nav className="flex flex-col py-4">
               <Link 
                 to="/catalog" 
@@ -230,7 +230,7 @@ const Header = () => {
                 <input
                   type="text"
                   placeholder="Поиск..."
-                  className="flex-1 bg-transparent border-b border-border focus:outline-none text-sm py-2"
+                  className="flex-1 bg-transparent focus:outline-none text-sm py-2"
                 />
                 <Search className="w-5 h-5" />
               </div>

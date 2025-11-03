@@ -18,13 +18,13 @@ const Footer = () => {
   const contactAddress = getSetting('contact_address', '192522, Санкт-Петербург');
 
   return (
-    <footer className="border-t border-border bg-background">
+    <footer className="bg-background">
       <div className="max-w-7xl mx-auto px-16 py-16">
         <div className="grid grid-cols-4 gap-12">
           {/* Brand Section */}
           <div>
             <Link to="/" className="inline-block mb-6">
-              <div className="border border-foreground p-3 text-center w-20">
+              <div className="p-3 text-center w-20">
                 <div className="text-lg font-light tracking-[0.2em]">AN</div>
                 <div className="text-lg font-light tracking-[0.2em]">DO</div>
                 <div className="w-full h-[1px] bg-foreground my-1" />
@@ -41,7 +41,7 @@ const Footer = () => {
                   href={instagramUrl}
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-10 h-10 border border-border flex items-center justify-center hover:border-foreground transition-colors"
+                  className="w-10 h-10 flex items-center justify-center hover:opacity-60 transition-opacity"
                   aria-label="Instagram"
                 >
                   <Instagram className="w-4 h-4" />
@@ -52,7 +52,7 @@ const Footer = () => {
                   href={telegramUrl}
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-10 h-10 border border-border flex items-center justify-center hover:border-foreground transition-colors"
+                  className="w-10 h-10 flex items-center justify-center hover:opacity-60 transition-opacity"
                   aria-label="Telegram"
                 >
                   <Send className="w-4 h-4" />
@@ -63,7 +63,7 @@ const Footer = () => {
                   href={vkUrl}
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-10 h-10 border border-border flex items-center justify-center hover:border-foreground transition-colors"
+                  className="w-10 h-10 flex items-center justify-center hover:opacity-60 transition-opacity"
                   aria-label="VKontakte"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -142,7 +142,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom Section */}
-        <div className="mt-12 pt-8 border-t border-border flex justify-between items-center text-xs text-muted-foreground">
+        <div className="mt-12 pt-8 flex justify-between items-center text-xs text-muted-foreground">
           <div>
             <p className="mb-1">© 2025 ANDO JV. Все права защищены.</p>
             <p className="text-[10px]">Не является публичной офертой.</p>
