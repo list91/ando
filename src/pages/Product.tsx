@@ -61,7 +61,6 @@ const Product = () => {
       color: product.available_colors?.[selectedColor] || 'default',
       image: mainImages[0],
     });
-    toast.success("Товар добавлен в корзину");
   };
 
   // Swipe handling

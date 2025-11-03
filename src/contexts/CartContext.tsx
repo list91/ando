@@ -10,6 +10,14 @@ interface CartItem {
   quantity: number;
 }
 
+export interface AddedProduct {
+  name: string;
+  price: number;
+  size?: string;
+  color?: string;
+  image: string;
+}
+
 interface CartContextType {
   items: CartItem[];
   addToCart: (item: Omit<CartItem, "quantity">) => void;
@@ -18,12 +26,15 @@ interface CartContextType {
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
+  lastAddedProduct: AddedProduct | null;
+  clearLastAdded: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [lastAddedProduct, setLastAddedProduct] = useState<AddedProduct | null>(null);
 
   useEffect(() => {
     const handleClearCart = () => {
@@ -50,6 +61,19 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
       return [...currentItems, { ...item, quantity: 1 }];
     });
+
+    // Set last added product for modal
+    setLastAddedProduct({
+      name: item.name,
+      price: item.price,
+      size: item.size,
+      color: item.color,
+      image: item.image,
+    });
+  };
+
+  const clearLastAdded = () => {
+    setLastAddedProduct(null);
   };
 
   const removeFromCart = (id: string, size: string) => {
@@ -91,6 +115,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         clearCart,
         totalItems,
         totalPrice,
+        lastAddedProduct,
+        clearLastAdded,
       }}
     >
       {children}

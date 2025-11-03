@@ -3,10 +3,11 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { CartProvider } from "@/contexts/CartContext";
+import { CartProvider, useCart } from "@/contexts/CartContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { CookieBanner } from "@/components/CookieBanner";
+import { AddToCartModal } from "@/components/AddToCartModal";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useState } from "react";
 import Layout from "./components/Layout";
@@ -38,53 +39,62 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   const [selectedCategory, setSelectedCategory] = useState("Все товары");
   const [activeInfoSection, setActiveInfoSection] = useState("delivery");
+  const { lastAddedProduct, clearLastAdded } = useCart();
 
   return (
-    <Layout 
-      selectedCategory={selectedCategory}
-      onCategoryChange={setSelectedCategory}
-      activeInfoSection={activeInfoSection}
-      onInfoSectionChange={setActiveInfoSection}
-    >
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route 
-          path="/catalog" 
-          element={<Catalog selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />} 
-        />
-        <Route path="/product/:id" element={<Product />} />
-        <Route path="/lookbook" element={<Lookbook />} />
-        <Route path="/about" element={<About />} />
-        <Route 
-          path="/info" 
-          element={<Info activeSection={activeInfoSection} setActiveSection={setActiveInfoSection} />} 
-        />
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/favorites" element={<Favorites />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/order-success" element={<OrderSuccess />} />
-        
-        {/* Admin routes */}
-        <Route path="/admin" element={
-          <ProtectedRoute requiredRole="manager">
-            <AdminLayout />
-          </ProtectedRoute>
-        }>
-          <Route index element={<AdminDashboard />} />
-          <Route path="orders" element={<AdminOrders />} />
-          <Route path="products" element={<AdminProducts />} />
-          <Route path="categories" element={<AdminCategories />} />
-          <Route path="site-settings" element={<AdminSiteSettings />} />
-          <Route path="lookbook" element={<AdminLookbook />} />
-          <Route path="info-pages" element={<AdminInfoPages />} />
-          <Route path="hero-slides" element={<AdminHeroSlides />} />
-          <Route path="about-page" element={<AdminAboutPage />} />
-        </Route>
-        
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Layout>
+    <>
+      <Layout 
+        selectedCategory={selectedCategory}
+        onCategoryChange={setSelectedCategory}
+        activeInfoSection={activeInfoSection}
+        onInfoSectionChange={setActiveInfoSection}
+      >
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route 
+            path="/catalog" 
+            element={<Catalog selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />} 
+          />
+          <Route path="/product/:id" element={<Product />} />
+          <Route path="/lookbook" element={<Lookbook />} />
+          <Route path="/about" element={<About />} />
+          <Route 
+            path="/info" 
+            element={<Info activeSection={activeInfoSection} setActiveSection={setActiveInfoSection} />} 
+          />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-success" element={<OrderSuccess />} />
+          
+          {/* Admin routes */}
+          <Route path="/admin" element={
+            <ProtectedRoute requiredRole="manager">
+              <AdminLayout />
+            </ProtectedRoute>
+          }>
+            <Route index element={<AdminDashboard />} />
+            <Route path="orders" element={<AdminOrders />} />
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="categories" element={<AdminCategories />} />
+            <Route path="site-settings" element={<AdminSiteSettings />} />
+            <Route path="lookbook" element={<AdminLookbook />} />
+            <Route path="info-pages" element={<AdminInfoPages />} />
+            <Route path="hero-slides" element={<AdminHeroSlides />} />
+            <Route path="about-page" element={<AdminAboutPage />} />
+          </Route>
+          
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Layout>
+      
+      <AddToCartModal 
+        isOpen={!!lastAddedProduct}
+        onClose={clearLastAdded}
+        product={lastAddedProduct}
+      />
+    </>
   );
 };
 
