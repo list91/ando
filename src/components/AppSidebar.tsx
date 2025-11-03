@@ -43,7 +43,7 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
   const vkUrl = getSetting('social_vk', 'https://vk.com');
 
   return (
-    <aside className="w-64 border-r border-border bg-background flex-shrink-0 h-screen overflow-y-auto">
+    <aside className="w-64 border-r border-border bg-muted flex-shrink-0 h-screen overflow-y-auto">
       <div className="flex flex-col h-full py-8 px-6">
         <Link to="/" className="mb-12 flex justify-center">
           <div className="border border-foreground p-3 text-center w-20">
