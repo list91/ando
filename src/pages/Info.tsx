@@ -56,11 +56,11 @@ const Info = ({ activeSection }: InfoProps) => {
             </p>
             <p className="text-sm leading-relaxed">
               Для получения информации о партнерских условиях и оптовых закупках, пожалуйста, 
-              свяжитесь с нами по электронной почте: hello@jnby.com.ru
+              свяжитесь с нами по электронной почте: info@andojv.ru
             </p>
             <div className="pt-6 space-y-2">
-              <p className="text-sm">Email: hello@jnby.com.ru</p>
-              <p className="text-sm">Телефон: +7 (921) 909-39-67</p>
+              <p className="text-sm">Email: info@andojv.ru</p>
+              <p className="text-sm">Телефон: +7 (966) 753-31-48</p>
             </div>
           </div>
         )}
@@ -86,8 +86,8 @@ const Info = ({ activeSection }: InfoProps) => {
                 Срок доставки составляет от 7 дней. Стоимость 1500 рублей.
               </p>
               <div className="pt-6">
-                <p className="text-sm">+7 (921) 909-39-67</p>
-                <p className="text-sm">hello@jnby.com.ru</p>
+                <p className="text-sm">+7 (966) 753-31-48</p>
+                <p className="text-sm">info@andojv.ru</p>
               </div>
             </section>
 
@@ -114,8 +114,8 @@ const Info = ({ activeSection }: InfoProps) => {
               Мы принимаем возврат товаров надлежащего качества в течение 14 дней с момента получения заказа.
             </p>
             <p className="text-sm leading-relaxed">
-              Для оформления возврата необходимо связаться с нами по электронной почте hello@jnby.com.ru 
-              или по телефону +7 (921) 909-39-67.
+              Для оформления возврата необходимо связаться с нами по электронной почте info@andojv.ru 
+              или по телефону +7 (966) 753-31-48.
             </p>
             <div className="pt-4">
               <h3 className="text-lg mb-4 tracking-wide">Условия возврата:</h3>
@@ -175,7 +175,7 @@ const Info = ({ activeSection }: InfoProps) => {
             </div>
 
             <p className="text-sm leading-relaxed pt-4 text-muted-foreground">
-              Если у вас возникли вопросы по подбору размера, свяжитесь с нами: hello@jnby.com.ru
+              Если у вас возникли вопросы по подбору размера, свяжитесь с нами: info@andojv.ru
             </p>
           </div>
         )}
@@ -248,7 +248,7 @@ const Info = ({ activeSection }: InfoProps) => {
             </p>
             <p className="text-sm leading-relaxed pt-4">
               Подпишитесь на нашу рассылку, чтобы первыми узнавать о запуске программы лояльности: 
-              hello@jnby.com.ru
+              info@andojv.ru
             </p>
           </div>
         )}
@@ -260,8 +260,8 @@ const Info = ({ activeSection }: InfoProps) => {
               <div>
                 <h3 className="font-medium mb-3">Служба поддержки</h3>
                 <div className="space-y-2 text-muted-foreground">
-                  <p>Email: hello@jnby.com.ru</p>
-                  <p>Телефон: +7 (921) 909-39-67</p>
+                  <p>Email: info@andojv.ru</p>
+                  <p>Телефон: +7 (966) 753-31-48</p>
                   <p>Время работы: Пн-Пт с 10:00 до 19:00 (МСК)</p>
                 </div>
               </div>

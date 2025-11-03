@@ -13,8 +13,8 @@ const Footer = () => {
   const instagramUrl = getSetting('social_instagram', 'https://instagram.com');
   const telegramUrl = getSetting('social_telegram', 'https://t.me');
   const vkUrl = getSetting('social_vk', 'https://vk.com');
-  const contactEmail = getSetting('contact_email', 'hello@jnby.com.ru');
-  const contactPhone = getSetting('contact_phone', '+7 (921) 909-39-67');
+  const contactEmail = getSetting('contact_email', 'info@andojv.ru');
+  const contactPhone = getSetting('contact_phone', '+7 (966) 753-31-48');
   const contactAddress = getSetting('contact_address', '192522, Санкт-Петербург');
 
   return (
