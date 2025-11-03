@@ -45,7 +45,7 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
   return (
     <aside className="w-80 border-r border-border bg-muted flex-shrink-0 h-screen overflow-y-auto">
       <div className="flex flex-col h-full py-8 px-6">
-        <Link to="/" className="mb-4 flex justify-center">
+        <Link to="/" className="mb-4 flex justify-start">
           <img src={logoImage} alt="ANDO JV" className="w-full" />
         </Link>
 
@@ -65,7 +65,7 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
           )}
 
           {isCatalogRelated && (
-            <nav className="space-y-2 pl-16">
+            <nav className="space-y-2">
               <Link
                 to="/catalog"
                 onClick={() => onCategoryChange?.("Все товары")}
