@@ -1,5 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Search, ShoppingCart, Heart, User, LogOut, Menu as MenuIcon, ShieldCheck, Package } from "lucide-react";
+import logoImage from "@/assets/logo.png";
 import { useState, useEffect } from "react";
 import CartDrawer from "./CartDrawer";
 import { useCart } from "@/contexts/CartContext";
@@ -55,7 +56,12 @@ const Header = () => {
   return (
     <>
       <header className="sticky top-0 z-40 bg-background border-b border-border">
-        <div className="flex items-center justify-between h-20 px-4 lg:px-8">
+        <div className="flex items-center justify-between h-24 px-4 lg:px-8">
+          {/* Logo */}
+          <Link to="/" className="flex items-center">
+            <img src={logoImage} alt="ANDO JV" className="h-[83px]" />
+          </Link>
+          
           {/* Left spacer - hidden on mobile */}
           <div className="hidden lg:block flex-1" />
           
