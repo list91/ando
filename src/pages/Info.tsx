@@ -1,14 +1,23 @@
 import { useInfoPages } from "@/hooks/useInfoPages";
 import { Loader2 } from "lucide-react";
+import InfoSectionToggle from "@/components/InfoSectionToggle";
 
 interface InfoProps {
   activeSection: string;
   setActiveSection: (section: string) => void;
 }
 
-const Info = ({ activeSection }: InfoProps) => {
+const Info = ({ activeSection, setActiveSection }: InfoProps) => {
   const { data: pages, isLoading } = useInfoPages();
   const visiblePages = pages?.filter(p => p.is_visible);
+
+  const sections = [
+    { key: 'delivery', label: 'Доставка' },
+    { key: 'returns', label: 'Возврат' },
+    { key: 'size-guide', label: 'Размеры' },
+    { key: 'warranty', label: 'Гарантия' },
+    { key: 'contacts', label: 'Контакты' },
+  ];
 
   if (isLoading) {
     return (
@@ -22,6 +31,11 @@ const Info = ({ activeSection }: InfoProps) => {
   const activePage = visiblePages?.find(p => p.page_key === activeSection);
   return (
     <div className="flex-1 py-8 lg:py-20 px-4 lg:px-16 max-w-4xl min-h-full">
+      <InfoSectionToggle 
+        sections={sections}
+        activeSection={activeSection}
+        onSectionChange={setActiveSection}
+      />
       {activePage ? (
         <div className="space-y-8">
           <h2 className="text-2xl mb-6 tracking-[0.15em] uppercase">{activePage.title}</h2>

@@ -167,7 +167,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
             {/* Material Filter */}
             <Popover>
               <PopoverTrigger asChild>
-                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity">
+                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity min-h-[44px] px-3">
                   Материал {selectedMaterials.length > 0 && `(${selectedMaterials.length})`}
                   <ChevronDown className="w-4 h-4" />
                 </button>
@@ -203,7 +203,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
             {/* Color Filter */}
             <Popover>
               <PopoverTrigger asChild>
-                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity">
+                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity min-h-[44px] px-3">
                   Цвет {selectedColors.length > 0 && `(${selectedColors.length})`}
                   <ChevronDown className="w-4 h-4" />
                 </button>
@@ -243,7 +243,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
             {/* Size Filter */}
             <Popover>
               <PopoverTrigger asChild>
-                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity">
+                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity min-h-[44px] px-3">
                   Размер {selectedSizes.length > 0 && `(${selectedSizes.length})`}
                   <ChevronDown className="w-4 h-4" />
                 </button>
@@ -322,14 +322,14 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
           </div>
 
           {/* Sorting */}
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
             <span className="text-muted-foreground text-xs lg:text-sm">
               Найдено: {sortedProducts.length}
               {searchQuery && ` по запросу "${searchQuery}"`}
             </span>
             <Popover>
               <PopoverTrigger asChild>
-                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity text-xs lg:text-sm">
+                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity text-xs lg:text-sm min-h-[44px] px-3">
                   Сортировка
                   <ChevronDown className="w-4 h-4" />
                 </button>
@@ -381,14 +381,14 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
-              className="mt-4 text-sm underline hover:no-underline"
+              className="mt-4 text-sm underline hover:no-underline min-h-[44px]"
             >
               Сбросить все фильтры
             </button>
           )}
         </div>
       ) : (
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 p-4 lg:pl-8 lg:pr-8" aria-label="Список товаров">
+        <section className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 p-3 sm:p-4 lg:px-8 lg:py-6" aria-label="Список товаров">
           {sortedProducts.map((product) => {
             const images = product.product_images && product.product_images.length > 0
               ? product.product_images.map(img => img.image_url)

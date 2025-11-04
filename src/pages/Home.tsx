@@ -98,15 +98,14 @@ const Home = () => {
             aria-label={slide.title}
           >
             <div className="absolute inset-0 bg-black/20" />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-              <h1 
-                className="text-8xl mb-4 font-extralight tracking-[0.3em]"
-                style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}
-              >
-                {slide.title}
-              </h1>
+            <div className="relative h-full flex flex-col items-center justify-center text-white px-4 lg:px-8">
+              {slide.title && (
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light mb-3 sm:mb-4 lg:mb-6 tracking-[0.3em] uppercase text-center max-w-4xl">
+                  {slide.title}
+                </h1>
+              )}
               {slide.subtitle && (
-                <p className="text-sm tracking-[0.2em] max-w-md text-center opacity-80">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 sm:mb-12 lg:mb-16 tracking-[0.15em] text-center max-w-2xl">
                   {slide.subtitle}
                 </p>
               )}
@@ -115,29 +114,33 @@ const Home = () => {
         </section>
       ))}
 
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-2" role="navigation" aria-label="Слайды">
-        {activeSlides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentSlide(index)}
-            className={`w-2 h-2 rounded-full transition-all ${
-              index === currentSlide ? "bg-white w-8" : "bg-white/50"
-            }`}
-            aria-label={`Слайд ${index + 1}`}
-            aria-current={index === currentSlide ? 'true' : 'false'}
-          />
-        ))}
-      </div>
-
-      {/* Scroll down indicator */}
+      {/* Scroll Down Indicator */}
       <button
         onClick={navigateToCatalog}
-        className="absolute bottom-20 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 text-white animate-fade-in hover:opacity-70 transition-opacity"
-        aria-label="Перейти к каталогу"
+        className="absolute bottom-8 sm:bottom-12 left-1/2 -translate-x-1/2 text-white animate-bounce hover:opacity-60 transition-opacity min-w-[44px] min-h-[44px] flex items-center justify-center"
+        aria-label="Прокрутить вниз"
       >
-        <span className="text-xs tracking-widest uppercase">Листайте вниз</span>
-        <ChevronDown className="w-6 h-6 animate-bounce" aria-hidden="true" />
+        <ChevronDown className="w-6 h-6 sm:w-8 sm:h-8" />
       </button>
+
+      {/* Slide Indicators */}
+      {activeSlides.length > 1 && (
+        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex gap-2" role="navigation" aria-label="Индикаторы слайдов">
+          {activeSlides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`w-2 h-2 rounded-full transition-all min-w-[32px] min-h-[32px] flex items-center justify-center ${
+                index === currentSlide ? "bg-white" : "bg-white/50"
+              }`}
+              aria-label={`Слайд ${index + 1}`}
+              aria-current={index === currentSlide}
+            >
+              <span className="sr-only">Слайд {index + 1}</span>
+            </button>
+          ))}
+        </div>
+      )}
     </main>
   );
 };

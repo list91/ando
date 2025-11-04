@@ -43,7 +43,7 @@ const Header = () => {
     navigate('/');
   };
   return <>
-      <header className="sticky top-0 z-40 bg-background border-b border-border">
+      <header className="sticky top-0 z-50 bg-background border-b border-border">
         <div className="h-40 px-4 lg:px-8">
           <div className="hidden lg:grid lg:grid-cols-[auto_1fr_auto] items-center h-full gap-12">
             {/* Desktop Navigation - left */}
@@ -72,9 +72,9 @@ const Header = () => {
             {/* Right Icons */}
             <div className="flex items-center gap-6 justify-end">
             {/* Cart */}
-            <button onClick={() => setIsCartOpen(true)} className="hover:opacity-60 transition-opacity relative" aria-label="Корзина">
+            <button onClick={() => setIsCartOpen(true)} className="hover:opacity-60 transition-opacity relative min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Корзина">
               <ShoppingCart className="w-5 h-5" />
-              {totalItems > 0 && <span className="absolute -top-2 -right-2 bg-foreground text-background text-xs w-5 h-5 rounded-full flex items-center justify-center">
+              {totalItems > 0 && <span className="absolute -top-1 -right-1 bg-foreground text-background text-xs w-5 h-5 rounded-full flex items-center justify-center">
                   {totalItems}
                 </span>}
             </button>
@@ -87,7 +87,7 @@ const Header = () => {
             {/* User Menu */}
             {user ? <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="hover:opacity-60 transition-opacity">
+                  <Button variant="ghost" size="icon" className="hover:opacity-60 transition-opacity min-w-[44px] min-h-[44px]">
                     <User className="w-5 h-5" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -114,7 +114,7 @@ const Header = () => {
                     Выйти
                   </DropdownMenuItem>
                 </DropdownMenuContent>
-              </DropdownMenu> : <Button variant="ghost" size="icon" onClick={() => navigate('/auth')} className="hover:opacity-60 transition-opacity">
+              </DropdownMenu> : <Button variant="ghost" size="icon" onClick={() => navigate('/auth')} className="hover:opacity-60 transition-opacity min-w-[44px] min-h-[44px]">
                 <User className="w-5 h-5" />
               </Button>}
             </div>
@@ -123,34 +123,34 @@ const Header = () => {
           {/* Mobile Layout */}
           <div className="lg:hidden flex items-center justify-between h-full">
             {/* Mobile Menu Button */}
-            <button className="hover:opacity-60 transition-opacity" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            <button className="hover:opacity-60 transition-opacity min-w-[44px] min-h-[44px] flex items-center justify-center" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Меню">
               <MenuIcon className="w-5 h-5" />
             </button>
 
             {/* Mobile Right Icons */}
             <div className="flex items-center gap-3">
               {/* Search Icon */}
-              <button onClick={() => navigate('/catalog')} className="hover:opacity-60 transition-opacity" aria-label="Поиск">
+              <button onClick={() => navigate('/catalog')} className="hover:opacity-60 transition-opacity min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Поиск">
                 <Search className="w-5 h-5" />
               </button>
 
               {/* Cart */}
-              <button onClick={() => setIsCartOpen(true)} className="hover:opacity-60 transition-opacity relative" aria-label="Корзина">
+              <button onClick={() => setIsCartOpen(true)} className="hover:opacity-60 transition-opacity relative min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Корзина">
                 <ShoppingCart className="w-5 h-5" />
-                {totalItems > 0 && <span className="absolute -top-2 -right-2 bg-foreground text-background text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                {totalItems > 0 && <span className="absolute -top-1 -right-1 bg-foreground text-background text-xs w-5 h-5 rounded-full flex items-center justify-center">
                     {totalItems}
                   </span>}
               </button>
 
               {/* Favorites - hidden on small mobile */}
-              <Link to="/favorites" className="hidden sm:block hover:opacity-60 transition-opacity">
+              <Link to="/favorites" className="hidden sm:flex hover:opacity-60 transition-opacity min-w-[44px] min-h-[44px] items-center justify-center" aria-label="Избранное">
                 <Heart className="w-5 h-5" />
               </Link>
               
               {/* User Menu */}
               {user ? <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="hover:opacity-60 transition-opacity">
+                    <Button variant="ghost" size="icon" className="hover:opacity-60 transition-opacity min-w-[44px] min-h-[44px]">
                       <User className="w-5 h-5" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -177,7 +177,7 @@ const Header = () => {
                       Выйти
                     </DropdownMenuItem>
                   </DropdownMenuContent>
-                </DropdownMenu> : <Button variant="ghost" size="icon" onClick={() => navigate('/auth')} className="hover:opacity-60 transition-opacity">
+                </DropdownMenu> : <Button variant="ghost" size="icon" onClick={() => navigate('/auth')} className="hover:opacity-60 transition-opacity min-w-[44px] min-h-[44px]">
                   <User className="w-5 h-5" />
                 </Button>}
             </div>
