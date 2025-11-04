@@ -1,7 +1,6 @@
-import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ShoppingCart, Heart, User, LogOut, Menu as MenuIcon, ShieldCheck, Package, Search } from "lucide-react";
 import { useState, useEffect } from "react";
-import ProductSearch from "./ProductSearch";
 import CartDrawer from "./CartDrawer";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,24 +19,7 @@ const Header = () => {
   } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [isAdmin, setIsAdmin] = useState(false);
-
-  // Handle search update - ONLY writes to URL
-  const handleSearchUpdate = (query: string) => {
-    const params = new URLSearchParams(searchParams);
-    if (query.trim()) {
-      params.set('search', query.trim());
-    } else {
-      params.delete('search');
-    }
-    
-    if (location.pathname !== '/catalog') {
-      navigate(`/catalog?${params.toString()}`);
-    } else {
-      setSearchParams(params, { replace: true });
-    }
-  };
   useEffect(() => {
     const checkAdminRole = async () => {
       if (!user) {
@@ -79,15 +61,8 @@ const Header = () => {
               </Link>
             </nav>
 
-            {/* Search Bar - center */}
-            <div className="flex items-center justify-center px-8">
-              <div className="w-full max-w-[280px]">
-                <ProductSearch 
-                  onSearch={handleSearchUpdate}
-                  initialValue={searchParams.get("search") || ""}
-                />
-              </div>
-            </div>
+            {/* Spacer */}
+            <div></div>
 
             {/* Right Icons */}
             <div className="flex items-center gap-6 justify-end">
