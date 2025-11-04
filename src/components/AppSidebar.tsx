@@ -43,9 +43,9 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
   const vkUrl = getSetting('social_vk', 'https://vk.com');
 
   return (
-    <aside className="w-[307px] border-r border-border bg-muted flex-shrink-0 h-screen overflow-y-auto">
-      <div className="flex flex-col items-center justify-center h-screen py-10">
-        {isHomePage && (
+    <aside className="w-[307px] border-r border-border bg-muted flex-shrink-0 flex flex-col min-h-screen overflow-y-auto">
+      {isHomePage && (
+        <div className="flex items-center justify-center flex-1">
           <p 
             className="text-xs tracking-[0.3em] uppercase"
             style={{ 
@@ -55,71 +55,71 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
           >
             Feel the moment
           </p>
-        )}
+        </div>
+      )}
 
-        {isCatalogRelated && (
-          <>
-            <Link to="/" className="block mb-8">
-              <img src={logoImage} alt="ANDO JV" className="block w-28 h-auto" />
-            </Link>
-            <nav className="w-28 text-left">
-              <ul className="list-none m-0 p-0 space-y-3">
-                <li>
+      {isCatalogRelated && (
+        <div className="grid grid-rows-[auto_auto] content-start justify-items-center gap-y-7 pt-12 pb-8">
+          <Link to="/" className="block">
+            <img src={logoImage} alt="ANDO JV" className="block w-36 h-auto" />
+          </Link>
+          <nav className="w-36 text-left justify-self-start">
+            <ul className="list-none m-0 p-0">
+              <li className="mb-3 leading-normal">
+                <Link
+                  to="/catalog"
+                  onClick={() => onCategoryChange?.("Все товары")}
+                  className={`block text-sm tracking-wide hover:opacity-60 transition-opacity ${
+                    selectedCategory === "Все товары" ? "underline" : ""
+                  }`}
+                >
+                  Все товары
+                </Link>
+              </li>
+              {!isLoading && categories?.map((category) => (
+                <li key={category.id} className="mb-3 leading-normal">
                   <Link
                     to="/catalog"
-                    onClick={() => onCategoryChange?.("Все товары")}
+                    onClick={() => onCategoryChange?.(category.name)}
                     className={`block text-sm tracking-wide hover:opacity-60 transition-opacity ${
-                      selectedCategory === "Все товары" ? "underline" : ""
+                      category.name === selectedCategory ? "underline" : ""
                     }`}
                   >
-                    Все товары
+                    {category.name}
                   </Link>
                 </li>
-                {!isLoading && categories?.map((category) => (
-                  <li key={category.id}>
-                    <Link
-                      to="/catalog"
-                      onClick={() => onCategoryChange?.(category.name)}
-                      className={`block text-sm tracking-wide hover:opacity-60 transition-opacity ${
-                        category.name === selectedCategory ? "underline" : ""
-                      }`}
-                    >
-                      {category.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          </>
-        )}
+              ))}
+            </ul>
+          </nav>
+        </div>
+      )}
 
-        {isInfoPage && (
-          <>
-            <Link to="/" className="block mb-8">
-              <img src={logoImage} alt="ANDO JV" className="block w-28 h-auto" />
-            </Link>
-            <nav className="w-28 text-left">
-              <ul className="list-none m-0 p-0 space-y-3">
-                {infoMenuItems.map((item) => (
-                  <li key={item.id}>
-                    <Link
-                      to="/info"
-                      onClick={() => onInfoSectionChange?.(item.id)}
-                      className={`block text-sm tracking-wide hover:opacity-60 transition-opacity ${
-                        activeInfoSection === item.id ? "underline" : ""
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          </>
-        )}
-      </div>
+      {isInfoPage && (
+        <div className="grid grid-rows-[auto_auto] content-start justify-items-center gap-y-7 pt-12 pb-8">
+          <Link to="/" className="block">
+            <img src={logoImage} alt="ANDO JV" className="block w-36 h-auto" />
+          </Link>
+          <nav className="w-36 text-left justify-self-start">
+            <ul className="list-none m-0 p-0">
+              {infoMenuItems.map((item) => (
+                <li key={item.id} className="mb-3 leading-normal">
+                  <Link
+                    to="/info"
+                    onClick={() => onInfoSectionChange?.(item.id)}
+                    className={`block text-sm tracking-wide hover:opacity-60 transition-opacity ${
+                      activeInfoSection === item.id ? "underline" : ""
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      )}
 
-      <div className="absolute bottom-8 left-0 right-0 text-[8px] text-center leading-relaxed text-muted-foreground px-6">
+      <div className="mt-auto text-[8px] text-center leading-relaxed text-muted-foreground px-6 pb-8">
         © 2025 ANDO JV. Все права<br />
         защищены. Не является публичной<br />
         офертой.
