@@ -98,7 +98,7 @@ export function AppSidebar({
         </div>
 
 
-        <div className="text-[32px] text-center leading-relaxed text-muted-foreground mt-auto pb-4">
+        <div className="text-[64px] text-center leading-relaxed text-muted-foreground mt-auto pb-4">
           © 2025 ANDO JV. Все права<br />
           защищены. Не является публичной<br />
           офертой.
