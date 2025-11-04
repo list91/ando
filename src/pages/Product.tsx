@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { Heart, ChevronLeft, ChevronRight } from "lucide-react";
+import { Heart, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useProduct } from "@/hooks/useProducts";
 import { toast } from "sonner";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const Product = () => {
   const { id } = useParams();
@@ -18,6 +19,8 @@ const Product = () => {
   const [currentImage, setCurrentImage] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -214,16 +217,17 @@ const Product = () => {
         {product.available_sizes && product.available_sizes.length > 0 && (
           <div className="mb-4">
             <div className="text-sm mb-3">Размер:</div>
-            <div className="flex gap-2 mb-3">
+            <div className="flex gap-2 mb-3 flex-wrap">
               {product.available_sizes.map((size) => (
                 <button
                   key={size}
                   onClick={() => setSelectedSize(size)}
-                  className={`px-4 py-2 border text-sm transition-colors ${
+                  className={`w-12 h-12 rounded-full border text-sm transition-all ${
                     selectedSize === size 
-                      ? "border-foreground bg-foreground text-background" 
-                      : "border-border hover:border-foreground"
+                      ? "border-foreground bg-foreground text-background scale-110" 
+                      : "border-border hover:border-foreground hover:scale-105"
                   }`}
+                  aria-label={`Выбрать размер ${size}`}
                 >
                   {size}
                 </button>
@@ -248,11 +252,11 @@ const Product = () => {
           </button>
           <button 
             onClick={() => toggleFavorite(product.id)}
-            className="w-12 h-12 border border-border hover:border-foreground transition-colors flex items-center justify-center flex-shrink-0"
+            className="w-12 h-12 flex items-center justify-center flex-shrink-0 hover:opacity-60 transition-opacity"
             aria-label={isFavorite(product.id) ? "Удалить из избранного" : "Добавить в избранное"}
           >
-            <Heart className={`w-5 h-5 transition-colors ${
-              isFavorite(product.id) ? 'fill-red-500 text-red-500' : ''
+            <Heart className={`w-6 h-6 transition-all ${
+              isFavorite(product.id) ? 'fill-red-500 text-red-500' : 'stroke-2'
             }`} />
           </button>
         </div>
@@ -268,39 +272,49 @@ const Product = () => {
         )}
 
         {/* Delivery section */}
-        <div className="pt-6 border-t border-border">
-          <h3 className="text-sm font-medium mb-2 tracking-wide">ДОСТАВКА</h3>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-1">
-            Доставка по России за 1-7 дней, бесплатно
-          </p>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-1">
-            По Санкт-Петербургу и Москве доставка заказа возможна доставка на следующий день. 
-            Стоимость доставки от 1500 руб.
-          </p>
-          <Link 
-            to="/info?section=delivery" 
-            className="text-sm underline hover:no-underline inline-block"
-          >
-            Подробнее на странице Доставка
-          </Link>
-        </div>
+        <Collapsible open={isDeliveryOpen} onOpenChange={setIsDeliveryOpen} className="pt-6 border-t border-border">
+          <CollapsibleTrigger className="flex items-center justify-between w-full text-left group">
+            <h3 className="text-sm font-medium tracking-wide">ДОСТАВКА</h3>
+            <ChevronDown className={`w-4 h-4 transition-transform ${isDeliveryOpen ? 'rotate-180' : ''}`} />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-3">
+            <p className="text-sm text-muted-foreground leading-relaxed mb-1">
+              Доставка по России за 1-7 дней, бесплатно
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-1">
+              По Санкт-Петербургу и Москве доставка заказа возможна на следующий день. 
+              Стоимость доставки от 1500 руб.
+            </p>
+            <Link 
+              to="/info?section=delivery" 
+              className="text-sm underline hover:no-underline inline-block mt-2"
+            >
+              Подробнее на странице Доставка
+            </Link>
+          </CollapsibleContent>
+        </Collapsible>
 
         {/* Payment section */}
-        <div className="pt-6">
-          <h3 className="text-sm font-medium mb-2 tracking-wide">ОПЛАТА</h3>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-1">
-            Онлайн оплата через платежную систему CloudPayments
-          </p>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-1">
-            Принимаются карты VISA, MasterCard, платежная система «Мир»
-          </p>
-          <Link 
-            to="/info?section=delivery" 
-            className="text-sm underline hover:no-underline inline-block"
-          >
-            Подробнее на странице Оплата
-          </Link>
-        </div>
+        <Collapsible open={isPaymentOpen} onOpenChange={setIsPaymentOpen} className="pt-6">
+          <CollapsibleTrigger className="flex items-center justify-between w-full text-left group">
+            <h3 className="text-sm font-medium tracking-wide">ОПЛАТА</h3>
+            <ChevronDown className={`w-4 h-4 transition-transform ${isPaymentOpen ? 'rotate-180' : ''}`} />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-3">
+            <p className="text-sm text-muted-foreground leading-relaxed mb-1">
+              Онлайн оплата через платежную систему CloudPayments
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-1">
+              Принимаются карты VISA, MasterCard, платежная система «Мир»
+            </p>
+            <Link 
+              to="/info?section=delivery" 
+              className="text-sm underline hover:no-underline inline-block mt-2"
+            >
+              Подробнее на странице Оплата
+            </Link>
+          </CollapsibleContent>
+        </Collapsible>
       </div>
     </div>
   );

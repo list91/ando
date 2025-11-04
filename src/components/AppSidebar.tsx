@@ -67,7 +67,11 @@ export function AppSidebar({
   const vkUrl = getSetting('social_vk', 'https://vk.com');
   return <aside className="w-[307px] border-r border-border bg-muted flex-shrink-0 h-screen overflow-y-auto relative">
       <div className="flex flex-col min-h-full pt-0 pb-[200px] px-6">
-        <Link to="/" className="mb-8 flex justify-center -mt-2">
+        <Link 
+          to="/" 
+          className="mb-8 flex justify-center -mt-2"
+          aria-label="На главную страницу"
+        >
           <img src={logoImage} alt="ANDO JV" className="w-[432px]" />
         </Link>
 

@@ -120,9 +120,9 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   }
 
   return (
-    <div className="min-h-full">
+    <main className="min-h-full" role="main">
       {/* Filters */}
-      <div className="border-b border-border py-4 px-4 lg:pl-8">
+      <section className="border-b border-border py-4 px-4 lg:pl-8" aria-label="Фильтры товаров">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 text-sm">
           <div className="flex flex-wrap gap-4 lg:gap-8 items-center">
             {/* Material Filter */}
@@ -322,7 +322,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
             </Popover>
           </div>
         </div>
-      </div>
+      </section>
 
       {sortedProducts.length === 0 ? (
         <div className="p-8 lg:p-16 text-center">
@@ -337,7 +337,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 p-4 lg:pl-8 lg:pr-8">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8 p-4 lg:pl-8 lg:pr-8" aria-label="Список товаров">
           {sortedProducts.map((product) => {
             const images = product.product_images && product.product_images.length > 0
               ? product.product_images.map(img => img.image_url)
@@ -425,26 +425,6 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
               setTouchProductId(null);
             };
 
-            const handleFavoriteClick = async (e: React.MouseEvent) => {
-              e.preventDefault();
-              e.stopPropagation();
-              
-              if (!user) {
-                toast({
-                  title: "Требуется авторизация",
-                  description: "Войдите в аккаунт, чтобы добавить товар в избранное",
-                });
-                navigate('/auth', { state: { from: '/catalog' } });
-                return;
-              }
-              
-              await toggleFavorite(product.id);
-              toast({
-                title: isFavorite(product.id) ? "Удалено из избранного" : "Добавлено в избранное",
-                description: product.name,
-              });
-            };
-
             return (
               <div key={product.id} className="group relative">
                 <Link to={`/product/${product.slug}`}>
@@ -474,6 +454,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                       src={currentImage}
                       alt={product.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
                     />
                     
                     {/* Image indicators - show on hover or touch */}
@@ -493,25 +474,6 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                     )}
                   </div>
                 </Link>
-
-                {/* Favorite button */}
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleFavoriteClick(e);
-                  }}
-                  className="absolute top-3 right-3 z-20 hover:scale-110 transition-transform"
-                  aria-label={isFavorite(product.id) ? "Удалить из избранного" : "Добавить в избранное"}
-                >
-                  <Heart 
-                    className={`h-6 w-6 transition-all ${
-                      isFavorite(product.id) 
-                        ? 'fill-red-500 text-red-500' 
-                        : 'text-white stroke-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]'
-                    }`}
-                  />
-                </button>
 
                 <Link to={`/product/${product.slug}`}>
                   <h3 className="text-sm mb-2 tracking-wide text-foreground">{product.name}</h3>
@@ -558,9 +520,9 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
               </div>
             );
           })}
-        </div>
+        </section>
       )}
-    </div>
+    </main>
   );
 };
 

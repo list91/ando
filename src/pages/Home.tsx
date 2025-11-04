@@ -80,19 +80,22 @@ const Home = () => {
   }
 
   return (
-    <div className={`relative h-[calc(100vh-4rem)] overflow-hidden transition-opacity duration-500 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
+    <main className={`relative h-[calc(100vh-4rem)] overflow-hidden transition-opacity duration-500 ${isFading ? 'opacity-0' : 'opacity-100'}`} role="main">
       {activeSlides.map((slide, index) => (
-        <div
+        <section
           key={slide.id}
           className={`absolute inset-0 transition-opacity duration-1000 ${
             index === currentSlide ? "opacity-100" : "opacity-0"
           }`}
+          aria-hidden={index !== currentSlide}
         >
           <div 
             className="w-full h-full bg-cover bg-center"
             style={{
               backgroundImage: `url('${slide.image_url}')`
             }}
+            role="img"
+            aria-label={slide.title}
           >
             <div className="absolute inset-0 bg-black/20" />
             <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
@@ -109,10 +112,10 @@ const Home = () => {
               )}
             </div>
           </div>
-        </div>
+        </section>
       ))}
 
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-2">
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-2" role="navigation" aria-label="Слайды">
         {activeSlides.map((_, index) => (
           <button
             key={index}
@@ -120,6 +123,8 @@ const Home = () => {
             className={`w-2 h-2 rounded-full transition-all ${
               index === currentSlide ? "bg-white w-8" : "bg-white/50"
             }`}
+            aria-label={`Слайд ${index + 1}`}
+            aria-current={index === currentSlide ? 'true' : 'false'}
           />
         ))}
       </div>
@@ -128,11 +133,12 @@ const Home = () => {
       <button
         onClick={navigateToCatalog}
         className="absolute bottom-20 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 text-white animate-fade-in hover:opacity-70 transition-opacity"
+        aria-label="Перейти к каталогу"
       >
         <span className="text-xs tracking-widest uppercase">Листайте вниз</span>
-        <ChevronDown className="w-6 h-6 animate-bounce" />
+        <ChevronDown className="w-6 h-6 animate-bounce" aria-hidden="true" />
       </button>
-    </div>
+    </main>
   );
 };
 

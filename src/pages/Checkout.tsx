@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -38,6 +39,9 @@ const Checkout = () => {
     paymentMethod: 'card',
     notes: '',
   });
+
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [agreedToNewsletter, setAgreedToNewsletter] = useState(false);
 
   useEffect(() => {
     if (items.length === 0) {
@@ -86,6 +90,15 @@ const Checkout = () => {
         variant: 'destructive',
       });
       navigate('/auth');
+      return;
+    }
+
+    if (!agreedToTerms) {
+      toast({
+        title: 'Требуется согласие',
+        description: 'Необходимо согласиться на обработку персональных данных',
+        variant: 'destructive',
+      });
       return;
     }
 
@@ -302,7 +315,56 @@ const Checkout = () => {
                 </CardContent>
               </Card>
 
-              <Button type="submit" className="w-full" size="lg" disabled={loading}>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Согласия</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-start space-x-2">
+                    <Checkbox 
+                      id="terms" 
+                      checked={agreedToTerms}
+                      onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
+                      required
+                      aria-required="true"
+                    />
+                    <div className="grid gap-1.5 leading-none">
+                      <label
+                        htmlFor="terms"
+                        className="text-sm font-medium leading-relaxed cursor-pointer"
+                      >
+                        Я согласен(на) на обработку персональных данных *
+                      </label>
+                      <p className="text-xs text-muted-foreground">
+                        Ознакомьтесь с{' '}
+                        <Link to="/info?section=agreement" className="underline hover:no-underline">
+                          пользовательским соглашением
+                        </Link>{' '}
+                        и{' '}
+                        <Link to="/info?section=agreement" className="underline hover:no-underline">
+                          политикой конфиденциальности
+                        </Link>
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start space-x-2">
+                    <Checkbox 
+                      id="newsletter" 
+                      checked={agreedToNewsletter}
+                      onCheckedChange={(checked) => setAgreedToNewsletter(checked as boolean)}
+                    />
+                    <label
+                      htmlFor="newsletter"
+                      className="text-sm font-medium leading-relaxed cursor-pointer"
+                    >
+                      Подписаться на новости и специальные предложения
+                    </label>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Button type="submit" className="w-full" size="lg" disabled={loading || !agreedToTerms}>
                 {loading ? 'Оформление...' : `Оформить заказ на ${totalPrice} ₽`}
               </Button>
             </form>

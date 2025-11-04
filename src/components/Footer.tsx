@@ -18,7 +18,7 @@ const Footer = () => {
   const contactAddress = getSetting('contact_address', '192522, Санкт-Петербург');
 
   return (
-    <footer className="border-t border-border bg-background">
+    <footer className="border-t border-border bg-background" role="contentinfo">
       <div className="max-w-7xl mx-auto px-16 py-16">
         <div className="grid grid-cols-4 gap-12">
           {/* Brand Section */}

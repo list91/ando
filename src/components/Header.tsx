@@ -58,17 +58,7 @@ const Header = () => {
         <div className="flex items-center justify-center h-40 px-4 lg:px-8 relative">
           
           {/* Desktop Navigation - centered */}
-          <nav className="hidden lg:flex items-center gap-16 absolute left-1/2 transform -translate-x-1/2">
-            <Link 
-              to="/catalog" 
-              className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-all px-6 py-6 whitespace-nowrap ${
-                location.pathname === '/catalog' || location.pathname.startsWith('/product/') 
-                  ? 'bg-secondary' 
-                  : ''
-              }`}
-            >
-              КАТАЛОГ
-            </Link>
+          <nav className="hidden lg:flex items-center gap-16 absolute left-1/2 transform -translate-x-1/2" role="navigation" aria-label="Основная навигация">
             <Link 
               to="/about" 
               className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-all px-6 py-6 whitespace-nowrap ${
@@ -78,6 +68,16 @@ const Header = () => {
               }`}
             >
               О БРЕНДЕ
+            </Link>
+            <Link 
+              to="/catalog" 
+              className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-all px-6 py-6 whitespace-nowrap ${
+                location.pathname === '/catalog' || location.pathname.startsWith('/product/') 
+                  ? 'bg-secondary' 
+                  : ''
+              }`}
+            >
+              КАТАЛОГ
             </Link>
             <Link 
               to="/lookbook" 
@@ -182,20 +182,20 @@ const Header = () => {
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
           <div className="lg:hidden border-t border-border bg-background">
-            <nav className="flex flex-col py-4">
-              <Link 
-                to="/catalog" 
-                className="px-6 py-3 text-sm uppercase tracking-[0.2em] hover:bg-muted transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                КАТАЛОГ
-              </Link>
+            <nav className="flex flex-col py-4" role="navigation" aria-label="Мобильная навигация">
               <Link 
                 to="/about" 
                 className="px-6 py-3 text-sm uppercase tracking-[0.2em] hover:bg-muted transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 О БРЕНДЕ
+              </Link>
+              <Link 
+                to="/catalog" 
+                className="px-6 py-3 text-sm uppercase tracking-[0.2em] hover:bg-muted transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                КАТАЛОГ
               </Link>
               <Link 
                 to="/lookbook" 
