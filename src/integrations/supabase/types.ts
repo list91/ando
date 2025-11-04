@@ -393,6 +393,8 @@ export type Database = {
           old_price: number | null
           payment_info: string | null
           price: number
+          sale_end_date: string | null
+          sale_start_date: string | null
           slug: string
           stock_quantity: number | null
           updated_at: string
@@ -415,6 +417,8 @@ export type Database = {
           old_price?: number | null
           payment_info?: string | null
           price: number
+          sale_end_date?: string | null
+          sale_start_date?: string | null
           slug: string
           stock_quantity?: number | null
           updated_at?: string
@@ -437,6 +441,8 @@ export type Database = {
           old_price?: number | null
           payment_info?: string | null
           price?: number
+          sale_end_date?: string | null
+          sale_start_date?: string | null
           slug?: string
           stock_quantity?: number | null
           updated_at?: string
@@ -544,6 +550,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      update_sale_status: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "manager" | "user"
