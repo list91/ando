@@ -1,4 +1,4 @@
-import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ShoppingCart, Heart, User, LogOut, Menu as MenuIcon, ShieldCheck, Package, Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import CartDrawer from "./CartDrawer";
@@ -10,7 +10,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const {
     totalItems
   } = useCart();
@@ -20,14 +19,7 @@ const Header = () => {
   } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [searchParams] = useSearchParams();
   const [isAdmin, setIsAdmin] = useState(false);
-
-  // Sync search query with URL params
-  useEffect(() => {
-    const urlSearch = searchParams.get("search") || "";
-    setSearchQuery(urlSearch);
-  }, [searchParams]);
   useEffect(() => {
     const checkAdminRole = async () => {
       if (!user) {
@@ -49,19 +41,6 @@ const Header = () => {
     await signOut();
     navigate('/');
   };
-  const handleSearch = (query: string) => {
-    if (location.pathname !== '/catalog') {
-      navigate(`/catalog${query ? `?search=${encodeURIComponent(query)}` : ''}`);
-    } else {
-      const params = new URLSearchParams(searchParams);
-      if (query) {
-        params.set('search', query);
-      } else {
-        params.delete('search');
-      }
-      navigate(`/catalog?${params.toString()}`, { replace: true });
-    }
-  };
   return <>
       <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="h-40 px-4 lg:px-8">
@@ -82,23 +61,8 @@ const Header = () => {
               </Link>
             </nav>
 
-            {/* Search Bar - center */}
-            <div className="flex items-center justify-center px-8">
-              <div className="relative w-full max-w-[280px]">
-                <input 
-                  type="search" 
-                  placeholder="" 
-                  value={searchQuery} 
-                  onChange={e => {
-                    setSearchQuery(e.target.value);
-                    handleSearch(e.target.value);
-                  }} 
-                  aria-label="Поиск товаров" 
-                  className="w-full bg-transparent border-0 border-b border-border px-2 py-2 text-sm focus:outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground text-center" 
-                />
-                <Search className="w-4 h-4 absolute right-0 top-1/2 -translate-y-1/2 opacity-60 pointer-events-none" />
-              </div>
-            </div>
+            {/* Spacer */}
+            <div></div>
 
             {/* Right Icons */}
             <div className="flex items-center gap-6 justify-end">
