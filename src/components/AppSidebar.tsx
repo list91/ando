@@ -68,7 +68,7 @@ export function AppSidebar({
   return <aside className="w-[307px] border-r border-border bg-muted flex-shrink-0 h-screen overflow-y-auto">
       <div className="flex flex-col h-full py-8 px-6">
         <Link to="/" className="mb-8 flex justify-center">
-          <img src={logoImage} alt="ANDO JV" className="w-96" />
+          <img src={logoImage} alt="ANDO JV" className="w-36" />
         </Link>
 
         <div className="flex-1">
