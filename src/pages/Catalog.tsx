@@ -515,9 +515,9 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                       </div>
                     )}
                     
-                    {/* Sale badge - top right */}
+                    {/* Sale badge - bottom left */}
                     {product.is_sale && discount > 0 && (
-                      <div className="absolute top-2 right-2 z-10 bg-primary/95 backdrop-blur-sm text-primary-foreground px-2 py-0.5 text-[11px] font-medium tabular-nums">
+                      <div className="absolute bottom-2 left-2 z-10 bg-primary/95 backdrop-blur-sm text-primary-foreground px-2 py-0.5 text-[11px] font-medium tabular-nums">
                         −{discount}%
                       </div>
                     )}
