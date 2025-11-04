@@ -122,7 +122,7 @@ const Product = () => {
         >
           {/* NEW badge - top left */}
           {product.is_new && (
-            <div className="absolute top-4 left-4 z-10 bg-background text-foreground px-3 py-1 text-xs font-normal uppercase tracking-wider">
+            <div className="absolute top-4 left-4 z-10 bg-foreground text-background px-3 py-1 text-xs font-normal uppercase tracking-wider border border-foreground">
               NEW
             </div>
           )}
