@@ -45,27 +45,25 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
   return (
     <aside className="w-[307px] border-r border-border bg-muted flex-shrink-0 h-screen overflow-y-auto">
       <div className="flex flex-col h-full py-8 px-6">
-        <div className="flex-1 flex flex-col items-start justify-center">
+        <div className="flex-1 flex items-center justify-center">
           {isHomePage && (
-            <div className="flex items-center justify-center h-full w-full">
-              <p 
-                className="text-xs tracking-[0.3em] uppercase"
-                style={{ 
-                  writingMode: 'vertical-rl',
-                  textOrientation: 'mixed'
-                }}
-              >
-                Feel the moment
-              </p>
-            </div>
+            <p 
+              className="text-xs tracking-[0.3em] uppercase"
+              style={{ 
+                writingMode: 'vertical-rl',
+                textOrientation: 'mixed'
+              }}
+            >
+              Feel the moment
+            </p>
           )}
 
           {isCatalogRelated && (
-            <div className="w-full space-y-8">
-              <Link to="/" className="block">
-                <img src={logoImage} alt="ANDO JV" className="w-32" />
+            <div className="mx-auto" style={{ inlineSize: 'fit-content' }}>
+              <Link to="/" className="block mb-8 mx-auto" style={{ inlineSize: 'fit-content' }}>
+                <img src={logoImage} alt="ANDO JV" className="block" style={{ inlineSize: '128px' }} />
               </Link>
-              <nav className="space-y-2">
+              <nav className="space-y-2 text-left" style={{ inlineSize: '128px' }}>
                 <Link
                   to="/catalog"
                   onClick={() => onCategoryChange?.("Все товары")}
@@ -92,11 +90,11 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
           )}
 
           {isInfoPage && (
-            <div className="w-full space-y-8">
-              <Link to="/" className="block">
-                <img src={logoImage} alt="ANDO JV" className="w-32" />
+            <div className="mx-auto" style={{ inlineSize: 'fit-content' }}>
+              <Link to="/" className="block mb-8 mx-auto" style={{ inlineSize: 'fit-content' }}>
+                <img src={logoImage} alt="ANDO JV" className="block" style={{ inlineSize: '128px' }} />
               </Link>
-              <nav className="space-y-2">
+              <nav className="space-y-2 text-left" style={{ inlineSize: '128px' }}>
                 {infoMenuItems.map((item) => (
                   <Link
                     key={item.id}
