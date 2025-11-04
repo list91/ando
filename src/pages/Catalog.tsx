@@ -354,6 +354,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                 {searchQuery && ` по запросу "${searchQuery}"`}
               </span>
             </div>
+
             <Popover>
               <PopoverTrigger asChild>
                 <button className="flex items-center gap-2 hover:opacity-60 transition-opacity text-xs lg:text-sm min-h-[44px] px-3">
