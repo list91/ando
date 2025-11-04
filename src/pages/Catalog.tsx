@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown, X, Heart } from "lucide-react";
 import { useProducts, useCategories, useProductFilters, ProductFilters } from "@/hooks/useProducts";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useAuth } from "@/contexts/AuthContext";
+import { useFavorites } from "@/contexts/FavoritesContext";
 import { useToast } from "@/hooks/use-toast";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -44,6 +45,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   const { data: products = [], isLoading } = useProducts(filters);
   const { data: settings } = useSiteSettings();
   const { user } = useAuth();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -476,6 +478,26 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
               setTouchProductId(null);
             };
 
+            const handleFavoriteClick = async (e: React.MouseEvent) => {
+              e.preventDefault();
+              e.stopPropagation();
+              
+              if (!user) {
+                toast({
+                  title: "Требуется авторизация",
+                  description: "Войдите в аккаунт, чтобы добавить товар в избранное",
+                });
+                navigate('/auth', { state: { from: '/catalog' } });
+                return;
+              }
+              
+              await toggleFavorite(product.id);
+              toast({
+                title: isFavorite(product.id) ? "Удалено из избранного" : "Добавлено в избранное",
+                description: product.name,
+              });
+            };
+
             return (
               <div key={product.id} className="group relative">
                 <Link to={`/product/${product.slug}`}>
@@ -525,6 +547,21 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                     )}
                   </div>
                 </Link>
+
+                {/* Favorite button */}
+                <button
+                  onClick={handleFavoriteClick}
+                  className="absolute top-3 right-3 z-20 hover:scale-110 transition-transform"
+                  aria-label={isFavorite(product.id) ? "Удалить из избранного" : "Добавить в избранное"}
+                >
+                  <Heart 
+                    className={`h-6 w-6 transition-all ${
+                      isFavorite(product.id) 
+                        ? 'fill-red-500 text-red-500' 
+                        : 'text-white stroke-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]'
+                    }`}
+                  />
+                </button>
 
                 <Link to={`/product/${product.slug}`}>
                   <h3 className="text-sm mb-2 tracking-wide text-foreground">{product.name}</h3>
