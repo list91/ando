@@ -322,39 +322,37 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
             )}
           </div>
 
-          {/* View & Sorting */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 justify-between w-full">
-            <div className="flex items-center gap-4">
-              {/* Grid View Toggle */}
-              <div className="flex items-center gap-1 border border-border rounded-sm p-0.5">
-                <button
-                  onClick={() => setGridCols(3)}
-                  className={`p-1.5 transition-colors ${
-                    gridCols === 3 ? 'bg-secondary' : 'hover:bg-secondary/50'
-                  }`}
-                  aria-label="3 карточки в строку"
-                  title="3 карточки"
-                >
-                  <Grid3x3 className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setGridCols(4)}
-                  className={`p-1.5 transition-colors ${
-                    gridCols === 4 ? 'bg-secondary' : 'hover:bg-secondary/50'
-                  }`}
-                  aria-label="4 карточки в строку"
-                  title="4 карточки"
-                >
-                  <LayoutGrid className="w-4 h-4" />
-                </button>
-              </div>
-
-              <span className="text-muted-foreground text-xs lg:text-sm">
-                Найдено: {sortedProducts.length}
-                {searchQuery && ` по запросу "${searchQuery}"`}
-              </span>
+          {/* Sorting and Grid View */}
+          <div className="flex items-center gap-4">
+            {/* Grid View Toggle */}
+            <div className="flex items-center gap-1 border border-border rounded-sm p-0.5">
+              <button
+                onClick={() => setGridCols(3)}
+                className={`p-1.5 transition-colors ${
+                  gridCols === 3 ? 'bg-secondary' : 'hover:bg-secondary/50'
+                }`}
+                aria-label="3 карточки в строку"
+                title="3 карточки"
+              >
+                <Grid3x3 className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setGridCols(4)}
+                className={`p-1.5 transition-colors ${
+                  gridCols === 4 ? 'bg-secondary' : 'hover:bg-secondary/50'
+                }`}
+                aria-label="4 карточки в строку"
+                title="4 карточки"
+              >
+                <LayoutGrid className="w-4 h-4" />
+              </button>
             </div>
 
+            <span className="text-muted-foreground text-xs lg:text-sm">
+              Найдено: {sortedProducts.length}
+              {searchQuery && ` по запросу "${searchQuery}"`}
+            </span>
+            
             <Popover>
               <PopoverTrigger asChild>
                 <button className="flex items-center gap-2 hover:opacity-60 transition-opacity text-xs lg:text-sm min-h-[44px] px-3">
