@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { ShoppingCart, Heart, User, LogOut, Menu as MenuIcon, ShieldCheck, Package } from "lucide-react";
+import { ShoppingCart, Heart, User, LogOut, Menu as MenuIcon, ShieldCheck, Package, Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import CartDrawer from "./CartDrawer";
 import { useCart } from "@/contexts/CartContext";
@@ -18,6 +18,7 @@ import {
 const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { totalItems } = useCart();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -52,13 +53,21 @@ const Header = () => {
     navigate('/');
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/catalog?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+    }
+  };
+
   return (
     <>
       <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="flex items-center justify-center h-40 px-4 lg:px-8 relative">
           
-          {/* Desktop Navigation - centered */}
-          <nav className="hidden lg:flex items-center gap-16 absolute left-1/2 transform -translate-x-1/2" role="navigation" aria-label="Основная навигация">
+          {/* Desktop Navigation - left */}
+          <nav className="hidden lg:flex items-center gap-16 absolute left-8" role="navigation" aria-label="Основная навигация">
             <Link 
               to="/about" 
               className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-all px-6 py-6 whitespace-nowrap ${
@@ -101,6 +110,20 @@ const Header = () => {
             </Link>
           </nav>
 
+          {/* Search Bar - center */}
+          <form onSubmit={handleSearch} className="hidden lg:block absolute left-1/2 transform -translate-x-1/2 w-64">
+            <div className="relative">
+              <input
+                type="search"
+                placeholder=""
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-transparent border-0 border-b border-border px-0 py-2 text-sm focus:outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground text-center"
+                aria-label="Поиск товаров"
+              />
+            </div>
+          </form>
+
           {/* Mobile Menu Button */}
           <button 
             className="lg:hidden hover:opacity-60 transition-opacity"
@@ -111,10 +134,20 @@ const Header = () => {
 
           {/* Right Icons */}
           <div className="flex items-center gap-3 lg:gap-6 absolute right-4 lg:right-8">
+            {/* Search Icon */}
+            <button 
+              onClick={() => navigate('/catalog')}
+              className="hover:opacity-60 transition-opacity"
+              aria-label="Поиск"
+            >
+              <Search className="w-5 h-5" />
+            </button>
+
             {/* Cart */}
             <button 
               onClick={() => setIsCartOpen(true)}
               className="hover:opacity-60 transition-opacity relative"
+              aria-label="Корзина"
             >
               <ShoppingCart className="w-5 h-5" />
               {totalItems > 0 && (

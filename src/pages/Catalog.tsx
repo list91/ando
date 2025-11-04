@@ -157,11 +157,6 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
 
   return (
     <main className="min-h-full" role="main">
-      {/* Search Bar */}
-      <div className="border-b border-border py-4 px-4 lg:pl-8">
-        <ProductSearch onSearch={setSearchQuery} initialValue={searchQuery} />
-      </div>
-
       {/* Filters */}
       <section className="border-b border-border py-4 px-4 lg:pl-8" aria-label="Фильтры товаров">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 text-sm">
