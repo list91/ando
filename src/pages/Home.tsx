@@ -104,17 +104,23 @@ const Home = () => {
             <div className="absolute inset-0 bg-black/20" />
             <div className="relative h-full flex items-center justify-center text-white px-4 lg:px-8">
               {slide.title && (
-                <div className="flex gap-4 sm:gap-6 md:gap-8 lg:gap-12 items-center justify-center">
-                  <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 text-center" style={{ writingMode: 'vertical-rl' }}>
-                    {slide.title.split(' ').map((word, i) => (
-                      <h1 
-                        key={i}
-                        className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light tracking-[0.3em] uppercase"
-                      >
-                        {word}
-                      </h1>
-                    ))}
-                  </div>
+                <div className="flex gap-6 sm:gap-8 md:gap-12 lg:gap-16 items-start justify-center h-auto">
+                  {/* Разбиваем текст на слова и отображаем каждое слово вертикально */}
+                  {slide.title.split(' ').map((word, wordIndex) => (
+                    <div 
+                      key={wordIndex}
+                      className="flex flex-col items-center gap-1 sm:gap-2"
+                    >
+                      {word.split('').map((letter, letterIndex) => (
+                        <span 
+                          key={letterIndex}
+                          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light tracking-wider uppercase"
+                        >
+                          {letter}
+                        </span>
+                      ))}
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
