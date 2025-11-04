@@ -44,80 +44,85 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
 
   return (
     <aside className="w-[307px] border-r border-border bg-muted flex-shrink-0 h-screen overflow-y-auto">
-      <div className="flex flex-col h-full py-8">
-        <div className="flex-1 flex flex-col items-center justify-center">
-          {isHomePage && (
-            <p 
-              className="text-xs tracking-[0.3em] uppercase"
-              style={{ 
-                writingMode: 'vertical-rl',
-                textOrientation: 'mixed'
-              }}
-            >
-              Feel the moment
-            </p>
-          )}
+      <div className="flex flex-col items-center justify-center h-screen py-10">
+        {isHomePage && (
+          <p 
+            className="text-xs tracking-[0.3em] uppercase"
+            style={{ 
+              writingMode: 'vertical-rl',
+              textOrientation: 'mixed'
+            }}
+          >
+            Feel the moment
+          </p>
+        )}
 
-          {isCatalogRelated && (
-            <>
-              <Link to="/" className="block">
-                <img src={logoImage} alt="ANDO JV" className="block w-32" />
-              </Link>
-              <nav className="space-y-2 mt-6" style={{ alignSelf: 'flex-start', marginLeft: '-64px' }}>
-                <Link
-                  to="/catalog"
-                  onClick={() => onCategoryChange?.("Все товары")}
-                  className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${
-                    selectedCategory === "Все товары" ? "underline" : ""
-                  }`}
-                >
-                  Все товары
-                </Link>
-                {!isLoading && categories?.map((category) => (
+        {isCatalogRelated && (
+          <>
+            <Link to="/" className="block mb-8">
+              <img src={logoImage} alt="ANDO JV" className="block w-28 h-auto" />
+            </Link>
+            <nav className="w-28 text-left">
+              <ul className="list-none m-0 p-0 space-y-3">
+                <li>
                   <Link
-                    key={category.id}
                     to="/catalog"
-                    onClick={() => onCategoryChange?.(category.name)}
-                    className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${
-                      category.name === selectedCategory ? "underline" : ""
+                    onClick={() => onCategoryChange?.("Все товары")}
+                    className={`block text-sm tracking-wide hover:opacity-60 transition-opacity ${
+                      selectedCategory === "Все товары" ? "underline" : ""
                     }`}
                   >
-                    {category.name}
+                    Все товары
                   </Link>
+                </li>
+                {!isLoading && categories?.map((category) => (
+                  <li key={category.id}>
+                    <Link
+                      to="/catalog"
+                      onClick={() => onCategoryChange?.(category.name)}
+                      className={`block text-sm tracking-wide hover:opacity-60 transition-opacity ${
+                        category.name === selectedCategory ? "underline" : ""
+                      }`}
+                    >
+                      {category.name}
+                    </Link>
+                  </li>
                 ))}
-              </nav>
-            </>
-          )}
+              </ul>
+            </nav>
+          </>
+        )}
 
-          {isInfoPage && (
-            <>
-              <Link to="/" className="block">
-                <img src={logoImage} alt="ANDO JV" className="block w-32" />
-              </Link>
-              <nav className="space-y-2 mt-6" style={{ alignSelf: 'flex-start', marginLeft: '-64px' }}>
+        {isInfoPage && (
+          <>
+            <Link to="/" className="block mb-8">
+              <img src={logoImage} alt="ANDO JV" className="block w-28 h-auto" />
+            </Link>
+            <nav className="w-28 text-left">
+              <ul className="list-none m-0 p-0 space-y-3">
                 {infoMenuItems.map((item) => (
-                  <Link
-                    key={item.id}
-                    to="/info"
-                    onClick={() => onInfoSectionChange?.(item.id)}
-                    className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${
-                      activeInfoSection === item.id ? "underline" : ""
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
+                  <li key={item.id}>
+                    <Link
+                      to="/info"
+                      onClick={() => onInfoSectionChange?.(item.id)}
+                      className={`block text-sm tracking-wide hover:opacity-60 transition-opacity ${
+                        activeInfoSection === item.id ? "underline" : ""
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
                 ))}
-              </nav>
-            </>
-          )}
-        </div>
+              </ul>
+            </nav>
+          </>
+        )}
+      </div>
 
-
-        <div className="text-[8px] text-center leading-relaxed text-muted-foreground px-6">
-          © 2025 ANDO JV. Все права<br />
-          защищены. Не является публичной<br />
-          офертой.
-        </div>
+      <div className="absolute bottom-8 left-0 right-0 text-[8px] text-center leading-relaxed text-muted-foreground px-6">
+        © 2025 ANDO JV. Все права<br />
+        защищены. Не является публичной<br />
+        офертой.
       </div>
     </aside>
   );
