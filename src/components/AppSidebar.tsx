@@ -65,8 +65,8 @@ export function AppSidebar({
   const instagramUrl = getSetting('social_instagram', 'https://instagram.com');
   const telegramUrl = getSetting('social_telegram', 'https://t.me');
   const vkUrl = getSetting('social_vk', 'https://vk.com');
-  return <aside className="w-[307px] border-r border-border bg-muted flex-shrink-0 h-screen overflow-y-auto">
-      <div className="flex flex-col h-full pt-0 pb-8 px-6">
+  return <aside className="w-[307px] border-r border-border bg-muted flex-shrink-0 h-screen overflow-y-auto relative">
+      <div className="flex flex-col min-h-full pt-0 pb-[200px] px-6">
         <Link to="/" className="mb-8 flex justify-center -mt-2">
           <img src={logoImage} alt="ANDO JV" className="w-[432px]" />
         </Link>
@@ -96,13 +96,13 @@ export function AppSidebar({
                 </Link>)}
             </nav>}
         </div>
+      </div>
 
-
-        <div className="text-[64px] text-center leading-relaxed text-muted-foreground mt-auto pb-4">
-          © 2025 ANDO JV. Все права<br />
-          защищены. Не является публичной<br />
-          офертой.
-        </div>
+      {/* Фиксированный блок внизу */}
+      <div className="absolute bottom-0 left-0 right-0 text-[64px] text-center leading-tight text-muted-foreground pb-8 px-6 bg-muted">
+        © 2025 ANDO JV. Все права<br />
+        защищены. Не является публичной<br />
+        офертой.
       </div>
     </aside>;
 }
