@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { Search, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
 
 interface ProductSearchProps {
   onSearch: (query: string) => void;
@@ -31,24 +30,26 @@ const ProductSearch = ({ onSearch, initialValue = "" }: ProductSearchProps) => {
 
   return (
     <div className="relative flex-1 max-w-md">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" aria-hidden="true" />
-      <Input
+      <input
         type="search"
         placeholder="Поиск товаров..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className="pl-10 pr-10"
+        className="w-full bg-transparent border-0 border-b border-border px-0 py-2 text-sm focus:outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground"
         aria-label="Поиск товаров"
       />
-      {searchQuery && (
-        <button
-          onClick={handleClear}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-          aria-label="Очистить поиск"
-        >
-          <X className="w-4 h-4" />
-        </button>
-      )}
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-2">
+        {searchQuery && (
+          <button
+            onClick={handleClear}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Очистить поиск"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+        <Search className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
+      </div>
     </div>
   );
 };
