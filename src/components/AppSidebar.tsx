@@ -44,8 +44,8 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
 
   return (
     <aside className="w-[307px] border-r border-border bg-muted flex-shrink-0 h-screen overflow-y-auto">
-      <div className="flex flex-col h-full py-8 px-6">
-        <div className="flex-1 flex items-center justify-center">
+      <div className="flex flex-col h-full py-8">
+        <div className="flex-1 flex flex-col items-center justify-center">
           {isHomePage && (
             <p 
               className="text-xs tracking-[0.3em] uppercase"
@@ -59,11 +59,11 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
           )}
 
           {isCatalogRelated && (
-            <div className="mx-auto" style={{ inlineSize: 'fit-content' }}>
-              <Link to="/" className="block mb-8 mx-auto" style={{ inlineSize: 'fit-content' }}>
-                <img src={logoImage} alt="ANDO JV" className="block" style={{ inlineSize: '128px' }} />
+            <>
+              <Link to="/" className="block">
+                <img src={logoImage} alt="ANDO JV" className="block w-32" />
               </Link>
-              <nav className="space-y-2 text-left" style={{ inlineSize: '128px' }}>
+              <nav className="space-y-2 mt-6" style={{ alignSelf: 'flex-start', marginLeft: '-64px' }}>
                 <Link
                   to="/catalog"
                   onClick={() => onCategoryChange?.("Все товары")}
@@ -86,15 +86,15 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
                   </Link>
                 ))}
               </nav>
-            </div>
+            </>
           )}
 
           {isInfoPage && (
-            <div className="mx-auto" style={{ inlineSize: 'fit-content' }}>
-              <Link to="/" className="block mb-8 mx-auto" style={{ inlineSize: 'fit-content' }}>
-                <img src={logoImage} alt="ANDO JV" className="block" style={{ inlineSize: '128px' }} />
+            <>
+              <Link to="/" className="block">
+                <img src={logoImage} alt="ANDO JV" className="block w-32" />
               </Link>
-              <nav className="space-y-2 text-left" style={{ inlineSize: '128px' }}>
+              <nav className="space-y-2 mt-6" style={{ alignSelf: 'flex-start', marginLeft: '-64px' }}>
                 {infoMenuItems.map((item) => (
                   <Link
                     key={item.id}
@@ -108,12 +108,12 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
                   </Link>
                 ))}
               </nav>
-            </div>
+            </>
           )}
         </div>
 
 
-        <div className="text-[8px] text-center leading-relaxed text-muted-foreground">
+        <div className="text-[8px] text-center leading-relaxed text-muted-foreground px-6">
           © 2025 ANDO JV. Все права<br />
           защищены. Не является публичной<br />
           офертой.
