@@ -11,7 +11,10 @@ import { CatalogSearchProvider } from "@/contexts/CatalogSearchContext";
 import { CookieBanner } from "@/components/CookieBanner";
 import { AddToCartModal } from "@/components/AddToCartModal";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { useState } from "react";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { useState, useEffect } from "react";
+import { initGA } from "@/lib/analytics";
+import { usePageTracking } from "@/hooks/usePageTracking";
 import Layout from "./components/Layout";
 import AdminLayout from "./components/AdminLayout";
 import Home from "./pages/Home";
@@ -34,6 +37,7 @@ import AdminHeroSlides from "./pages/admin/HeroSlides";
 import AdminAboutPage from "./pages/admin/AboutPage";
 import Favorites from "./pages/Favorites";
 import Orders from "./pages/Orders";
+import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +46,9 @@ const AppContent = () => {
   const [selectedCategory, setSelectedCategory] = useState("Все товары");
   const [activeInfoSection, setActiveInfoSection] = useState("delivery");
   const { lastAddedProduct, clearLastAdded } = useCart();
+  
+  // Track page views
+  usePageTracking();
 
   return (
     <>
@@ -67,6 +74,7 @@ const AppContent = () => {
           <Route path="/auth" element={<Auth />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/install" element={<Install />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-success" element={<OrderSuccess />} />
           
@@ -100,27 +108,35 @@ const AppContent = () => {
   );
 };
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <HelmetProvider>
-      <AuthProvider>
-        <FavoritesProvider>
-          <CartProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <CatalogSearchProvider>
-                  <AppContent />
-                  <CookieBanner />
-                </CatalogSearchProvider>
-              </BrowserRouter>
-            </TooltipProvider>
-          </CartProvider>
-        </FavoritesProvider>
-      </AuthProvider>
-    </HelmetProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  useEffect(() => {
+    initGA();
+  }, []);
+
+  return (
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <HelmetProvider>
+          <AuthProvider>
+            <FavoritesProvider>
+              <CartProvider>
+                <TooltipProvider>
+                  <Toaster />
+                  <Sonner />
+                  <BrowserRouter>
+                    <CatalogSearchProvider>
+                      <AppContent />
+                      <CookieBanner />
+                    </CatalogSearchProvider>
+                  </BrowserRouter>
+                </TooltipProvider>
+              </CartProvider>
+            </FavoritesProvider>
+          </AuthProvider>
+        </HelmetProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
+  );
+};
 
 export default App;
