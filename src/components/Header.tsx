@@ -65,7 +65,7 @@ const Header = () => {
               to="/catalog" 
               className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-opacity pb-1 border-b-2 ${
                 location.pathname === '/catalog' || location.pathname.startsWith('/product/') 
-                  ? 'border-[#8FBE3F]' 
+                  ? 'border-primary' 
                   : 'border-transparent'
               }`}
             >
@@ -75,7 +75,7 @@ const Header = () => {
               to="/about" 
               className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-opacity pb-1 border-b-2 ${
                 location.pathname === '/about' 
-                  ? 'border-[#8FBE3F]' 
+                  ? 'border-primary' 
                   : 'border-transparent'
               }`}
             >
@@ -85,7 +85,7 @@ const Header = () => {
               to="/lookbook" 
               className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-opacity pb-1 border-b-2 ${
                 location.pathname === '/lookbook' 
-                  ? 'border-[#8FBE3F]' 
+                  ? 'border-primary' 
                   : 'border-transparent'
               }`}
             >
@@ -95,7 +95,7 @@ const Header = () => {
               to="/info" 
               className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-opacity pb-1 border-b-2 ${
                 location.pathname === '/info' 
-                  ? 'border-[#8FBE3F]' 
+                  ? 'border-primary' 
                   : 'border-transparent'
               }`}
             >
