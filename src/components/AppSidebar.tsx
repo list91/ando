@@ -76,26 +76,14 @@ export function AppSidebar({
         </Link>
 
         <div className="py-0 my-0 ml-2 w-fit px-px mx-px">
-          {isHomePage && (
-            <div className="flex gap-1 items-start justify-start">
-              {/* Разбиваем текст на слова и отображаем каждое слово вертикально */}
-              {['Feel', 'the', 'moment'].map((word, wordIndex) => (
-                <div 
-                  key={wordIndex}
-                  className="flex flex-col items-center gap-0.5"
-                >
-                  {word.split('').map((letter, letterIndex) => (
-                    <span 
-                      key={letterIndex}
-                      className="text-[10px] font-light tracking-wider uppercase leading-tight"
-                    >
-                      {letter}
-                    </span>
-                  ))}
-                </div>
-              ))}
-            </div>
-          )}
+          {isHomePage && <div className="flex items-center justify-center h-full">
+              <p className="text-xs tracking-[0.3em] uppercase" style={{
+            writingMode: 'vertical-rl',
+            textOrientation: 'mixed'
+          }}>
+                Feel the moment
+              </p>
+            </div>}
 
           {isCatalogRelated && <nav className="space-y-2 flex flex-col pl-6 mx-[55px]">
               <Link to="/catalog" onClick={() => onCategoryChange?.("Все товары")} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${selectedCategory === "Все товары" ? "underline" : ""}`}>
