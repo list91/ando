@@ -20,12 +20,6 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState<ProductFilters>({});
   const [searchQuery, setSearchQuery] = useState("");
-  
-  // Sync search query from URL params
-  useEffect(() => {
-    const urlSearch = searchParams.get("search") || "";
-    setSearchQuery(urlSearch);
-  }, [searchParams]);
   const [selectedMaterials, setSelectedMaterials] = useState<string[]>(
     searchParams.get("materials")?.split(",").filter(Boolean) || []
   );
@@ -163,6 +157,14 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
 
   return (
     <main className="min-h-full" role="main">
+      {/* Search Bar */}
+      <div className="border-b border-border py-6 px-4 lg:px-8">
+        <ProductSearch 
+          onSearch={setSearchQuery}
+          initialValue={searchQuery}
+        />
+      </div>
+
       {/* Filters */}
       <section className="border-b border-border py-4 px-4 lg:pl-8" aria-label="Фильтры товаров">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 text-sm">

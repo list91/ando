@@ -69,20 +69,8 @@ const Header = () => {
               </Link>
             </nav>
 
-            {/* Search Bar - center */}
-            <form onSubmit={handleSearch} className="flex items-center justify-center px-8">
-              <div className="relative w-full max-w-[280px]">
-                <input 
-                  type="search" 
-                  placeholder="" 
-                  value={searchQuery} 
-                  onChange={e => setSearchQuery(e.target.value)} 
-                  aria-label="Поиск товаров" 
-                  className="w-full bg-transparent border-0 border-b border-border px-2 py-2 text-sm focus:outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground text-center" 
-                />
-                <Search className="w-4 h-4 absolute right-0 top-1/2 -translate-y-1/2 opacity-60 pointer-events-none" />
-              </div>
-            </form>
+            {/* Spacer */}
+            <div></div>
 
             {/* Right Icons */}
             <div className="flex items-center gap-6 justify-end">
