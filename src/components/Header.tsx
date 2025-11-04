@@ -10,7 +10,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [localSearchInput, setLocalSearchInput] = useState(""); // Local input only, не синхронизируется с URL
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
   const {
     totalItems
@@ -24,11 +24,11 @@ const Header = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isAdmin, setIsAdmin] = useState(false);
   
-  // Read search from URL and sync to local state
+  // ONLY read from URL on mount to initialize input field
   useEffect(() => {
     const urlSearch = searchParams.get("search") || "";
-    setSearchQuery(urlSearch);
-  }, [searchParams]);
+    setLocalSearchInput(urlSearch);
+  }, []); // Empty deps - только при монтировании!
   useEffect(() => {
     const checkAdminRole = async () => {
       if (!user) {
@@ -51,33 +51,34 @@ const Header = () => {
     navigate('/');
   };
 
-  // Handle search input change with debounce
+  // Handle search - ONLY writes to URL, никогда не читает
   const handleSearchChange = (value: string) => {
-    setSearchQuery(value);
+    // Обновляем локальный инпут мгновенно для UI
+    setLocalSearchInput(value);
     
-    // Clear existing timer
+    // Очищаем предыдущий таймер
     if (searchTimerRef.current) {
       clearTimeout(searchTimerRef.current);
     }
     
-    // Navigate to catalog if not there
-    if (location.pathname !== '/catalog') {
-      if (value.trim()) {
-        navigate(`/catalog?search=${encodeURIComponent(value.trim())}`);
-      }
+    // Если не на странице каталога и есть текст - переходим
+    if (location.pathname !== '/catalog' && value.trim()) {
+      navigate(`/catalog?search=${encodeURIComponent(value.trim())}`);
       return;
     }
     
-    // Debounce URL update on catalog page
-    searchTimerRef.current = setTimeout(() => {
-      const params = new URLSearchParams(searchParams);
-      if (value.trim()) {
-        params.set('search', value.trim());
-      } else {
-        params.delete('search');
-      }
-      setSearchParams(params, { replace: true });
-    }, 300);
+    // Debounce обновления URL только для каталога
+    if (location.pathname === '/catalog') {
+      searchTimerRef.current = setTimeout(() => {
+        const params = new URLSearchParams(searchParams);
+        if (value.trim()) {
+          params.set('search', value.trim());
+        } else {
+          params.delete('search');
+        }
+        setSearchParams(params, { replace: true });
+      }, 300);
+    }
   };
   return <>
       <header className="sticky top-0 z-40 bg-background border-b border-border">
@@ -105,7 +106,7 @@ const Header = () => {
                 <input 
                   type="text"
                   placeholder="" 
-                  value={searchQuery} 
+                  value={localSearchInput}
                   onChange={e => handleSearchChange(e.target.value)}
                   aria-label="Поиск товаров" 
                   className="w-full bg-transparent border-0 border-b border-border px-2 py-2 text-sm focus:outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground text-center" 
