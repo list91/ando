@@ -63,40 +63,40 @@ const Header = () => {
           <nav className="hidden lg:flex items-center gap-16">
             <Link 
               to="/catalog" 
-              className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-opacity pb-1 border-b-2 ${
+              className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-all px-6 py-3 ${
                 location.pathname === '/catalog' || location.pathname.startsWith('/product/') 
-                  ? 'border-primary' 
-                  : 'border-transparent'
+                  ? 'bg-secondary' 
+                  : ''
               }`}
             >
               КАТАЛОГ
             </Link>
             <Link 
               to="/about" 
-              className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-opacity pb-1 border-b-2 ${
+              className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-all px-6 py-3 ${
                 location.pathname === '/about' 
-                  ? 'border-primary' 
-                  : 'border-transparent'
+                  ? 'bg-secondary' 
+                  : ''
               }`}
             >
               О БРЕНДЕ
             </Link>
             <Link 
               to="/lookbook" 
-              className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-opacity pb-1 border-b-2 ${
+              className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-all px-6 py-3 ${
                 location.pathname === '/lookbook' 
-                  ? 'border-primary' 
-                  : 'border-transparent'
+                  ? 'bg-secondary' 
+                  : ''
               }`}
             >
               LOOKBOOK
             </Link>
             <Link 
               to="/info" 
-              className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-opacity pb-1 border-b-2 ${
+              className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-all px-6 py-3 ${
                 location.pathname === '/info' 
-                  ? 'border-primary' 
-                  : 'border-transparent'
+                  ? 'bg-secondary' 
+                  : ''
               }`}
             >
               INFO +
