@@ -104,16 +104,16 @@ const App = () => (
     <AuthProvider>
       <FavoritesProvider>
         <CartProvider>
-          <CatalogSearchProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <CatalogSearchProvider>
                 <AppContent />
                 <CookieBanner />
-              </BrowserRouter>
-            </TooltipProvider>
-          </CatalogSearchProvider>
+              </CatalogSearchProvider>
+            </BrowserRouter>
+          </TooltipProvider>
         </CartProvider>
       </FavoritesProvider>
     </AuthProvider>
