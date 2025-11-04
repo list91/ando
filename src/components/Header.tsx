@@ -22,12 +22,6 @@ const Header = () => {
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [isAdmin, setIsAdmin] = useState(false);
-
-  // Sync with URL on mount and URL change
-  useEffect(() => {
-    const urlSearch = searchParams.get("search") || "";
-    setSearchQuery(urlSearch);
-  }, [location.pathname, searchParams]);
   useEffect(() => {
     const checkAdminRole = async () => {
       if (!user) {
@@ -50,24 +44,22 @@ const Header = () => {
     navigate('/');
   };
 
-  // Debounced search handler
+  // Update URL with debounce when typing
   useEffect(() => {
+    if (location.pathname !== '/catalog') return;
+    
     const timer = setTimeout(() => {
-      if (location.pathname === '/catalog') {
-        const params = new URLSearchParams(searchParams);
-        if (searchQuery) {
-          params.set('search', searchQuery);
-        } else {
-          params.delete('search');
-        }
-        setSearchParams(params, { replace: true });
-      } else if (searchQuery) {
-        navigate(`/catalog?search=${encodeURIComponent(searchQuery)}`);
+      const params = new URLSearchParams(searchParams);
+      if (searchQuery.trim()) {
+        params.set('search', searchQuery.trim());
+      } else {
+        params.delete('search');
       }
+      setSearchParams(params, { replace: true });
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [searchQuery, location.pathname]);
   return <>
       <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="h-40 px-4 lg:px-8">
@@ -92,10 +84,15 @@ const Header = () => {
             <div className="flex items-center justify-center px-8">
               <div className="relative w-full max-w-[280px]">
                 <input 
-                  type="search" 
+                  type="text"
                   placeholder="" 
                   value={searchQuery} 
                   onChange={e => setSearchQuery(e.target.value)}
+                  onFocus={() => {
+                    if (location.pathname !== '/catalog') {
+                      navigate('/catalog');
+                    }
+                  }}
                   aria-label="Поиск товаров" 
                   className="w-full bg-transparent border-0 border-b border-border px-2 py-2 text-sm focus:outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground text-center" 
                 />
