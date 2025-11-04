@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ChevronDown, X, Heart } from "lucide-react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { ChevronDown, X } from "lucide-react";
 import { useProducts, useCategories, useProductFilters, ProductFilters } from "@/hooks/useProducts";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useAuth } from "@/contexts/AuthContext";
-import { useFavorites } from "@/contexts/FavoritesContext";
 import { useToast } from "@/hooks/use-toast";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import ProductSearch from "@/components/ProductSearch";
 
 interface CatalogProps {
   selectedCategory: string;
@@ -16,14 +16,25 @@ interface CatalogProps {
 }
 
 const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState<ProductFilters>({});
-  const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
-  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<{ min?: number; max?: number }>({});
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
+  const [selectedMaterials, setSelectedMaterials] = useState<string[]>(
+    searchParams.get("materials")?.split(",").filter(Boolean) || []
+  );
+  const [selectedColors, setSelectedColors] = useState<string[]>(
+    searchParams.get("colors")?.split(",").filter(Boolean) || []
+  );
+  const [selectedSizes, setSelectedSizes] = useState<string[]>(
+    searchParams.get("sizes")?.split(",").filter(Boolean) || []
+  );
+  const [priceRange, setPriceRange] = useState<{ min?: number; max?: number }>({
+    min: searchParams.get("minPrice") ? Number(searchParams.get("minPrice")) : undefined,
+    max: searchParams.get("maxPrice") ? Number(searchParams.get("maxPrice")) : undefined,
+  });
   const [hoveredProduct, setHoveredProduct] = useState<string | null>(null);
   const [currentImageIndexes, setCurrentImageIndexes] = useState<Record<string, number>>({});
-  const [sortBy, setSortBy] = useState<string>('default');
+  const [sortBy, setSortBy] = useState<string>(searchParams.get("sort") || "default");
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchProductId, setTouchProductId] = useState<string | null>(null);
   const mouseXRef = useRef<number>(0);
@@ -33,7 +44,6 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   const { data: products = [], isLoading } = useProducts(filters);
   const { data: settings } = useSiteSettings();
   const { user } = useAuth();
-  const { isFavorite, toggleFavorite } = useFavorites();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -44,6 +54,20 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
     const lowerName = colorName.toLowerCase().trim();
     return colorMap[lowerName] || '#CCCCCC'; // Default gray if color not found
   };
+
+  // Update URL params when filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchQuery) params.set("search", searchQuery);
+    if (selectedMaterials.length > 0) params.set("materials", selectedMaterials.join(","));
+    if (selectedColors.length > 0) params.set("colors", selectedColors.join(","));
+    if (selectedSizes.length > 0) params.set("sizes", selectedSizes.join(","));
+    if (priceRange.min !== undefined) params.set("minPrice", String(priceRange.min));
+    if (priceRange.max !== undefined) params.set("maxPrice", String(priceRange.max));
+    if (sortBy !== "default") params.set("sort", sortBy);
+    
+    setSearchParams(params, { replace: true });
+  }, [searchQuery, selectedMaterials, selectedColors, selectedSizes, priceRange, sortBy, setSearchParams]);
 
   useEffect(() => {
     const newFilters: ProductFilters = {};
@@ -84,17 +108,27 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   }, [selectedCategory, categories, selectedMaterials, selectedColors, selectedSizes, priceRange]);
 
   const clearFilters = () => {
+    setSearchQuery("");
     setSelectedMaterials([]);
     setSelectedColors([]);
     setSelectedSizes([]);
     setPriceRange({});
+    setSortBy("default");
   };
 
-  const hasActiveFilters = selectedMaterials.length > 0 || selectedColors.length > 0 || 
+  const hasActiveFilters = searchQuery || selectedMaterials.length > 0 || selectedColors.length > 0 || 
     selectedSizes.length > 0 || priceRange.min !== undefined || priceRange.max !== undefined;
 
+  // Filter products by search query
+  const searchFilteredProducts = searchQuery
+    ? products.filter((p) =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.article?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : products;
+
   // Sort products
-  const sortedProducts = [...products].sort((a, b) => {
+  const sortedProducts = [...searchFilteredProducts].sort((a, b) => {
     switch (sortBy) {
       case 'price-asc':
         return a.price - b.price;
@@ -121,6 +155,11 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
 
   return (
     <main className="min-h-full" role="main">
+      {/* Search Bar */}
+      <div className="border-b border-border py-4 px-4 lg:pl-8">
+        <ProductSearch onSearch={setSearchQuery} initialValue={searchQuery} />
+      </div>
+
       {/* Filters */}
       <section className="border-b border-border py-4 px-4 lg:pl-8" aria-label="Фильтры товаров">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 text-sm">
@@ -285,7 +324,8 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
           {/* Sorting */}
           <div className="flex items-center gap-4">
             <span className="text-muted-foreground text-xs lg:text-sm">
-              Найдено: {products.length}
+              Найдено: {sortedProducts.length}
+              {searchQuery && ` по запросу "${searchQuery}"`}
             </span>
             <Popover>
               <PopoverTrigger asChild>
@@ -326,13 +366,24 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
 
       {sortedProducts.length === 0 ? (
         <div className="p-8 lg:p-16 text-center">
-          <p className="text-muted-foreground">Товары не найдены</p>
+          {searchQuery ? (
+            <>
+              <p className="text-muted-foreground mb-2">
+                По запросу "<mark className="bg-yellow-200 px-1">{searchQuery}</mark>" ничего не найдено
+              </p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Попробуйте изменить запрос или очистить фильтры
+              </p>
+            </>
+          ) : (
+            <p className="text-muted-foreground">Товары не найдены</p>
+          )}
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
               className="mt-4 text-sm underline hover:no-underline"
             >
-              Сбросить фильтры
+              Сбросить все фильтры
             </button>
           )}
         </div>

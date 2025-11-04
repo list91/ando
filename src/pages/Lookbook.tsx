@@ -59,13 +59,14 @@ const Lookbook = () => {
         </div>
       ) : images && images.length > 0 ? (
         <>
-          <div className="grid grid-cols-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
             {images.map((image) => (
               <div key={image.id} className="aspect-[3/4] relative overflow-hidden group">
                 <img
                   src={image.image_url}
                   alt={`Lookbook ${currentSeason?.season_name}`}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  loading="lazy"
                 />
               </div>
             ))}
