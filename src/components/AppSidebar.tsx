@@ -65,7 +65,7 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
           )}
 
           {isCatalogRelated && (
-            <nav className="space-y-2 pl-16">
+            <nav className="space-y-2 flex flex-col items-center">
               <Link
                 to="/catalog"
                 onClick={() => onCategoryChange?.("Все товары")}
@@ -91,7 +91,7 @@ export function AppSidebar({ selectedCategory, onCategoryChange, activeInfoSecti
           )}
 
           {isInfoPage && (
-            <nav className="space-y-2 pl-16">
+            <nav className="space-y-2 flex flex-col items-center">
               {infoMenuItems.map((item) => (
                 <Link
                   key={item.id}
