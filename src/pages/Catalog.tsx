@@ -517,14 +517,14 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                   <h3 className="text-sm mb-2 tracking-wide text-foreground">{product.name}</h3>
                   
                   <div className="flex items-center gap-2 mb-2">
+                    <span className="text-sm text-foreground">
+                      {product.price} ₽
+                    </span>
                     {product.old_price && (
                       <span className="text-sm text-muted-foreground line-through">
                         {product.old_price} ₽
                       </span>
                     )}
-                    <span className="text-sm text-foreground">
-                      {product.price} ₽
-                    </span>
                     {product.available_colors && product.available_colors.length > 0 && (
                       <div className="flex items-center gap-2 ml-auto">
                         {product.available_colors.slice(0, 4).map((color, idx) => {
