@@ -90,7 +90,7 @@ export function AppSidebar({
                 </Link>)}
             </nav>}
 
-          {isInfoPage && <nav className="space-y-2 flex flex-col pl-6 my-0 px-[55px] mx-[55px]">
+          {isInfoPage && <nav className="space-y-2 flex flex-col pl-6 my-0 px-[55px] mx-[53px]">
               {infoMenuItems.map(item => <Link key={item.id} to="/info" onClick={() => onInfoSectionChange?.(item.id)} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${activeInfoSection === item.id ? "underline" : ""}`}>
                   {item.label}
                 </Link>)}
