@@ -75,8 +75,8 @@ export function AppSidebar({
           <img src={logoImage} alt="ANDO JV" className="w-[432px]" />
         </Link>
 
-        <div className="py-0 my-0 ml-2 w-fit px-px mx-px">
-          {isHomePage && <div className="flex items-center justify-center h-full">
+        <div className="flex justify-center">
+          {isHomePage && <div className="flex items-center justify-center">
               <p className="text-xs tracking-[0.3em] uppercase" style={{
             writingMode: 'vertical-rl',
             textOrientation: 'mixed'
