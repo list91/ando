@@ -1,6 +1,7 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ShoppingCart, Heart, User, LogOut, Menu as MenuIcon, ShieldCheck, Package, Search } from "lucide-react";
 import { useState, useEffect } from "react";
+import ProductSearch from "./ProductSearch";
 import CartDrawer from "./CartDrawer";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -61,8 +62,12 @@ const Header = () => {
               </Link>
             </nav>
 
-            {/* Spacer */}
-            <div></div>
+            {/* Search Bar - center */}
+            <div className="flex items-center justify-center px-8">
+              <div className="w-full max-w-[280px]">
+                <ProductSearch />
+              </div>
+            </div>
 
             {/* Right Icons */}
             <div className="flex items-center gap-6 justify-end">

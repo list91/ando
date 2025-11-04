@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider, useCart } from "@/contexts/CartContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
+import { CatalogSearchProvider } from "@/contexts/CatalogSearchContext";
 import { CookieBanner } from "@/components/CookieBanner";
 import { AddToCartModal } from "@/components/AddToCartModal";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -103,14 +104,16 @@ const App = () => (
     <AuthProvider>
       <FavoritesProvider>
         <CartProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <AppContent />
-              <CookieBanner />
-            </BrowserRouter>
-          </TooltipProvider>
+          <CatalogSearchProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <AppContent />
+                <CookieBanner />
+              </BrowserRouter>
+            </TooltipProvider>
+          </CatalogSearchProvider>
         </CartProvider>
       </FavoritesProvider>
     </AuthProvider>

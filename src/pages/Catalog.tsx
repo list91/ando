@@ -4,12 +4,12 @@ import { ChevronDown, X, Heart } from "lucide-react";
 import { useProducts, useCategories, useProductFilters, ProductFilters } from "@/hooks/useProducts";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCatalogSearch } from "@/contexts/CatalogSearchContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useToast } from "@/hooks/use-toast";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import ProductSearch from "@/components/ProductSearch";
 
 
 interface CatalogProps {
@@ -20,13 +20,7 @@ interface CatalogProps {
 const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState<ProductFilters>({});
-  const [searchQuery, setSearchQuery] = useState("");
-
-  // ONLY read from URL - Catalog doesn't manage search input
-  useEffect(() => {
-    const urlSearch = searchParams.get("search") || "";
-    setSearchQuery(urlSearch);
-  }, [searchParams]);
+  const { query: searchQuery } = useCatalogSearch();
   const [selectedMaterials, setSelectedMaterials] = useState<string[]>(
     searchParams.get("materials")?.split(",").filter(Boolean) || []
   );
@@ -64,10 +58,9 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
     return colorMap[lowerName] || '#CCCCCC'; // Default gray if color not found
   };
 
-  // Update URL params when filters change
+  // Update URL params when filters change (NOT search - handled by context)
   useEffect(() => {
     const params = new URLSearchParams();
-    if (searchQuery) params.set("search", searchQuery);
     if (selectedMaterials.length > 0) params.set("materials", selectedMaterials.join(","));
     if (selectedColors.length > 0) params.set("colors", selectedColors.join(","));
     if (selectedSizes.length > 0) params.set("sizes", selectedSizes.join(","));
@@ -75,8 +68,12 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
     if (priceRange.max !== undefined) params.set("maxPrice", String(priceRange.max));
     if (sortBy !== "default") params.set("sort", sortBy);
     
+    // Keep search param from context
+    const currentSearch = searchParams.get("search");
+    if (currentSearch) params.set("search", currentSearch);
+    
     setSearchParams(params, { replace: true });
-  }, [searchQuery, selectedMaterials, selectedColors, selectedSizes, priceRange, sortBy, setSearchParams]);
+  }, [selectedMaterials, selectedColors, selectedSizes, priceRange, sortBy, searchParams, setSearchParams]);
 
   useEffect(() => {
     const newFilters: ProductFilters = {};
@@ -117,7 +114,6 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   }, [selectedCategory, categories, selectedMaterials, selectedColors, selectedSizes, priceRange]);
 
   const clearFilters = () => {
-    setSearchQuery("");
     setSelectedMaterials([]);
     setSelectedColors([]);
     setSelectedSizes([]);
@@ -125,7 +121,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
     setSortBy("default");
   };
 
-  const hasActiveFilters = searchQuery || selectedMaterials.length > 0 || selectedColors.length > 0 || 
+  const hasActiveFilters = searchQuery || selectedMaterials.length > 0 || selectedColors.length > 0 ||
     selectedSizes.length > 0 || priceRange.min !== undefined || priceRange.max !== undefined;
 
   // Filter products by search query
@@ -164,14 +160,6 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
 
   return (
     <main className="min-h-full" role="main">
-      {/* Search Bar */}
-      <div className="border-b border-border py-6 px-4 lg:px-8">
-        <ProductSearch 
-          onSearch={setSearchQuery}
-          initialValue={searchQuery}
-        />
-      </div>
-
       {/* Filters */}
       <section className="border-b border-border py-4 px-4 lg:pl-8" aria-label="Фильтры товаров">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 text-sm">

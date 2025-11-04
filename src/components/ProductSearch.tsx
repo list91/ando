@@ -1,40 +1,45 @@
-import { useState, useEffect } from "react";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
+import { useCatalogSearch } from "@/contexts/CatalogSearchContext";
 
-interface ProductSearchProps {
-  onSearch: (query: string) => void;
-  initialValue?: string;
-}
+const ProductSearch = () => {
+  const { query, setQuery, clearQuery } = useCatalogSearch();
 
-const ProductSearch = ({ onSearch, initialValue = "" }: ProductSearchProps) => {
-  const [searchQuery, setSearchQuery] = useState(initialValue);
-  const [debouncedQuery, setDebouncedQuery] = useState(initialValue);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+  };
 
-  // Debounce search input
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(searchQuery);
-    }, 300);
+  const handleClear = () => {
+    clearQuery();
+  };
 
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  // Call onSearch when debounced query changes
-  useEffect(() => {
-    onSearch(debouncedQuery);
-  }, [debouncedQuery, onSearch]);
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape') {
+      clearQuery();
+    }
+  };
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" role="search">
       <input
         type="text"
         placeholder=""
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        className="w-full bg-transparent border-0 border-b border-border px-2 py-2 text-sm focus:outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground text-center"
+        value={query}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
         aria-label="Поиск товаров"
+        className="w-full bg-transparent border-0 border-b border-border px-2 py-2 text-sm focus:outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground text-center"
       />
-      <div className="absolute right-0 top-1/2 -translate-y-1/2">
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-2">
+        {query && (
+          <button
+            onClick={handleClear}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Очистить поиск"
+            type="button"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
         <Search className="w-4 h-4 text-muted-foreground opacity-60" aria-hidden="true" />
       </div>
     </div>
