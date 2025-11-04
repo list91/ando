@@ -90,8 +90,8 @@ const AppContent = () => {
 };
 
 const App = () => (
-  <HelmetProvider>
-    <QueryClientProvider client={queryClient}>
+  <QueryClientProvider client={queryClient}>
+    <HelmetProvider>
       <AuthProvider>
         <FavoritesProvider>
           <CartProvider>
@@ -108,8 +108,8 @@ const App = () => (
           </CartProvider>
         </FavoritesProvider>
       </AuthProvider>
-    </QueryClientProvider>
-  </HelmetProvider>
+    </HelmetProvider>
+  </QueryClientProvider>
 );
 
 export default App;
