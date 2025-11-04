@@ -90,7 +90,7 @@ export function AppSidebar({
                 </Link>)}
             </nav>}
 
-          {isInfoPage && <nav className="space-y-2 flex flex-col pl-6 my-0 mx-[59px] px-[5px]">
+          {isInfoPage && <nav className="space-y-2 flex flex-col pl-6 my-0 mx-[22px] px-[55px]">
               {infoMenuItems.map(item => <Link key={item.id} to="/info" onClick={() => onInfoSectionChange?.(item.id)} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${activeInfoSection === item.id ? "underline" : ""}`}>
                   {item.label}
                 </Link>)}
@@ -98,7 +98,7 @@ export function AppSidebar({
         </div>
 
 
-        <div className="text-[8px] text-center leading-relaxed text-muted-foreground">
+        <div className="text-[8px] text-center leading-relaxed text-muted-foreground py-0 my-[270px]">
           © 2025 ANDO JV. Все права<br />
           защищены. Не является публичной<br />
           офертой.
