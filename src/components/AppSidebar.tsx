@@ -66,7 +66,7 @@ export function AppSidebar({
   const telegramUrl = getSetting('social_telegram', 'https://t.me');
   const vkUrl = getSetting('social_vk', 'https://vk.com');
   return <aside className="w-[307px] border-r border-border bg-muted flex-shrink-0 h-screen overflow-y-auto">
-      <div className="flex flex-col h-full py-8 px-6">
+      <div className="flex flex-col h-full pt-4 pb-8 px-6">
         <Link to="/" className="mb-8 flex justify-center">
           <img src={logoImage} alt="ANDO JV" className="w-[432px]" />
         </Link>
