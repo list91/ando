@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import { useLookbookSeasons, useLookbookImages } from "@/hooks/useLookbook";
 import { Button } from "@/components/ui/button";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const LookbookDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -66,7 +67,7 @@ const LookbookDetail = () => {
         </div>
       )}
 
-      {/* Галерея изображений */}
+      {/* Галерея изображений - слайдер */}
       {imagesLoading ? (
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin" />
@@ -76,24 +77,44 @@ const LookbookDetail = () => {
           <p className="text-muted-foreground">Изображения скоро появятся</p>
         </div>
       ) : (
-        <div className="space-y-0">
-          {visibleImages.map((image) => (
-            <div key={image.id} className="w-full">
-              <img
-                src={image.image_url}
-                alt={image.alt_text || season.season_name}
-                className="w-full h-auto object-contain"
-                loading="lazy"
+        <div className="py-8 px-4 md:px-12">
+          <Carousel className="w-full max-w-5xl mx-auto">
+            <CarouselContent>
+              {visibleImages.map((image) => (
+                <CarouselItem key={image.id}>
+                  <div className="flex flex-col items-center">
+                    <div className="w-full aspect-[3/4] md:aspect-[4/5] overflow-hidden rounded-lg">
+                      <img
+                        src={image.image_url}
+                        alt={image.alt_text || season.season_name}
+                        className="w-full h-full object-contain"
+                        loading="lazy"
+                      />
+                    </div>
+                    {image.caption && (
+                      <div className="mt-6 text-center max-w-2xl">
+                        <p className="text-sm md:text-base text-muted-foreground">
+                          {image.caption}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-2 md:-left-12" />
+            <CarouselNext className="right-2 md:-right-12" />
+          </Carousel>
+
+          {/* Индикатор слайдов */}
+          <div className="flex justify-center gap-2 mt-6">
+            {visibleImages.map((_, index) => (
+              <div
+                key={index}
+                className="w-2 h-2 rounded-full bg-muted transition-colors"
               />
-              {image.caption && (
-                <div className="py-4 px-8 text-center">
-                  <p className="text-sm text-muted-foreground">
-                    {image.caption}
-                  </p>
-                </div>
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 
