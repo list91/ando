@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Heart, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
@@ -23,6 +23,9 @@ const Product = () => {
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+  const [isZooming, setIsZooming] = useState(false);
+  const imageRef = useRef<HTMLDivElement>(null);
 
   if (isLoading) {
     return (
@@ -104,6 +107,16 @@ const Product = () => {
     }
   };
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!imageRef.current) return;
+    
+    const rect = imageRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    
+    setZoomPosition({ x, y });
+  };
+
   return (
     <>
       <Helmet>
@@ -120,22 +133,26 @@ const Product = () => {
       <div className="flex flex-col lg:flex-row min-h-full">
         {/* Left side - Product images */}
         <div className="flex-1 flex items-center justify-center py-6 lg:py-16 px-4 lg:px-8 relative">
-        {/* Left arrow - outside image */}
+        {/* Left arrow - closer to image */}
         {mainImages.length > 1 && (
           <button 
             onClick={() => setCurrentImage((prev) => (prev - 1 + mainImages.length) % mainImages.length)}
-            className="absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 z-10 hover:opacity-60 transition-opacity"
+            className="absolute left-[5%] lg:left-[10%] top-1/2 -translate-y-1/2 z-10 hover:opacity-60 transition-opacity bg-background/80 backdrop-blur-sm rounded-full p-2"
           >
-            <ChevronLeft className="w-6 h-6 lg:w-8 lg:h-8" />
+            <ChevronLeft className="w-5 h-5 lg:w-6 lg:h-6" />
           </button>
         )}
 
         {/* Image container */}
         <div 
-          className="max-w-xl w-full relative"
+          ref={imageRef}
+          className="max-w-xl w-full relative overflow-hidden cursor-zoom-in"
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
+          onMouseMove={handleMouseMove}
+          onMouseEnter={() => setIsZooming(true)}
+          onMouseLeave={() => setIsZooming(false)}
         >
           {/* NEW badge - top left */}
           {product.is_new && (
@@ -147,7 +164,11 @@ const Product = () => {
           <img
             src={mainImages[currentImage]}
             alt={product.name}
-            className="w-full"
+            className="w-full transition-transform duration-200 ease-out"
+            style={{
+              transform: isZooming ? 'scale(2)' : 'scale(1)',
+              transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`
+            }}
             loading="eager"
             fetchPriority="high"
           />
@@ -173,13 +194,13 @@ const Product = () => {
           )}
         </div>
 
-        {/* Right arrow - outside image */}
+        {/* Right arrow - closer to image */}
         {mainImages.length > 1 && (
           <button 
             onClick={() => setCurrentImage((prev) => (prev + 1) % mainImages.length)}
-            className="absolute right-2 lg:right-4 top-1/2 -translate-y-1/2 z-10 hover:opacity-60 transition-opacity"
+            className="absolute right-[5%] lg:right-[10%] top-1/2 -translate-y-1/2 z-10 hover:opacity-60 transition-opacity bg-background/80 backdrop-blur-sm rounded-full p-2"
           >
-            <ChevronRight className="w-6 h-6 lg:w-8 lg:h-8" />
+            <ChevronRight className="w-5 h-5 lg:w-6 lg:h-6" />
           </button>
         )}
       </div>
