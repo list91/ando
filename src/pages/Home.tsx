@@ -26,6 +26,13 @@ const Home = () => {
       <SchemaOrg type="organization" />
       
       <main className="relative h-[calc(100vh-4rem)] overflow-hidden" role="main">
+        {/* Vertical text on the left */}
+        <div className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-10">
+          <div className="flex flex-col items-center gap-6 text-foreground/20 text-xs sm:text-sm tracking-[0.3em] font-light" style={{ writingMode: 'vertical-rl' }}>
+            FEEL THE MOMENT IN TRADITIONALITY
+          </div>
+        </div>
+
         <div 
           className="w-full h-full bg-cover bg-center"
           style={{

@@ -20,8 +20,15 @@ const About = () => {
   const founderImage = sections?.find((s) => s.section_key === "founder_image");
 
   return (
-    <div className="min-h-screen flex items-center py-8 px-8">
-      <div className="max-w-7xl mx-auto w-full">
+    <div className="min-h-screen flex items-center py-8 px-8 relative">
+      {/* Vertical text on the left */}
+      <div className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2">
+        <div className="flex flex-col items-center gap-6 text-foreground/20 text-xs sm:text-sm tracking-[0.3em] font-light" style={{ writingMode: 'vertical-rl' }}>
+          FEEL THE MOMENT IN TRADITIONALITY
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto w-full pl-8 sm:pl-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           {/* Left side - Text content */}
           <div className="space-y-6">
