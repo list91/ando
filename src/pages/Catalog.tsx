@@ -282,31 +282,41 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
             </Popover>
 
             {/* Price Filter */}
-            <Popover>
+            <Popover modal={true}>
               <PopoverTrigger asChild>
                 <button className="flex items-center gap-2 hover:opacity-60 transition-opacity">
                   Цена {(priceRange.min || priceRange.max) && '•'}
                   <ChevronDown className="w-4 h-4" />
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-64" align="start">
+              <PopoverContent className="w-64" align="start" onInteractOutside={(e) => {
+                // Prevent closing when interacting with inputs
+                const target = e.target as HTMLElement;
+                if (target.tagName === 'INPUT') {
+                  e.preventDefault();
+                }
+              }}>
                 <div className="space-y-4">
                   <p className="font-medium text-sm">Диапазон цен</p>
                   <div className="flex gap-2 items-center">
                     <input
                       type="number"
                       placeholder="От"
+                      inputMode="numeric"
                       className="w-full px-3 py-2 text-sm border border-input rounded-md bg-background"
                       value={priceRange.min || ''}
                       onChange={(e) => setPriceRange({ ...priceRange, min: e.target.value ? Number(e.target.value) : undefined })}
+                      onFocus={(e) => e.stopPropagation()}
                     />
                     <span className="text-muted-foreground">—</span>
                     <input
                       type="number"
                       placeholder="До"
+                      inputMode="numeric"
                       className="w-full px-3 py-2 text-sm border border-input rounded-md bg-background"
                       value={priceRange.max || ''}
                       onChange={(e) => setPriceRange({ ...priceRange, max: e.target.value ? Number(e.target.value) : undefined })}
+                      onFocus={(e) => e.stopPropagation()}
                     />
                   </div>
                   {filterOptions?.priceRange && (
@@ -330,9 +340,51 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
           </div>
 
           {/* Sorting and Grid View */}
-          <div className="flex items-center gap-4">
-            {/* Grid View Toggle */}
-            <div className="flex items-center gap-1 border border-border rounded-sm p-0.5">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-3 lg:gap-4">
+            {/* Mobile: Found count and Sorting */}
+            <div className="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-start order-1 lg:order-2">
+              <span className="text-muted-foreground text-xs lg:text-sm">
+                Найдено: {sortedProducts.length}
+                {searchQuery && ` по запросу "${searchQuery}"`}
+              </span>
+              
+              <Popover modal={true}>
+                <PopoverTrigger asChild>
+                  <button className="flex items-center gap-2 hover:opacity-60 transition-opacity text-xs lg:text-sm min-h-[44px] px-3">
+                    Сортировка
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-56" align="end">
+                  <div className="space-y-2">
+                    <p className="font-medium mb-3 text-sm">Сортировать по</p>
+                    {[
+                      { value: 'default', label: 'По умолчанию' },
+                      { value: 'price-asc', label: 'Цена: по возрастанию' },
+                      { value: 'price-desc', label: 'Цена: по убыванию' },
+                      { value: 'name-asc', label: 'Название: А-Я' },
+                      { value: 'name-desc', label: 'Название: Я-А' },
+                      { value: 'newest', label: 'Сначала новые' },
+                    ].map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => setSortBy(option.value)}
+                        className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors ${
+                          sortBy === option.value
+                            ? 'bg-primary text-primary-foreground'
+                            : 'hover:bg-secondary'
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            {/* Desktop: Grid View Toggle - hidden on mobile */}
+            <div className="hidden lg:flex items-center gap-1 border border-border rounded-sm p-0.5 order-2 lg:order-1">
               <button
                 onClick={() => setGridCols(3)}
                 className={`p-1.5 transition-colors ${
@@ -354,45 +406,6 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                 <LayoutGrid className="w-4 h-4" />
               </button>
             </div>
-
-            <span className="text-muted-foreground text-xs lg:text-sm">
-              Найдено: {sortedProducts.length}
-              {searchQuery && ` по запросу "${searchQuery}"`}
-            </span>
-            
-            <Popover>
-              <PopoverTrigger asChild>
-                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity text-xs lg:text-sm min-h-[44px] px-3">
-                  Сортировка
-                  <ChevronDown className="w-4 h-4" />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-56" align="end">
-                <div className="space-y-2">
-                  <p className="font-medium mb-3 text-sm">Сортировать по</p>
-                  {[
-                    { value: 'default', label: 'По умолчанию' },
-                    { value: 'price-asc', label: 'Цена: по возрастанию' },
-                    { value: 'price-desc', label: 'Цена: по убыванию' },
-                    { value: 'name-asc', label: 'Название: А-Я' },
-                    { value: 'name-desc', label: 'Название: Я-А' },
-                    { value: 'newest', label: 'Сначала новые' },
-                  ].map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => setSortBy(option.value)}
-                      className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors ${
-                        sortBy === option.value
-                          ? 'bg-primary text-primary-foreground'
-                          : 'hover:bg-secondary'
-                      }`}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              </PopoverContent>
-            </Popover>
           </div>
         </div>
       </section>
@@ -603,17 +616,19 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                 <Link to={`/product/${product.slug}`}>
                   <h3 className="text-sm mb-2 tracking-wide text-foreground">{product.name}</h3>
                   
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-sm text-foreground">
-                      {product.price} ₽
-                    </span>
-                    {product.old_price && (
-                      <span className="text-sm text-muted-foreground line-through">
-                        {product.old_price} ₽
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-foreground">
+                        {product.price} ₽
                       </span>
-                    )}
+                      {product.old_price && (
+                        <span className="text-sm text-muted-foreground line-through">
+                          {product.old_price} ₽
+                        </span>
+                      )}
+                    </div>
                     {product.available_colors && product.available_colors.length > 0 && (
-                      <div className="flex items-center gap-2 ml-auto">
+                      <div className="flex items-center gap-2">
                         {product.available_colors.slice(0, 4).map((color, idx) => {
                           const colorHex = getColorHex(color);
                           return (
