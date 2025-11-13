@@ -177,26 +177,35 @@ export type Database = {
       }
       lookbook_images: {
         Row: {
+          alt_text: string | null
+          caption: string | null
           created_at: string
           display_order: number
           id: string
           image_url: string
+          is_visible: boolean | null
           photographer_credit: string | null
           season_id: string
         }
         Insert: {
+          alt_text?: string | null
+          caption?: string | null
           created_at?: string
           display_order?: number
           id?: string
           image_url: string
+          is_visible?: boolean | null
           photographer_credit?: string | null
           season_id: string
         }
         Update: {
+          alt_text?: string | null
+          caption?: string | null
           created_at?: string
           display_order?: number
           id?: string
           image_url?: string
+          is_visible?: boolean | null
           photographer_credit?: string | null
           season_id?: string
         }
@@ -212,27 +221,45 @@ export type Database = {
       }
       lookbook_seasons: {
         Row: {
+          cover_image_url: string | null
           created_at: string
+          description: string | null
           display_order: number
           id: string
           is_active: boolean
           season_name: string
+          short_description: string | null
+          slug: string | null
+          subtitle: string | null
+          title: string | null
           updated_at: string
         }
         Insert: {
+          cover_image_url?: string | null
           created_at?: string
+          description?: string | null
           display_order?: number
           id?: string
           is_active?: boolean
           season_name: string
+          short_description?: string | null
+          slug?: string | null
+          subtitle?: string | null
+          title?: string | null
           updated_at?: string
         }
         Update: {
+          cover_image_url?: string | null
           created_at?: string
+          description?: string | null
           display_order?: number
           id?: string
           is_active?: boolean
           season_name?: string
+          short_description?: string | null
+          slug?: string | null
+          subtitle?: string | null
+          title?: string | null
           updated_at?: string
         }
         Relationships: []

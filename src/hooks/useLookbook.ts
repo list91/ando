@@ -5,6 +5,12 @@ import { toast } from '@/hooks/use-toast';
 export interface LookbookSeason {
   id: string;
   season_name: string;
+  slug: string;
+  short_description?: string;
+  cover_image_url?: string;
+  title?: string;
+  subtitle?: string;
+  description?: string;
   display_order: number;
   is_active: boolean;
   created_at: string;
@@ -15,7 +21,10 @@ export interface LookbookImage {
   id: string;
   season_id: string;
   image_url: string;
+  caption?: string;
+  alt_text?: string;
   display_order: number;
+  is_visible: boolean;
   photographer_credit?: string;
   created_at: string;
 }

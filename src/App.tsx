@@ -20,7 +20,8 @@ import AdminLayout from "./components/AdminLayout";
 import Home from "./pages/Home";
 import Catalog from "./pages/Catalog";
 import Product from "./pages/Product";
-import Lookbook from "./pages/Lookbook";
+import LookbookList from "./pages/LookbookList";
+import LookbookDetail from "./pages/LookbookDetail";
 import About from "./pages/About";
 import Info from "./pages/Info";
 import Auth from "./pages/Auth";
@@ -66,7 +67,8 @@ const AppContent = () => {
             element={<Catalog selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />} 
           />
           <Route path="/product/:id" element={<Product />} />
-          <Route path="/lookbook" element={<Lookbook />} />
+          <Route path="/lookbook" element={<LookbookList />} />
+          <Route path="/lookbook/:slug" element={<LookbookDetail />} />
           <Route path="/about" element={<About />} />
           <Route 
             path="/info" 
