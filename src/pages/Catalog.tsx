@@ -169,15 +169,15 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   return (
     <main className="min-h-full" role="main">
       {/* Filters */}
-      <section className="border-b border-border py-4 px-4 lg:pl-8" aria-label="Фильтры товаров">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 text-sm">
-          <div className="flex flex-wrap gap-4 lg:gap-8 items-center">
+      <section className="border-b border-border py-3 px-3 lg:px-8 lg:py-4" aria-label="Фильтры товаров">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4 text-sm">
+          <div className="flex flex-wrap gap-2 lg:gap-8 items-center">
             {/* Material Filter */}
             <Popover>
               <PopoverTrigger asChild>
-                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity min-h-[44px] px-3">
+                <button className="flex items-center gap-1.5 hover:opacity-60 transition-opacity min-h-[44px] px-2 lg:px-3 text-xs lg:text-sm">
                   Материал {selectedMaterials.length > 0 && `(${selectedMaterials.length})`}
-                  <ChevronDown className="w-4 h-4" />
+                  <ChevronDown className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
                 </button>
               </PopoverTrigger>
               <PopoverContent className="w-64" align="start">
@@ -211,9 +211,9 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
             {/* Color Filter */}
             <Popover>
               <PopoverTrigger asChild>
-                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity min-h-[44px] px-3">
+                <button className="flex items-center gap-1.5 hover:opacity-60 transition-opacity min-h-[44px] px-2 lg:px-3 text-xs lg:text-sm">
                   Цвет {selectedColors.length > 0 && `(${selectedColors.length})`}
-                  <ChevronDown className="w-4 h-4" />
+                  <ChevronDown className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
                 </button>
               </PopoverTrigger>
               <PopoverContent className="w-64" align="start">
@@ -251,9 +251,9 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
             {/* Size Filter */}
             <Popover>
               <PopoverTrigger asChild>
-                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity min-h-[44px] px-3">
+                <button className="flex items-center gap-1.5 hover:opacity-60 transition-opacity min-h-[44px] px-2 lg:px-3 text-xs lg:text-sm">
                   Размер {selectedSizes.length > 0 && `(${selectedSizes.length})`}
-                  <ChevronDown className="w-4 h-4" />
+                  <ChevronDown className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
                 </button>
               </PopoverTrigger>
               <PopoverContent className="w-64" align="start">
@@ -284,9 +284,9 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
             {/* Price Filter */}
             <Popover modal={true}>
               <PopoverTrigger asChild>
-                <button className="flex items-center gap-2 hover:opacity-60 transition-opacity">
+                <button className="flex items-center gap-1.5 hover:opacity-60 transition-opacity min-h-[44px] px-2 lg:px-3 text-xs lg:text-sm">
                   Цена {(priceRange.min || priceRange.max) && '•'}
-                  <ChevronDown className="w-4 h-4" />
+                  <ChevronDown className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
                 </button>
               </PopoverTrigger>
               <PopoverContent className="w-64" align="start" onInteractOutside={(e) => {
@@ -340,9 +340,9 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
           </div>
 
           {/* Sorting and Grid View */}
-          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-3 lg:gap-4">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-2 lg:gap-4">
             {/* Mobile: Found count and Sorting */}
-            <div className="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-start order-1 lg:order-2">
+            <div className="flex items-center gap-2 lg:gap-3 w-full lg:w-auto justify-between lg:justify-start order-1 lg:order-2">
               <span className="text-muted-foreground text-xs lg:text-sm">
                 Найдено: {sortedProducts.length}
                 {searchQuery && ` по запросу "${searchQuery}"`}
@@ -350,9 +350,9 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
               
               <Popover modal={true}>
                 <PopoverTrigger asChild>
-                  <button className="flex items-center gap-2 hover:opacity-60 transition-opacity text-xs lg:text-sm min-h-[44px] px-3">
+                  <button className="flex items-center gap-1.5 hover:opacity-60 transition-opacity text-xs lg:text-sm min-h-[44px] px-2 lg:px-3">
                     Сортировка
-                    <ChevronDown className="w-4 h-4" />
+                    <ChevronDown className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
                   </button>
                 </PopoverTrigger>
                 <PopoverContent className="w-56" align="end">
@@ -435,9 +435,9 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
         </div>
       ) : (
         <section 
-          className={`grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 ${
+          className={`grid grid-cols-2 ${
             gridCols === 3 ? 'md:grid-cols-3 lg:grid-cols-3' : 'md:grid-cols-3 lg:grid-cols-4'
-          } gap-3 sm:gap-4 lg:gap-6 p-3 sm:p-4 lg:px-8 lg:py-6`} 
+          } gap-2 sm:gap-3 lg:gap-6 p-2 sm:p-3 lg:px-8 lg:py-6`} 
           aria-label="Список товаров"
         >
           {sortedProducts.map((product) => {
@@ -551,7 +551,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
               <div key={product.id} className="group relative">
                 <Link to={`/product/${product.slug}`}>
                   <div 
-                    className="relative aspect-[3/4] mb-3 overflow-hidden bg-muted"
+                    className="relative aspect-[3/4] mb-2 lg:mb-3 overflow-hidden bg-muted"
                     onMouseMove={handleMouseMove}
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
@@ -561,14 +561,14 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                   >
                     {/* NEW badge - top left */}
                     {product.is_new && (
-                      <div className="absolute top-2 left-2 z-10 bg-background/95 backdrop-blur-sm text-foreground px-2.5 py-1 text-[11px] font-medium uppercase tracking-widest border border-border">
+                      <div className="absolute top-1.5 left-1.5 lg:top-2 lg:left-2 z-10 bg-background/95 backdrop-blur-sm text-foreground px-1.5 py-0.5 lg:px-2.5 lg:py-1 text-[9px] lg:text-[11px] font-medium uppercase tracking-widest border border-border">
                         NEW
                       </div>
                     )}
                     
                     {/* SALE badge - top left (below NEW if both present) */}
                     {product.is_sale && (
-                      <div className={`absolute ${product.is_new ? 'top-11' : 'top-2'} left-2 z-10 bg-primary/10 text-primary px-2.5 py-1 text-[11px] font-medium uppercase tracking-widest border border-primary/20`}>
+                      <div className={`absolute ${product.is_new ? 'top-8 lg:top-11' : 'top-1.5 lg:top-2'} left-1.5 lg:left-2 z-10 bg-primary/10 text-primary px-1.5 py-0.5 lg:px-2.5 lg:py-1 text-[9px] lg:text-[11px] font-medium uppercase tracking-widest border border-primary/20`}>
                         SALE {discount > 0 && `−${discount}%`}
                       </div>
                     )}
@@ -601,11 +601,11 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                 {/* Favorite button */}
                 <button
                   onClick={handleFavoriteClick}
-                  className="absolute top-3 right-3 z-20 hover:scale-110 transition-transform"
+                  className="absolute top-2 right-2 lg:top-3 lg:right-3 z-20 hover:scale-110 transition-transform"
                   aria-label={isFavorite(product.id) ? "Удалить из избранного" : "Добавить в избранное"}
                 >
                   <Heart 
-                    className={`h-6 w-6 transition-all ${
+                    className={`h-5 w-5 lg:h-6 lg:w-6 transition-all ${
                       isFavorite(product.id) 
                         ? 'fill-red-500 text-red-500' 
                         : 'text-white stroke-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]'
@@ -614,27 +614,27 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                 </button>
 
                 <Link to={`/product/${product.slug}`}>
-                  <h3 className="text-sm mb-2 tracking-wide text-foreground">{product.name}</h3>
+                  <h3 className="text-xs lg:text-sm mb-1.5 lg:mb-2 tracking-wide text-foreground line-clamp-2">{product.name}</h3>
                   
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-foreground">
+                  <div className="flex flex-col gap-1 lg:gap-1.5 mb-1.5 lg:mb-2">
+                    <div className="flex items-center gap-1.5 lg:gap-2">
+                      <span className="text-xs lg:text-sm font-medium text-foreground">
                         {product.price} ₽
                       </span>
                       {product.old_price && (
-                        <span className="text-sm text-muted-foreground line-through">
+                        <span className="text-xs lg:text-sm text-muted-foreground line-through">
                           {product.old_price} ₽
                         </span>
                       )}
                     </div>
                     {product.available_colors && product.available_colors.length > 0 && (
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
                         {product.available_colors.slice(0, 4).map((color, idx) => {
                           const colorHex = getColorHex(color);
                           return (
                             <div
                               key={idx}
-                              className="w-5 h-5 rounded-full border-2 border-border flex-shrink-0"
+                              className="w-4 h-4 lg:w-5 lg:h-5 rounded-full border border-border flex-shrink-0"
                               style={{ 
                                 backgroundColor: colorHex,
                                 boxShadow: colorHex.toLowerCase() === '#ffffff' ? 'inset 0 0 0 1px rgba(0,0,0,0.1)' : 'none'
@@ -648,7 +648,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
                   </div>
 
                   {product.available_sizes && product.available_sizes.length > 0 && (
-                    <div className="flex gap-3 text-xs text-muted-foreground">
+                    <div className="flex gap-2 lg:gap-3 text-[10px] lg:text-xs text-muted-foreground">
                       {product.available_sizes.map((size) => (
                         <span key={size}>
                           {size}
