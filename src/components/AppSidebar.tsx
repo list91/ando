@@ -75,17 +75,16 @@ export function AppSidebar({
           <img src={logoImage} alt="ANDO JV" className="w-[432px]" />
         </Link>
 
-        {/* Vertical text below logo */}
-        <div className="flex justify-center mb-8">
-          <p className="text-xs tracking-[0.3em] uppercase text-foreground/40" style={{
+        <div className="flex justify-center">
+          {isHomePage && <div className="flex items-center justify-center">
+              <p className="text-xs tracking-[0.3em] uppercase" style={{
             writingMode: 'vertical-rl',
             textOrientation: 'mixed'
           }}>
-            Feel the moment
-          </p>
-        </div>
+                Feel the moment
+              </p>
+            </div>}
 
-        <div className="flex justify-center">
           {isCatalogRelated && <nav className="space-y-2 flex flex-col pl-6 mx-[55px]">
               <Link to="/catalog" onClick={() => onCategoryChange?.("Все товары")} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${selectedCategory === "Все товары" ? "underline" : ""}`}>
                 Все товары
