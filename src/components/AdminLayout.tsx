@@ -32,7 +32,7 @@ const AdminLayout = () => {
       items: [
         { path: '/admin/products', label: 'Товары', icon: Package },
         { path: '/admin/categories', label: 'Категории', icon: Folder },
-        { path: '/admin/hero-slides', label: 'Слайды', icon: ImagePlay },
+        { path: '/admin/hero-image', label: 'Главное фото', icon: ImageIcon },
         { path: '/admin/lookbook', label: 'Лукбук', icon: ImageIcon },
         { path: '/admin/about-page', label: 'О бренде', icon: Info },
         { path: '/admin/info-pages', label: 'Инфо страницы', icon: FileText },

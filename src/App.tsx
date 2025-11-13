@@ -34,6 +34,7 @@ import AdminSiteSettings from "./pages/admin/SiteSettings";
 import AdminLookbook from "./pages/admin/Lookbook";
 import AdminInfoPages from "./pages/admin/InfoPages";
 import AdminHeroSlides from "./pages/admin/HeroSlides";
+import AdminHeroImage from "./pages/admin/HeroImage";
 import AdminAboutPage from "./pages/admin/AboutPage";
 import Favorites from "./pages/Favorites";
 import Orders from "./pages/Orders";
@@ -92,6 +93,7 @@ const AppContent = () => {
             <Route path="lookbook" element={<AdminLookbook />} />
             <Route path="info-pages" element={<AdminInfoPages />} />
             <Route path="hero-slides" element={<AdminHeroSlides />} />
+            <Route path="hero-image" element={<AdminHeroImage />} />
             <Route path="about-page" element={<AdminAboutPage />} />
           </Route>
           
