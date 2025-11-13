@@ -35,7 +35,14 @@ const Lookbook = () => {
   }
 
   return (
-    <div className="min-h-full">
+    <div className="min-h-full relative">
+      {/* Vertical text on the left */}
+      <div className="fixed left-4 sm:left-8 top-1/2 -translate-y-1/2 z-10">
+        <div className="flex flex-col items-center gap-6 text-foreground/20 text-xs sm:text-sm tracking-[0.3em] font-light" style={{ writingMode: 'vertical-rl' }}>
+          FEEL THE MOMENT IN TRADITIONALITY
+        </div>
+      </div>
+
       <div className="border-b border-border py-4 px-8 flex justify-end">
         <div className="relative">
           <select
