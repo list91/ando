@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 public/*
 screenshots/*
+node_modules
+*.tsx.backup
+nul
