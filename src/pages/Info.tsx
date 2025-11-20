@@ -1,6 +1,8 @@
 import { useInfoPages } from "@/hooks/useInfoPages";
 import { Loader2 } from "lucide-react";
 import InfoSectionToggle from "@/components/InfoSectionToggle";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 interface InfoProps {
   activeSection: string;
@@ -10,6 +12,16 @@ interface InfoProps {
 const Info = ({ activeSection, setActiveSection }: InfoProps) => {
   const { data: pages, isLoading } = useInfoPages();
   const visiblePages = pages?.filter(p => p.is_visible);
+  const location = useLocation();
+
+  // Handle URL query parameter ?section=
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const sectionParam = searchParams.get('section');
+    if (sectionParam) {
+      setActiveSection(sectionParam);
+    }
+  }, [location.search, setActiveSection]);
 
   const sections = [
     { key: 'delivery', label: 'Доставка' },
@@ -194,7 +206,7 @@ const Info = ({ activeSection, setActiveSection }: InfoProps) => {
           </div>
         )}
 
-        {activeSection === "agreement" && (
+        {(activeSection === "agreement" || activeSection === "privacy") && (
           <div className="space-y-8">
             <h2 className="text-2xl mb-6 tracking-[0.15em] uppercase">Пользовательское соглашение</h2>
             <p className="text-sm leading-relaxed">
@@ -328,7 +340,7 @@ const Info = ({ activeSection, setActiveSection }: InfoProps) => {
           </div>
         )}
 
-        {!["brand", "cooperation", "delivery", "returns", "size-guide", "agreement", "warranty", "loyalty", "contacts", "stores"].includes(activeSection) && (
+        {!["brand", "cooperation", "delivery", "returns", "size-guide", "agreement", "privacy", "warranty", "loyalty", "contacts", "stores"].includes(activeSection) && (
           <div className="space-y-12">
             <section className="pt-8 border-t border-border">
               <h2 className="text-2xl mb-6 tracking-[0.15em] uppercase">РЕКВИЗИТЫ</h2>

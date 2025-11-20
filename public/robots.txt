@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://yourdomain.com/sitemap.xml
+Sitemap: https://andojv.com/sitemap.xml
+# Test deploy - 2025-11-20 19:45
