@@ -187,12 +187,13 @@ const Product = () => {
 
             {/* Image with zoom */}
             <div
-              className="relative overflow-hidden touch-pan-y"
+              className="relative overflow-hidden touch-pan-y aspect-[3/4]"
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
               <TransformWrapper
+                key={currentImage}
                 ref={zoomRef}
                 initialScale={1}
                 minScale={1}
@@ -206,13 +207,13 @@ const Product = () => {
                 }}
               >
                 <TransformComponent
-                  wrapperClass="!w-full"
-                  contentClass="!w-full"
+                  wrapperClass="!w-full !h-full"
+                  contentClass="!w-full !h-full flex items-center justify-center"
                 >
                   <img
                     src={mainImages[currentImage]}
                     alt={product.name}
-                    className="w-full select-none"
+                    className="w-full h-full object-contain select-none"
                     loading="eager"
                     draggable={false}
                   />
