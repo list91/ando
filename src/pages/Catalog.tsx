@@ -61,24 +61,26 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
 
   // Update URL params when filters change (NOT search - handled by context)
   useEffect(() => {
-    const params = new URLSearchParams();
-    if (selectedMaterials.length > 0) params.set("materials", selectedMaterials.join(","));
-    if (selectedColors.length > 0) params.set("colors", selectedColors.join(","));
-    if (selectedSizes.length > 0) params.set("sizes", selectedSizes.join(","));
-    if (priceRange.min !== undefined) params.set("minPrice", String(priceRange.min));
-    if (priceRange.max !== undefined) params.set("maxPrice", String(priceRange.max));
-    if (sortBy !== "default") params.set("sort", sortBy);
-    
-    // Keep search param from context
-    const currentSearch = searchParams.get("search");
-    if (currentSearch) params.set("search", currentSearch);
-    
-    setSearchParams(params, { replace: true });
-  }, [selectedMaterials, selectedColors, selectedSizes, priceRange, sortBy, searchParams, setSearchParams]);
+    setSearchParams(currentParams => {
+      const params = new URLSearchParams();
+      if (selectedMaterials.length > 0) params.set("materials", selectedMaterials.join(","));
+      if (selectedColors.length > 0) params.set("colors", selectedColors.join(","));
+      if (selectedSizes.length > 0) params.set("sizes", selectedSizes.join(","));
+      if (priceRange.min !== undefined) params.set("minPrice", String(priceRange.min));
+      if (priceRange.max !== undefined) params.set("maxPrice", String(priceRange.max));
+      if (sortBy !== "default") params.set("sort", sortBy);
+
+      // Keep search param from context
+      const currentSearch = currentParams.get("search");
+      if (currentSearch) params.set("search", currentSearch);
+
+      return params;
+    }, { replace: true });
+  }, [selectedMaterials, selectedColors, selectedSizes, priceRange, sortBy, setSearchParams]);
 
   useEffect(() => {
     const newFilters: ProductFilters = {};
-    
+
     if (selectedCategory === "Все товары") {
       newFilters.categoryId = null;
       newFilters.isSale = false;
@@ -118,7 +120,13 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
       newFilters.maxPrice = priceRange.max;
     }
 
-    setFilters(newFilters);
+    // Only update if filters actually changed to prevent infinite loop
+    setFilters(prevFilters => {
+      if (JSON.stringify(prevFilters) === JSON.stringify(newFilters)) {
+        return prevFilters; // Return same reference to prevent re-render
+      }
+      return newFilters;
+    });
   }, [selectedCategory, categories, selectedMaterials, selectedColors, selectedSizes, priceRange]);
 
   const clearFilters = () => {
