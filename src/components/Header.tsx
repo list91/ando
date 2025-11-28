@@ -1,16 +1,20 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { ShoppingCart, Heart, User, LogOut, Menu as MenuIcon, ShieldCheck, Package, Search } from "lucide-react";
-import { useState, useEffect } from "react";
+import { ShoppingCart, Heart, User, LogOut, Menu as MenuIcon, ShieldCheck, Package, Search, X } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import ProductSearch from "./ProductSearch";
 import CartDrawer from "./CartDrawer";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCatalogSearch } from "@/contexts/CatalogSearchContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
+  const { query: searchQuery, setQuery: setSearchQuery, clearQuery: clearSearchQuery } = useCatalogSearch();
   const {
     totalItems
   } = useCart();
@@ -127,10 +131,58 @@ const Header = () => {
               <MenuIcon className="w-5 h-5" />
             </button>
 
+            {/* Mobile Search Bar - expandable */}
+            {isMobileSearchOpen && (
+              <div className="absolute left-0 right-0 top-0 h-full bg-background z-10 flex items-center px-4 gap-2">
+                <input
+                  ref={mobileSearchInputRef}
+                  type="text"
+                  placeholder="Поиск товаров..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape') {
+                      if (searchQuery) {
+                        clearSearchQuery();
+                      } else {
+                        setIsMobileSearchOpen(false);
+                      }
+                    } else if (e.key === 'Enter' && searchQuery.trim()) {
+                      navigate('/catalog');
+                      setIsMobileSearchOpen(false);
+                    }
+                  }}
+                  className="flex-1 bg-transparent border-0 border-b border-border px-2 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+                  autoFocus
+                />
+                <button
+                  onClick={() => {
+                    if (searchQuery) {
+                      clearSearchQuery();
+                      mobileSearchInputRef.current?.focus();
+                    } else {
+                      setIsMobileSearchOpen(false);
+                    }
+                  }}
+                  className="hover:opacity-60 transition-opacity p-2"
+                  aria-label={searchQuery ? "Очистить поиск" : "Закрыть поиск"}
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+
             {/* Mobile Right Icons */}
             <div className="flex items-center gap-3">
               {/* Search Icon */}
-              <button onClick={() => navigate('/catalog')} className="hover:opacity-60 transition-opacity min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Поиск">
+              <button
+                onClick={() => {
+                  setIsMobileSearchOpen(true);
+                  setTimeout(() => mobileSearchInputRef.current?.focus(), 100);
+                }}
+                className="hover:opacity-60 transition-opacity min-w-[44px] min-h-[44px] flex items-center justify-center"
+                aria-label="Поиск"
+              >
                 <Search className="w-5 h-5" />
               </button>
 
