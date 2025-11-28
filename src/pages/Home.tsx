@@ -15,7 +15,7 @@ const Home = () => {
 
   if (isLoading || !heroImageUrl) {
     return (
-      <div className="relative h-[calc(100vh-4rem)] overflow-hidden">
+      <div className="relative h-full overflow-hidden">
         <div className="absolute inset-0 bg-muted animate-pulse" />
       </div>
     );
@@ -25,8 +25,8 @@ const Home = () => {
     <>
       <SchemaOrg type="organization" />
       
-      <main className="relative h-[calc(100vh-4rem)] overflow-hidden" role="main">
-        <div 
+      <main className="relative h-full overflow-hidden" role="main">
+        <div
           className="w-full h-full bg-cover bg-center"
           style={{
             backgroundImage: `url('${heroImageUrl}')`
@@ -42,10 +42,10 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Scroll Down Indicator */}
+        {/* Scroll Down Indicator — абсолютно позиционирован, всегда видим */}
         <button
           onClick={navigateToCatalog}
-          className="absolute bottom-8 sm:bottom-12 left-1/2 -translate-x-1/2 text-white animate-bounce hover:opacity-60 transition-opacity min-w-[44px] min-h-[44px] flex items-center justify-center"
+          className="absolute bottom-[3%] left-1/2 -translate-x-1/2 text-white animate-bounce hover:opacity-60 transition-opacity min-w-[44px] min-h-[44px] flex items-center justify-center"
           aria-label="Прокрутить вниз"
         >
           <ChevronDown className="w-6 h-6 sm:w-8 sm:h-8" />

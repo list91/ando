@@ -65,51 +65,53 @@ export function AppSidebar({
   const instagramUrl = getSetting('social_instagram', 'https://instagram.com');
   const telegramUrl = getSetting('social_telegram', 'https://t.me');
   const vkUrl = getSetting('social_vk', 'https://vk.com');
-  return <aside className="w-[307px] border-r border-border bg-muted flex-shrink-0 h-screen overflow-y-auto relative">
-      <div className="flex flex-col min-h-full pt-0 pb-[200px] px-6">
-        <Link 
-          to="/" 
+  return <aside className="w-[307px] border-r border-border bg-muted flex-shrink-0 h-screen flex flex-col overflow-hidden">
+      {/* Логотип — фиксированный */}
+      <div className="flex-shrink-0 px-6">
+        <Link
+          to="/"
           className="mb-8 flex justify-center -mt-2"
           aria-label="На главную страницу"
         >
           <img src={logoImage} alt="ANDO JV" className="w-[432px]" />
         </Link>
+      </div>
 
-        <div className="flex justify-center">
-          {isHomePage && <div className="flex items-center justify-center">
-              <p className="text-xs tracking-[0.3em] uppercase" style={{
+      {/* Контент — прижат к верху, обрезается ТОЛЬКО при нехватке места */}
+      <div className="flex-1 min-h-0 flex items-start justify-center overflow-hidden px-6">
+        {isHomePage && (
+          <p className="text-xs tracking-[0.3em] uppercase" style={{
             writingMode: 'vertical-rl',
             textOrientation: 'mixed'
           }}>
-                Feel the moment
-              </p>
-            </div>}
+            Feel the moment
+          </p>
+        )}
 
-          {isCatalogRelated && <nav className="space-y-2 flex flex-col pl-6 mx-[55px]">
-              <Link to="/catalog" onClick={() => onCategoryChange?.("NEW")} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${selectedCategory === "NEW" ? "underline" : ""}`}>
-                NEW
-              </Link>
-              <Link to="/catalog" onClick={() => onCategoryChange?.("Все товары")} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${selectedCategory === "Все товары" ? "underline" : ""}`}>
-                Все товары
-              </Link>
-              {!isLoading && categories?.map(category => <Link key={category.id} to="/catalog" onClick={() => onCategoryChange?.(category.name)} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${category.name === selectedCategory ? "underline" : ""}`}>
-                  {category.name}
-                </Link>)}
-              <Link to="/catalog" onClick={() => onCategoryChange?.("SALE")} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${selectedCategory === "SALE" ? "underline" : ""}`}>
-                SALE
-              </Link>
-            </nav>}
+        {isCatalogRelated && <nav className="space-y-2 flex flex-col pl-6 mx-[55px] overflow-y-auto max-h-full">
+            <Link to="/catalog" onClick={() => onCategoryChange?.("NEW")} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${selectedCategory === "NEW" ? "underline" : ""}`}>
+              NEW
+            </Link>
+            <Link to="/catalog" onClick={() => onCategoryChange?.("Все товары")} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${selectedCategory === "Все товары" ? "underline" : ""}`}>
+              Все товары
+            </Link>
+            {!isLoading && categories?.map(category => <Link key={category.id} to="/catalog" onClick={() => onCategoryChange?.(category.name)} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${category.name === selectedCategory ? "underline" : ""}`}>
+                {category.name}
+              </Link>)}
+            <Link to="/catalog" onClick={() => onCategoryChange?.("SALE")} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${selectedCategory === "SALE" ? "underline" : ""}`}>
+              SALE
+            </Link>
+          </nav>}
 
-          {isInfoPage && <nav className="space-y-2 flex flex-col pl-6 my-0 px-[55px] mx-[53px]">
-              {infoMenuItems.map(item => <Link key={item.id} to="/info" onClick={() => onInfoSectionChange?.(item.id)} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${activeInfoSection === item.id ? "underline" : ""}`}>
-                  {item.label}
-                </Link>)}
-            </nav>}
-        </div>
+        {isInfoPage && <nav className="space-y-2 flex flex-col pl-6 my-0 px-[55px] mx-[53px] overflow-y-auto max-h-full">
+            {infoMenuItems.map(item => <Link key={item.id} to="/info" onClick={() => onInfoSectionChange?.(item.id)} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${activeInfoSection === item.id ? "underline" : ""}`}>
+                {item.label}
+              </Link>)}
+          </nav>}
       </div>
 
-      {/* Фиксированный блок внизу */}
-      <div className="absolute bottom-0 left-0 right-0 text-xs text-center leading-snug text-muted-foreground pb-4 px-4 bg-muted">
+      {/* Копирайт — фиксированный внизу */}
+      <div className="flex-shrink-0 text-xs text-center leading-snug text-muted-foreground py-4 px-4 bg-muted">
         © 2025 ANDO JV. Все права<br />
         защищены. Не является публичной<br />
         офертой.
