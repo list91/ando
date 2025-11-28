@@ -473,6 +473,32 @@ const ProductCount = memo(({ products, searchQuery }: ProductCountProps) => {
   );
 });
 
+// Кнопка очистки фильтров - подписывается на store для проверки цен
+interface ClearFiltersButtonProps {
+  hasOtherFilters: boolean;
+  onClear: () => void;
+}
+
+const ClearFiltersButton = memo(({ hasOtherFilters, onClear }: ClearFiltersButtonProps) => {
+  const priceMin = usePriceFilterStore(state => state.min);
+  const priceMax = usePriceFilterStore(state => state.max);
+
+  const hasPriceFilter = priceMin !== '' || priceMax !== '';
+  const showButton = hasOtherFilters || hasPriceFilter;
+
+  if (!showButton) return null;
+
+  return (
+    <button
+      onClick={onClear}
+      className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+    >
+      <X className="w-3 h-3" />
+      Очистить фильтры
+    </button>
+  );
+});
+
 const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState<ProductFilters>({});
@@ -721,15 +747,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
               priceRangeInfo={filterOptions?.priceRange}
             />
 
-            {hasActiveFilters && (
-              <button
-                onClick={clearFilters}
-                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <X className="w-3 h-3" />
-                Очистить фильтры
-              </button>
-            )}
+            <ClearFiltersButton hasOtherFilters={hasActiveFilters} onClear={clearFilters} />
           </div>
 
           {/* Sorting and Grid View */}
