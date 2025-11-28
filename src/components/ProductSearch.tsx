@@ -1,8 +1,10 @@
 import { Search, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useCatalogSearch } from "@/contexts/CatalogSearchContext";
 
 const ProductSearch = () => {
   const { query, setQuery, clearQuery } = useCatalogSearch();
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
@@ -15,6 +17,8 @@ const ProductSearch = () => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Escape') {
       clearQuery();
+    } else if (e.key === 'Enter' && query.trim()) {
+      navigate('/catalog');
     }
   };
 
