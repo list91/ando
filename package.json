@@ -9,8 +9,8 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "deploy": "npm run build && node deploy-chunked.js",
-    "deploy:old": "npm run build && node deploy.js",
+    "deploy": "node deploy-git.js",
+    "deploy:ftp": "npm run build && node deploy-chunked.js",
     "test:e2e": "node tests/cookie-privacy-link.spec.cjs",
     "test:product-links": "node tests/product-links.spec.cjs"
   },

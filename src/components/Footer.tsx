@@ -144,7 +144,7 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="mt-12 pt-8 border-t border-border flex justify-between items-center text-xs text-muted-foreground">
           <div>
-            <p className="mb-1">© 2025 ANDO JV. Все права защищены.</p>
+            <p className="mb-1">© 2025 ANDO JV. Все права защищены. v2.1</p>
             <p className="text-[10px]">Не является публичной офертой.</p>
           </div>
           <div className="flex gap-6">
