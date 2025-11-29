@@ -23,6 +23,10 @@ const config = {
   deleteRemote: false,
   forcePasv: true,
   sftp: false,
+  // Connection stability settings
+  connTimeout: 60000,      // 60 sec connection timeout
+  pasvTimeout: 60000,      // 60 sec passive mode timeout
+  keepalive: 10000,        // Send keepalive every 10 sec
 };
 
 console.log('🚀 Начинаю деплой на', config.host);

@@ -24,11 +24,20 @@ const Info = ({ activeSection, setActiveSection }: InfoProps) => {
   }, [location.search, setActiveSection]);
 
   const sections = [
-    { key: 'delivery', label: 'Доставка' },
+    { key: 'brand', label: 'О бренде' },
+    { key: 'cooperation', label: 'Сотрудничество' },
+    { key: 'delivery', label: 'Оплата и доставка' },
     { key: 'returns', label: 'Возврат' },
-    { key: 'size-guide', label: 'Размеры' },
+    { key: 'size-guide', label: 'Гид по размерам' },
     { key: 'warranty', label: 'Гарантия' },
+    { key: 'loyalty', label: 'Программа лояльности' },
+    { key: 'privacy', label: 'Политика конфиденциальности' },
+    { key: 'agreement', label: 'Пользовательское соглашение' },
+    { key: 'offer', label: 'Публичная оферта' },
+    { key: 'pd-consent', label: 'Согласие на обработку ПД' },
+    { key: 'newsletter-consent', label: 'Согласие на рассылку' },
     { key: 'contacts', label: 'Контакты' },
+    { key: 'stores', label: 'Магазины' },
   ];
 
   if (isLoading) {
@@ -206,36 +215,66 @@ const Info = ({ activeSection, setActiveSection }: InfoProps) => {
           </div>
         )}
 
-        {(activeSection === "agreement" || activeSection === "privacy") && (
+        {activeSection === "privacy" && (
+          <div className="space-y-8">
+            <h2 className="text-2xl mb-6 tracking-[0.15em] uppercase">Политика конфиденциальности</h2>
+            <p className="text-sm leading-relaxed">
+              Настоящая Политика конфиденциальности определяет порядок обработки и защиты персональных данных
+              пользователей интернет-магазина ANDO JV.
+            </p>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Контент раздела находится в разработке. Полный текст политики конфиденциальности будет добавлен в ближайшее время.
+            </p>
+          </div>
+        )}
+
+        {activeSection === "agreement" && (
           <div className="space-y-8">
             <h2 className="text-2xl mb-6 tracking-[0.15em] uppercase">Пользовательское соглашение</h2>
             <p className="text-sm leading-relaxed">
-              Настоящее Пользовательское соглашение регулирует отношения между администрацией 
+              Настоящее Пользовательское соглашение регулирует отношения между администрацией
               интернет-магазина ANDO JV и пользователями сайта.
             </p>
-            <div className="space-y-4 text-sm">
-              <div>
-                <h3 className="font-medium mb-2">1. Общие положения</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Использование сайта означает согласие с настоящим пользовательским соглашением. 
-                  Если вы не согласны с условиями, пожалуйста, покиньте сайт.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-medium mb-2">2. Конфиденциальность</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Мы гарантируем конфиденциальность персональных данных пользователей. 
-                  Информация используется только для обработки заказов.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-medium mb-2">3. Обязательства сторон</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Покупатель обязуется предоставить достоверную информацию при оформлении заказа. 
-                  Продавец обязуется предоставить товар надлежащего качества.
-                </p>
-              </div>
-            </div>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Контент раздела находится в разработке. Полный текст пользовательского соглашения будет добавлен в ближайшее время.
+            </p>
+          </div>
+        )}
+
+        {activeSection === "offer" && (
+          <div className="space-y-8">
+            <h2 className="text-2xl mb-6 tracking-[0.15em] uppercase">Публичная оферта</h2>
+            <p className="text-sm leading-relaxed">
+              Настоящий документ является официальным предложением (публичной офертой) интернет-магазина ANDO JV
+              заключить договор купли-продажи товаров.
+            </p>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Контент раздела находится в разработке. Полный текст публичной оферты будет добавлен в ближайшее время.
+            </p>
+          </div>
+        )}
+
+        {activeSection === "pd-consent" && (
+          <div className="space-y-8">
+            <h2 className="text-2xl mb-6 tracking-[0.15em] uppercase">Согласие на обработку ПД</h2>
+            <p className="text-sm leading-relaxed">
+              Настоящим я даю согласие на обработку моих персональных данных интернет-магазином ANDO JV.
+            </p>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Контент раздела находится в разработке. Полный текст согласия на обработку персональных данных будет добавлен в ближайшее время.
+            </p>
+          </div>
+        )}
+
+        {activeSection === "newsletter-consent" && (
+          <div className="space-y-8">
+            <h2 className="text-2xl mb-6 tracking-[0.15em] uppercase">Согласие на рассылку</h2>
+            <p className="text-sm leading-relaxed">
+              Настоящим я даю согласие на получение рекламных и информационных материалов от интернет-магазина ANDO JV.
+            </p>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Контент раздела находится в разработке. Полный текст согласия на рассылку будет добавлен в ближайшее время.
+            </p>
           </div>
         )}
 
@@ -340,7 +379,7 @@ const Info = ({ activeSection, setActiveSection }: InfoProps) => {
           </div>
         )}
 
-        {!["brand", "cooperation", "delivery", "returns", "size-guide", "agreement", "privacy", "warranty", "loyalty", "contacts", "stores"].includes(activeSection) && (
+        {!["brand", "cooperation", "delivery", "returns", "size-guide", "agreement", "privacy", "offer", "pd-consent", "newsletter-consent", "warranty", "loyalty", "contacts", "stores"].includes(activeSection) && (
           <div className="space-y-12">
             <section className="pt-8 border-t border-border">
               <h2 className="text-2xl mb-6 tracking-[0.15em] uppercase">РЕКВИЗИТЫ</h2>
