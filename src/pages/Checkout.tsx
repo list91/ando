@@ -341,7 +341,7 @@ const Checkout = () => {
                           пользовательским соглашением
                         </Link>{' '}
                         и{' '}
-                        <Link to="/info?section=agreement" className="underline hover:no-underline">
+                        <Link to="/info?section=privacy" className="underline hover:no-underline">
                           политикой конфиденциальности
                         </Link>
                       </p>

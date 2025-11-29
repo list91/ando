@@ -10,7 +10,7 @@ interface AppSidebarProps {
 }
 const infoMenuItems = [{
   id: "brand",
-  label: "О Бренде"
+  label: "О бренде"
 }, {
   id: "cooperation",
   label: "Сотрудничество"
@@ -24,14 +24,26 @@ const infoMenuItems = [{
   id: "size-guide",
   label: "Гид по размерам"
 }, {
-  id: "agreement",
-  label: "Пользовательское соглашение"
-}, {
   id: "warranty",
   label: "Гарантия"
 }, {
   id: "loyalty",
-  label: "Программа лояльности и бонусы"
+  label: "Программа лояльности"
+}, {
+  id: "privacy",
+  label: "Политика конфиденциальности"
+}, {
+  id: "agreement",
+  label: "Пользовательское соглашение"
+}, {
+  id: "offer",
+  label: "Публичная оферта"
+}, {
+  id: "pd-consent",
+  label: "Согласие на обработку ПД"
+}, {
+  id: "newsletter-consent",
+  label: "Согласие на рассылку"
 }, {
   id: "contacts",
   label: "Контакты"

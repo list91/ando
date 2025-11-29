@@ -151,7 +151,7 @@ const Footer = () => {
             <Link to="/info?section=agreement" className="hover:text-foreground transition-colors">
               Пользовательское соглашение
             </Link>
-            <Link to="/info?section=agreement" className="hover:text-foreground transition-colors">
+            <Link to="/info?section=privacy" className="hover:text-foreground transition-colors">
               Политика конфиденциальности
             </Link>
           </div>
