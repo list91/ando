@@ -64,3 +64,23 @@ All colors MUST be HSL.
     letter-spacing: 0.1em;
   }
 }
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Info menu - scales with viewport height */
+.info-menu-adaptive {
+  font-size: clamp(10px, 1.8vh, 14px);
+  gap: clamp(0px, 0.4vh, 4px);
+}
+
+.info-menu-adaptive a {
+  padding-block: clamp(0px, 0.2vh, 2px);
+}

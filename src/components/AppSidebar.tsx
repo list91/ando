@@ -115,8 +115,8 @@ export function AppSidebar({
             </Link>
           </nav>}
 
-        {isInfoPage && <nav className="space-y-2 flex flex-col pl-6 my-0 px-[55px] mx-[53px] overflow-y-auto max-h-full">
-            {infoMenuItems.map(item => <Link key={item.id} to="/info" onClick={() => onInfoSectionChange?.(item.id)} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${activeInfoSection === item.id ? "underline" : ""}`}>
+        {isInfoPage && <nav className="flex flex-col pl-6 my-0 px-4 overflow-y-auto max-h-full info-menu-adaptive">
+            {infoMenuItems.map(item => <Link key={item.id} to="/info" onClick={() => onInfoSectionChange?.(item.id)} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${activeInfoSection === item.id ? "underline" : ""}`}>
                 {item.label}
               </Link>)}
           </nav>}
