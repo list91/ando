@@ -89,8 +89,8 @@ export function AppSidebar({
         </Link>
       </div>
 
-      {/* Контент — прижат к верху, обрезается ТОЛЬКО при нехватке места */}
-      <div className="flex-1 min-h-0 flex items-start justify-center overflow-hidden px-6">
+      {/* Контент — прижат к верху, масштабируется по высоте контейнера */}
+      <div className="flex-1 min-h-0 flex items-start justify-center overflow-hidden px-6 sidebar-menu-container">
         {isHomePage && (
           <p className="text-xs tracking-[0.3em] uppercase" style={{
             writingMode: 'vertical-rl',
@@ -100,22 +100,22 @@ export function AppSidebar({
           </p>
         )}
 
-        {isCatalogRelated && <nav className="space-y-2 flex flex-col pl-6 mx-[55px] overflow-y-auto max-h-full">
-            <Link to="/catalog" onClick={() => onCategoryChange?.("NEW")} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${selectedCategory === "NEW" ? "underline" : ""}`}>
+        {isCatalogRelated && <nav className="flex flex-col pl-6 mx-[55px] sidebar-menu-adaptive">
+            <Link to="/catalog" onClick={() => onCategoryChange?.("NEW")} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${selectedCategory === "NEW" ? "underline" : ""}`}>
               NEW
             </Link>
-            <Link to="/catalog" onClick={() => onCategoryChange?.("Все товары")} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${selectedCategory === "Все товары" ? "underline" : ""}`}>
+            <Link to="/catalog" onClick={() => onCategoryChange?.("Все товары")} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${selectedCategory === "Все товары" ? "underline" : ""}`}>
               Все товары
             </Link>
-            {!isLoading && categories?.map(category => <Link key={category.id} to="/catalog" onClick={() => onCategoryChange?.(category.name)} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${category.name === selectedCategory ? "underline" : ""}`}>
+            {!isLoading && categories?.map(category => <Link key={category.id} to="/catalog" onClick={() => onCategoryChange?.(category.name)} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${category.name === selectedCategory ? "underline" : ""}`}>
                 {category.name}
               </Link>)}
-            <Link to="/catalog" onClick={() => onCategoryChange?.("SALE")} className={`block w-full text-left text-sm tracking-wide hover:opacity-60 transition-opacity ${selectedCategory === "SALE" ? "underline" : ""}`}>
+            <Link to="/catalog" onClick={() => onCategoryChange?.("SALE")} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${selectedCategory === "SALE" ? "underline" : ""}`}>
               SALE
             </Link>
           </nav>}
 
-        {isInfoPage && <nav className="flex flex-col pl-6 my-0 px-4 overflow-y-auto max-h-full info-menu-adaptive">
+        {isInfoPage && <nav className="flex flex-col pl-6 my-0 px-4 sidebar-menu-adaptive">
             {infoMenuItems.map(item => <Link key={item.id} to="/info" onClick={() => onInfoSectionChange?.(item.id)} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${activeInfoSection === item.id ? "underline" : ""}`}>
                 {item.label}
               </Link>)}

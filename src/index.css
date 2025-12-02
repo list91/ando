@@ -75,12 +75,20 @@ All colors MUST be HSL.
   }
 }
 
-/* Info menu - scales with viewport height */
-.info-menu-adaptive {
-  font-size: clamp(10px, 1.8vh, 14px);
-  gap: clamp(0px, 0.4vh, 4px);
+/* Container for sidebar menu area */
+.sidebar-menu-container {
+  container-type: size;
+  container-name: sidebar-menu;
 }
 
-.info-menu-adaptive a {
-  padding-block: clamp(0px, 0.2vh, 2px);
+/* Sidebar menu - scales based on CONTAINER height, not viewport */
+.sidebar-menu-adaptive {
+  font-size: clamp(4px, 4cqh, 14px);
+  gap: clamp(0px, 1cqh, 8px);
+  line-height: 1.2;
+  overflow: hidden !important;
+}
+
+.sidebar-menu-adaptive a {
+  padding-block: clamp(0px, 0.3cqh, 2px);
 }
