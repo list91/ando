@@ -42,13 +42,27 @@ import Orders from "./pages/Orders";
 import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 
+// Версия билда - меняется при каждом деплое (Vite заменяет при сборке)
+const BUILD_VERSION = import.meta.env.VITE_BUILD_TIME || Date.now().toString();
+
+// Проверяем, изменилась ли версия - если да, очищаем кэш
+const STORED_VERSION_KEY = 'ando_build_version';
+const storedVersion = localStorage.getItem(STORED_VERSION_KEY);
+if (storedVersion !== BUILD_VERSION) {
+  // Новый деплой - очищаем все кэши
+  localStorage.setItem(STORED_VERSION_KEY, BUILD_VERSION);
+  if ('caches' in window) {
+    caches.keys().then(names => names.forEach(name => caches.delete(name)));
+  }
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // Данные считаются "свежими" 5 минут - не будет лишних запросов
-      staleTime: 5 * 60 * 1000,
-      // Данные хранятся в памяти 10 минут после последнего использования
-      gcTime: 10 * 60 * 1000,
+      // Данные считаются "свежими" 1 минуту - баланс между скоростью и актуальностью
+      staleTime: 1 * 60 * 1000,
+      // Данные хранятся в памяти 5 минут после последнего использования
+      gcTime: 5 * 60 * 1000,
       // При ошибке - 1 повторная попытка
       retry: 1,
       // Не перезапрашивать при фокусе окна (избегаем лишних запросов)
