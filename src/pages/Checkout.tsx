@@ -145,6 +145,37 @@ const Checkout = () => {
 
       if (itemsError) throw itemsError;
 
+      // Send email notification to order@andojv.com
+      try {
+        await fetch('https://andojv.com/send-order.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            orderNumber,
+            customerName: formData.fullName,
+            customerEmail: formData.email,
+            customerPhone: formData.phone,
+            address: formData.address,
+            deliveryMethod: formData.deliveryMethod === 'courier' ? 'Курьер' : 'Самовывоз',
+            paymentMethod: formData.paymentMethod === 'card' ? 'Карта' : 'Наличные',
+            notes: formData.notes,
+            totalAmount: totalPrice,
+            items: items.map((item) => ({
+              name: item.name,
+              size: item.size,
+              color: item.color,
+              quantity: item.quantity,
+              price: item.price,
+            })),
+          }),
+        });
+      } catch (emailError) {
+        // Don't fail the order if email fails
+        console.error('Failed to send order email:', emailError);
+      }
+
       toast({
         title: 'Заказ оформлен!',
         description: `Номер заказа: ${orderNumber}`,
