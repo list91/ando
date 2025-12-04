@@ -42,7 +42,20 @@ import Orders from "./pages/Orders";
 import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Данные считаются "свежими" 5 минут - не будет лишних запросов
+      staleTime: 5 * 60 * 1000,
+      // Данные хранятся в памяти 10 минут после последнего использования
+      gcTime: 10 * 60 * 1000,
+      // При ошибке - 1 повторная попытка
+      retry: 1,
+      // Не перезапрашивать при фокусе окна (избегаем лишних запросов)
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const AppContent = () => {
   const [selectedCategory, setSelectedCategory] = useState("Все товары");
