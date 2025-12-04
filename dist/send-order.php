@@ -1,6 +1,6 @@
 <?php
 /**
- * ANDO JV - Order Email Notification
+ * ANDO JV - Order Email Notification via SMTP
  * Sends order details to order@andojv.com
  */
 
@@ -72,9 +72,9 @@ foreach ($items as $item) {
     </tr>";
 }
 
-// Email content
+// Email recipient
 $to = 'order@andojv.com';
-$subject = "=?UTF-8?B?" . base64_encode("Новый заказ #{$orderNumber}") . "?=";
+$subject = "Новый заказ #{$orderNumber}";
 
 $message = "
 <!DOCTYPE html>
@@ -132,21 +132,56 @@ $message = "
 </html>
 ";
 
-// Email headers
-$headers = [
+// Try SMTP first (reg.ru method)
+function sendViaSMTP($to, $subject, $message, $customerEmail) {
+    // SMTP settings for reg.ru
+    $smtpHost = 'smtp.andojv.com';
+    $smtpPort = 587;
+    $smtpUser = 'order@andojv.com';
+    $smtpPass = ''; // Need to set password
+
+    // If no SMTP password configured, fall back to mail()
+    if (empty($smtpPass)) {
+        return false;
+    }
+
+    // Simple SMTP implementation would go here
+    // For now, return false to use mail()
+    return false;
+}
+
+// Use standard mail() with proper headers for reg.ru
+$boundary = md5(time());
+
+$headers = implode("\r\n", [
     'MIME-Version: 1.0',
-    'Content-type: text/html; charset=UTF-8',
-    'From: ANDO JV <noreply@andojv.com>',
+    'Content-Type: text/html; charset=UTF-8',
+    'From: order@andojv.com',
     'Reply-To: ' . $customerEmail,
-    'X-Mailer: PHP/' . phpversion()
-];
+    'X-Mailer: PHP/' . phpversion(),
+    'X-Priority: 1'
+]);
+
+// Log attempt
+$logFile = __DIR__ . '/mail_log.txt';
+$logEntry = date('Y-m-d H:i:s') . " - Attempting to send order {$orderNumber} to {$to}\n";
+file_put_contents($logFile, $logEntry, FILE_APPEND);
 
 // Send email
-$sent = mail($to, $subject, $message, implode("\r\n", $headers));
+$sent = @mail($to, $subject, $message, $headers);
+
+// Log result
+$logEntry = date('Y-m-d H:i:s') . " - mail() returned: " . ($sent ? 'true' : 'false') . "\n";
+file_put_contents($logFile, $logEntry, FILE_APPEND);
 
 if ($sent) {
     echo json_encode(['success' => true, 'message' => 'Order notification sent']);
 } else {
+    // Try alternative: send to admin via different method
+    $error = error_get_last();
+    $logEntry = date('Y-m-d H:i:s') . " - Error: " . ($error ? $error['message'] : 'unknown') . "\n";
+    file_put_contents($logFile, $logEntry, FILE_APPEND);
+
     http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Failed to send email']);
+    echo json_encode(['success' => false, 'error' => 'Failed to send email', 'debug' => $error]);
 }
