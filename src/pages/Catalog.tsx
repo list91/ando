@@ -110,7 +110,7 @@ const ProductGrid = memo(({ products, gridCols, getColorHex, user, isFavorite, t
     <section
       className={`grid grid-cols-2 ${
         gridCols === 3 ? 'md:grid-cols-3 lg:grid-cols-3' : 'md:grid-cols-3 lg:grid-cols-4'
-      } gap-2 sm:gap-3 lg:gap-6 p-2 sm:p-3 lg:px-8 lg:py-6`}
+      } gap-2 sm:gap-3 lg:gap-6 p-2 sm:p-3 lg:px-8 lg:pt-2 lg:pb-6`}
       aria-label="Список товаров"
     >
       {products.map((product) => {
@@ -630,7 +630,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   return (
     <main className="min-h-full" role="main">
       {/* Filters */}
-      <section className="border-b border-border py-3 px-3 lg:px-8 lg:py-4" aria-label="Фильтры товаров">
+      <section className="border-b border-border py-3 px-3 lg:px-8 lg:py-4 mt-[35px]" aria-label="Фильтры товаров">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4 text-sm">
           <div className="flex flex-wrap gap-2 lg:gap-8 items-center">
             {/* Material Filter */}
