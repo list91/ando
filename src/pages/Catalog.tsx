@@ -229,14 +229,14 @@ const ProductGrid = memo(({ products, gridCols, getColorHex, user, isFavorite, t
                 onTouchEnd={handleTouchEnd}
               >
                 {product.is_new && (
-                  <div className="absolute top-1.5 left-1.5 lg:top-2 lg:left-2 z-10 bg-background/95 backdrop-blur-sm text-foreground px-1.5 py-0.5 lg:px-2.5 lg:py-1 text-[9px] lg:text-[11px] font-medium uppercase tracking-widest border border-border">
+                  <div className="absolute top-3 left-3 lg:top-4 lg:left-4 z-10 bg-white text-black px-3 py-1 lg:px-4 lg:py-1.5 text-[10px] lg:text-xs font-medium uppercase tracking-wider rounded-full">
                     NEW
                   </div>
                 )}
 
                 {product.is_sale && (
-                  <div className={`absolute ${product.is_new ? 'top-8 lg:top-11' : 'top-1.5 lg:top-2'} left-1.5 lg:left-2 z-10 bg-primary/10 text-primary px-1.5 py-0.5 lg:px-2.5 lg:py-1 text-[9px] lg:text-[11px] font-medium uppercase tracking-widest border border-primary/20`}>
-                    SALE {discount > 0 && `−${discount}%`}
+                  <div className={`absolute ${product.is_new ? 'top-11 lg:top-14' : 'top-3 lg:top-4'} left-3 lg:left-4 z-10 bg-black text-white px-3 py-1 lg:px-4 lg:py-1.5 text-[10px] lg:text-xs font-medium uppercase tracking-wider rounded-full`}>
+                    SALE
                   </div>
                 )}
                 <img

@@ -171,20 +171,6 @@ const Product = () => {
         <div className="flex-1 flex items-start justify-center py-6 lg:py-16 px-4 lg:px-16 relative">
           {/* Image container */}
           <div className="max-w-xl w-full relative">
-            {/* NEW badge */}
-            {product.is_new && (
-              <div className="absolute top-3 left-3 z-20 bg-background/95 backdrop-blur-sm text-foreground px-2.5 py-1 text-[11px] font-medium uppercase tracking-widest border border-border">
-                NEW
-              </div>
-            )}
-
-            {/* SALE badge */}
-            {product.is_sale && discount > 0 && (
-              <div className={`absolute ${product.is_new ? 'top-14' : 'top-3'} left-3 z-20 bg-primary/10 text-primary px-2.5 py-1 text-[11px] font-medium uppercase tracking-widest border border-primary/20`}>
-                SALE −{discount}%
-              </div>
-            )}
-
             {/* Image with zoom */}
             <div
               className="relative overflow-hidden touch-pan-y aspect-[3/4]"
@@ -192,6 +178,20 @@ const Product = () => {
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
+              {/* NEW badge - inside image container */}
+              {product.is_new && (
+                <div className="absolute top-3 left-[42px] z-20 bg-white text-black px-4 py-1.5 text-xs font-medium uppercase tracking-wider rounded-full">
+                  NEW
+                </div>
+              )}
+
+              {/* SALE badge - inside image container */}
+              {product.is_sale && discount > 0 && (
+                <div className={`absolute ${product.is_new ? 'top-12' : 'top-3'} left-[42px] z-20 bg-black text-white px-4 py-1.5 text-xs font-medium uppercase tracking-wider rounded-full`}>
+                  SALE
+                </div>
+              )}
+
               <TransformWrapper
                 key={currentImage}
                 ref={zoomRef}
@@ -226,14 +226,14 @@ const Product = () => {
               <>
                 <button
                   onClick={goToPrevImage}
-                  className="absolute left-2 sm:left-0 md:-left-[30px] top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-full border border-border hover:bg-background transition-colors z-10"
+                  className="absolute -left-[14px] md:-left-[30px] top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-full border border-border hover:bg-background transition-colors z-10"
                   aria-label="Предыдущее фото"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
                 <button
                   onClick={goToNextImage}
-                  className="absolute right-2 sm:right-0 md:-right-[30px] top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-full border border-border hover:bg-background transition-colors z-10"
+                  className="absolute -right-[14px] md:-right-[30px] top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-full border border-border hover:bg-background transition-colors z-10"
                   aria-label="Следующее фото"
                 >
                   <ChevronRight className="w-5 h-5" />
