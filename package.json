@@ -12,7 +12,8 @@
     "deploy": "node deploy-git.js",
     "deploy:ftp": "npm run build && node deploy-chunked.js",
     "test:e2e": "node tests/cookie-privacy-link.spec.cjs",
-    "test:product-links": "node tests/product-links.spec.cjs"
+    "test:product-links": "node tests/product-links.spec.cjs",
+    "screenshot:catalog-mobile-before": "node tests/catalog-mobile-screenshot.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
