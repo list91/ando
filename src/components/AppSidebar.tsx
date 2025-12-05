@@ -90,7 +90,7 @@ export function AppSidebar({
       </div>
 
       {/* Контент — прижат к верху, масштабируется по высоте контейнера */}
-      <div className="flex-1 min-h-0 flex items-start justify-center overflow-hidden px-6 sidebar-menu-container">
+      <div className="flex-1 min-h-0 flex items-start justify-center overflow-visible px-6 sidebar-menu-container">
         {isHomePage && (
           <p className="text-xs tracking-[0.3em] uppercase" style={{
             writingMode: 'vertical-rl',
@@ -100,7 +100,7 @@ export function AppSidebar({
           </p>
         )}
 
-        {isCatalogRelated && <nav className="flex flex-col pl-6 mx-[55px] sidebar-menu-adaptive">
+        {isCatalogRelated && <nav className="flex flex-col pl-6 mx-[55px] -mt-[45px] sidebar-menu-adaptive">
             <Link to="/catalog" onClick={() => onCategoryChange?.("NEW")} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${selectedCategory === "NEW" ? "underline" : ""}`}>
               NEW
             </Link>

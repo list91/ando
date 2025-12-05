@@ -168,7 +168,7 @@ const Product = () => {
 
       <div className="flex flex-col lg:flex-row min-h-full">
         {/* Left side - Product images */}
-        <div className="flex-1 flex items-center justify-center py-6 lg:py-16 px-4 lg:px-16 relative">
+        <div className="flex-1 flex items-start justify-center py-6 lg:py-16 px-4 lg:px-16 relative">
           {/* Image container */}
           <div className="max-w-xl w-full relative">
             {/* NEW badge */}
