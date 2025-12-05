@@ -11,6 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { usePriceFilterStore } from "@/stores/priceFilterStore";
+import CategoryDropdown from "@/components/CategoryDropdown";
 
 
 interface CatalogProps {
@@ -629,8 +630,17 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
 
   return (
     <main className="min-h-full" role="main">
+      {/* Mobile Category Dropdown */}
+      <div className="lg:hidden px-3 pt-3 mt-[35px]">
+        <CategoryDropdown
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+          categories={categories}
+        />
+      </div>
+
       {/* Filters */}
-      <section className="border-b border-border py-3 px-3 lg:px-8 lg:py-4 mt-[35px]" aria-label="Фильтры товаров">
+      <section className="border-b border-border py-3 px-3 lg:px-8 lg:py-4 lg:mt-[35px]" aria-label="Фильтры товаров">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4 text-sm">
           <div className="flex flex-wrap gap-2 lg:gap-8 items-center">
             {/* Material Filter */}
