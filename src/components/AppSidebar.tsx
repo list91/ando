@@ -63,6 +63,8 @@ export function AppSidebar({
   const isProductPage = location.pathname.startsWith("/product/");
   const isCatalogPage = location.pathname === "/catalog";
   const isCatalogRelated = isCatalogPage || isProductPage;
+  const isAboutPage = location.pathname === "/about";
+  const isLookbookPage = location.pathname === "/lookbook" || location.pathname.startsWith("/lookbook/");
   const {
     data: categories,
     isLoading
@@ -91,13 +93,18 @@ export function AppSidebar({
 
       {/* Контент — прижат к верху, масштабируется по высоте контейнера */}
       <div className="flex-1 min-h-0 flex items-start justify-center overflow-visible px-6 sidebar-menu-container">
-        {isHomePage && (
-          <p className="text-xs tracking-[0.3em] uppercase" style={{
-            writingMode: 'vertical-rl',
-            textOrientation: 'mixed'
-          }}>
-            Feel the moment
-          </p>
+        {(isHomePage || isAboutPage || isLookbookPage) && (
+          <div className="flex gap-4 text-xs text-muted-foreground/70" style={{ letterSpacing: '0.7em' }}>
+            <p style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}>
+              FEEL THE MOMENT
+            </p>
+            <p style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}>
+              СОЕДИНЕНИЕ ТРАДИЦИЙ
+            </p>
+            <p style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}>
+              СОВРЕМЕННОСТИ
+            </p>
+          </div>
         )}
 
         {isCatalogRelated && <nav className="flex flex-col pl-6 mx-[55px] -mt-[45px] sidebar-menu-adaptive">
