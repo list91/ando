@@ -13,7 +13,11 @@
     "deploy:ftp": "npm run build && node deploy-chunked.js",
     "test:e2e": "node tests/cookie-privacy-link.spec.cjs",
     "test:product-links": "node tests/product-links.spec.cjs",
-    "screenshot:catalog-mobile-before": "node tests/catalog-mobile-screenshot.cjs"
+    "test:info-page": "node tests/info-page-database.spec.cjs",
+    "test:admin-info-pages": "node tests/run-admin-info-test.cjs",
+    "test:toggle-edit": "node tests/run-toggle-edit-test.cjs",
+    "screenshot:catalog-mobile-before": "node tests/catalog-mobile-screenshot.cjs",
+    "populate-info-pages": "node scripts/populate-info-pages.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

@@ -25,7 +25,7 @@ const Product = () => {
   const zoomRef = useRef<ReactZoomPanPinchRef>(null);
   const [isZoomed, setIsZoomed] = useState(false);
 
-  // Swipe state
+  // Swipe state test
   const touchStartX = useRef<number>(0);
   const touchStartY = useRef<number>(0);
   const swipeDirection = useRef<'horizontal' | 'vertical' | null>(null);
