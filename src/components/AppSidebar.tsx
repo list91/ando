@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useCategories } from "@/hooks/useProducts";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import logoImage from "@/assets/logo.png";
+import verticalTextImage from "@/assets/vertical-text.png";
 interface AppSidebarProps {
   selectedCategory?: string;
   onCategoryChange?: (category: string) => void;
@@ -94,17 +95,7 @@ export function AppSidebar({
       {/* Контент — прижат к верху, масштабируется по высоте контейнера */}
       <div className="flex-1 min-h-0 flex items-start justify-center overflow-visible px-6 sidebar-menu-container">
         {(isHomePage || isAboutPage || isLookbookPage) && (
-          <div className="flex gap-4 text-xs text-muted-foreground/70 -mt-[45px]" style={{ letterSpacing: '0.7em' }}>
-            <p style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}>
-              FEEL THE MOMENT
-            </p>
-            <p style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}>
-              СОЕДИНЕНИЕ ТРАДИЦИЙ
-            </p>
-            <p style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}>
-              СОВРЕМЕННОСТИ
-            </p>
-          </div>
+          <img src={verticalTextImage} alt="FEEL THE MOMENT - Соединение традиций и современности" className="-mt-[45px] w-auto max-w-[92px] h-full max-h-[400px] object-contain" />
         )}
 
         {isCatalogRelated && <nav className="flex flex-col pl-6 ml-[19px] mr-[55px] -mt-[37px] sidebar-menu-adaptive">
