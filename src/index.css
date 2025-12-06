@@ -95,6 +95,6 @@ All colors MUST be HSL.
 
 /* Custom margin classes for catalog filters alignment */
 @media (min-width: 1024px) {
-  .catalog-filters-mt { margin-top: 47px; }
+  .catalog-filters-mt { margin-top: 55px; }
 }
 
