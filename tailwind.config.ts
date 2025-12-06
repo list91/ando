@@ -2,6 +2,15 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
+  safelist: [
+    "lg:mt-[47px]",
+    "lg:mt-[38px]",
+    "lg:mt-[29px]",
+    "-mt-[45px]",
+    "-mt-[37px]",
+    "ml-[19px]",
+    "ml-[59px]",
+  ],
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
   theme: {
