@@ -92,3 +92,9 @@ All colors MUST be HSL.
 .sidebar-menu-adaptive a {
   padding-block: clamp(0px, 0.3cqh, 2px);
 }
+
+/* Custom margin classes for catalog filters alignment */
+@media (min-width: 1024px) {
+  .catalog-filters-mt { margin-top: 47px; }
+}
+
