@@ -21,7 +21,7 @@ const LookbookList = () => {
   }
 
   return (
-    <div className="min-h-full">
+    <div className="min-h-full lg:mt-[29px]">
       {shouldShowIntro && (introTitle?.value || introDescription?.value) && (
         <div className="border-b border-border py-12 px-8 text-center max-w-3xl mx-auto">
           {introTitle?.value && (

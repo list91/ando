@@ -35,7 +35,7 @@ const Lookbook = () => {
   }
 
   return (
-    <div className="min-h-full">
+    <div className="min-h-full lg:mt-[29px]">
       <div className="border-b border-border py-4 px-8 flex justify-end">
         <div className="relative">
           <select

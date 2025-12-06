@@ -94,7 +94,7 @@ export function AppSidebar({
       {/* Контент — прижат к верху, масштабируется по высоте контейнера */}
       <div className="flex-1 min-h-0 flex items-start justify-center overflow-visible px-6 sidebar-menu-container">
         {(isHomePage || isAboutPage || isLookbookPage) && (
-          <div className="flex gap-4 text-xs text-muted-foreground/70" style={{ letterSpacing: '0.7em' }}>
+          <div className="flex gap-4 text-xs text-muted-foreground/70 -mt-[45px]" style={{ letterSpacing: '0.7em' }}>
             <p style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}>
               FEEL THE MOMENT
             </p>
@@ -107,7 +107,7 @@ export function AppSidebar({
           </div>
         )}
 
-        {isCatalogRelated && <nav className="flex flex-col pl-6 mx-[55px] -mt-[45px] sidebar-menu-adaptive">
+        {isCatalogRelated && <nav className="flex flex-col pl-6 ml-[19px] mr-[55px] -mt-[37px] sidebar-menu-adaptive">
             <Link to="/catalog" onClick={() => onCategoryChange?.("NEW")} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${selectedCategory === "NEW" ? "underline" : ""}`}>
               NEW
             </Link>
@@ -122,7 +122,7 @@ export function AppSidebar({
             </Link>
           </nav>}
 
-        {isInfoPage && <nav className="flex flex-col pl-6 ml-[55px] -mt-[45px] sidebar-menu-adaptive">
+        {isInfoPage && <nav className="flex flex-col pl-6 ml-[59px] -mt-[37px] sidebar-menu-adaptive">
             {infoMenuItems.map(item => <Link key={item.id} to="/info" onClick={() => onInfoSectionChange?.(item.id)} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity ${activeInfoSection === item.id ? "underline" : ""}`}>
                 {item.label}
               </Link>)}
