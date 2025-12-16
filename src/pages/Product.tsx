@@ -371,12 +371,8 @@ const Product = () => {
               <ChevronDown className={`w-4 h-4 transition-transform ${isDeliveryOpen ? 'rotate-180' : ''}`} />
             </CollapsibleTrigger>
             <CollapsibleContent className="mt-3">
-              <p className="text-sm text-muted-foreground leading-relaxed mb-1">
-                Доставка по России за 1-7 дней, бесплатно
-              </p>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-1">
-                По Санкт-Петербургу и Москве доставка заказа возможна на следующий день.
-                Стоимость доставки от 1500 руб.
+              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                {product.delivery_info || 'Информация о доставке уточняется'}
               </p>
               <Link
                 to="/info?section=delivery"
@@ -394,11 +390,8 @@ const Product = () => {
               <ChevronDown className={`w-4 h-4 transition-transform ${isPaymentOpen ? 'rotate-180' : ''}`} />
             </CollapsibleTrigger>
             <CollapsibleContent className="mt-3">
-              <p className="text-sm text-muted-foreground leading-relaxed mb-1">
-                Онлайн оплата через платежную систему CloudPayments
-              </p>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-1">
-                Принимаются карты VISA, MasterCard, платежная система «Мир»
+              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                {product.payment_info || 'Информация об оплате уточняется'}
               </p>
               <Link
                 to="/info?section=delivery"
