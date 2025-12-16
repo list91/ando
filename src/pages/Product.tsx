@@ -19,6 +19,8 @@ const Product = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState(0);
   const [currentImage, setCurrentImage] = useState(0);
+  const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
+  const [isCareOpen, setIsCareOpen] = useState(false);
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
@@ -363,6 +365,32 @@ const Product = () => {
               </Link>
             </div>
           )}
+
+          {/* Description section */}
+          <Collapsible open={isDescriptionOpen} onOpenChange={setIsDescriptionOpen} className="pt-6 border-t border-border">
+            <CollapsibleTrigger className="flex items-center justify-between w-full text-left group">
+              <h3 className="text-sm font-medium tracking-wide">ОПИСАНИЕ</h3>
+              <ChevronDown className={`w-4 h-4 transition-transform ${isDescriptionOpen ? 'rotate-180' : ''}`} />
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-3">
+              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                {product.description || 'Описание отсутствует'}
+              </p>
+            </CollapsibleContent>
+          </Collapsible>
+
+          {/* Care instructions section */}
+          <Collapsible open={isCareOpen} onOpenChange={setIsCareOpen} className="pt-6 border-t border-border">
+            <CollapsibleTrigger className="flex items-center justify-between w-full text-left group">
+              <h3 className="text-sm font-medium tracking-wide">УХОД</h3>
+              <ChevronDown className={`w-4 h-4 transition-transform ${isCareOpen ? 'rotate-180' : ''}`} />
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-3">
+              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                {product.care_instructions || 'Инструкции по уходу отсутствуют'}
+              </p>
+            </CollapsibleContent>
+          </Collapsible>
 
           {/* Delivery section */}
           <Collapsible open={isDeliveryOpen} onOpenChange={setIsDeliveryOpen} className="pt-6 border-t border-border">
