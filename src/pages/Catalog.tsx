@@ -617,7 +617,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   }, []);
 
   // Для отображения активных фильтров
-  const hasActiveFilters = searchQuery || selectedMaterials.length > 0 || selectedColors.length > 0 ||
+  const hasActiveFilters = !!searchQuery || selectedMaterials.length > 0 || selectedColors.length > 0 ||
     selectedSizes.length > 0;
 
   if (isLoading) {
