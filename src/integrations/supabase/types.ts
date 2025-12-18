@@ -408,6 +408,7 @@ export type Database = {
           available_sizes: string[] | null
           care_instructions: string | null
           category_id: string | null
+          color_links: Json | null
           created_at: string
           delivery_info: string | null
           description: string | null
@@ -432,6 +433,7 @@ export type Database = {
           available_sizes?: string[] | null
           care_instructions?: string | null
           category_id?: string | null
+          color_links?: Json | null
           created_at?: string
           delivery_info?: string | null
           description?: string | null
@@ -456,6 +458,7 @@ export type Database = {
           available_sizes?: string[] | null
           care_instructions?: string | null
           category_id?: string | null
+          color_links?: Json | null
           created_at?: string
           delivery_info?: string | null
           description?: string | null
