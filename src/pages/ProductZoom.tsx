@@ -200,13 +200,23 @@ const goToImage = (index: number) => {    setCurrentImage(index);    zoomRef.cur
           </button>
         </div>
 
-        {/* Other colors */}
-        {product.available_colors && product.available_colors.length > 1 && (
+        {/* Other colors - ссылки на товары в других цветах */}
+        {product.color_links && Object.keys(product.color_links).length > 0 && (
           <div className="text-sm mb-8">
             В другом цвете:{" "}
-            <Link to="#" className="underline hover:no-underline">
-              {product.available_colors.filter((_, idx) => idx !== selectedColor)[0]}
-            </Link>
+            {Object.entries(product.color_links)
+              .map(([colorName, colorLink], index, array) => (
+                <span key={colorName}>
+                  {colorLink && colorLink.trim() !== '' ? (
+                    <Link to={colorLink} className="underline hover:no-underline">
+                      {colorName}
+                    </Link>
+                  ) : (
+                    <span>{colorName}</span>
+                  )}
+                  {index < array.length - 1 && ", "}
+                </span>
+              ))}
           </div>
         )}
 

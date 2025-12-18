@@ -405,6 +405,7 @@ export type Database = {
         Row: {
           article: string | null
           available_colors: string[] | null
+          color_links: Record<string, string> | null
           available_sizes: string[] | null
           care_instructions: string | null
           category_id: string | null
@@ -430,6 +431,7 @@ export type Database = {
         Insert: {
           article?: string | null
           available_colors?: string[] | null
+          color_links?: Record<string, string> | null
           available_sizes?: string[] | null
           care_instructions?: string | null
           category_id?: string | null
@@ -455,6 +457,7 @@ export type Database = {
         Update: {
           article?: string | null
           available_colors?: string[] | null
+          color_links?: Record<string, string> | null
           available_sizes?: string[] | null
           care_instructions?: string | null
           category_id?: string | null

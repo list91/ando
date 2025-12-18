@@ -58,6 +58,7 @@ const AdminProducts = () => {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [customSizeInput, setCustomSizeInput] = useState('');
   const [customColorInput, setCustomColorInput] = useState('');
+  const [customColorLinkInput, setCustomColorLinkInput] = useState('');
   const [draggedItem, setDraggedItem] = useState<Product | null>(null);
   const { toast } = useToast();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
@@ -79,6 +80,7 @@ const AdminProducts = () => {
     payment_info: '',
     available_sizes: [] as string[],
     available_colors: [] as string[],
+    color_links: {} as Record<string, string>,
   });
 
   const availableSizeOptions = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '42', '44', '46', '48', '50', '52', '54'];
@@ -174,6 +176,12 @@ const AdminProducts = () => {
     setSubmitting(true);
     try {
 
+      // Сохраняем все color_links (даже с пустыми ссылками - они будут показаны как текст)
+      const processedColorLinks: Record<string, string> = {};
+      Object.entries(formData.color_links).forEach(([color, link]) => {
+        processedColorLinks[color] = link?.trim() || '';
+      });
+
       const productData = {
         name: formData.name.trim(),
         slug: formData.slug.trim(),
@@ -191,6 +199,7 @@ const AdminProducts = () => {
         payment_info: formData.payment_info.trim() || null,
         available_sizes: formData.available_sizes.length > 0 ? formData.available_sizes : null,
         available_colors: formData.available_colors.length > 0 ? formData.available_colors : null,
+        color_links: Object.keys(processedColorLinks).length > 0 ? processedColorLinks : null,
       };
 
       if (editingProduct) {
@@ -271,10 +280,12 @@ const AdminProducts = () => {
       payment_info: '',
       available_sizes: [],
       available_colors: [],
+      color_links: {},
     });
     setEditingProduct(null);
     setCustomSizeInput('');
     setCustomColorInput('');
+    setCustomColorLinkInput('');
   };
 
   const addCustomSize = () => {
@@ -307,9 +318,45 @@ const AdminProducts = () => {
   };
 
   const removeColor = (color: string) => {
+    // Удаляем ТОЛЬКО из available_colors, НЕ трогаем color_links (это разные сущности)
     setFormData({
       ...formData,
       available_colors: formData.available_colors.filter(c => c !== color)
+    });
+  };
+
+  const addColorLink = (colorName: string) => {
+    if (colorName && !(colorName in formData.color_links)) {
+      setFormData({
+        ...formData,
+        color_links: {
+          ...formData.color_links,
+          [colorName]: ''
+        }
+      });
+    }
+  };
+
+  const addCustomColorLink = () => {
+    const trimmed = customColorLinkInput.trim();
+    if (trimmed && !(trimmed in formData.color_links)) {
+      setFormData({
+        ...formData,
+        color_links: {
+          ...formData.color_links,
+          [trimmed]: ''
+        }
+      });
+      setCustomColorLinkInput('');
+    }
+  };
+
+  const removeColorLink = (color: string) => {
+    const newColorLinks = { ...formData.color_links };
+    delete newColorLinks[color];
+    setFormData({
+      ...formData,
+      color_links: newColorLinks
     });
   };
 
@@ -395,6 +442,7 @@ const AdminProducts = () => {
       payment_info: data.payment_info || '',
       available_sizes: data.available_sizes || [],
       available_colors: data.available_colors || [],
+      color_links: data.color_links || {},
     });
     setDialogOpen(true);
   };
@@ -699,6 +747,7 @@ const AdminProducts = () => {
                                       available_colors: [...formData.available_colors, color]
                                     });
                                   } else {
+                                    // Удаляем ТОЛЬКО из available_colors, color_links не трогаем
                                     setFormData({
                                       ...formData,
                                       available_colors: formData.available_colors.filter(c => c !== color)
@@ -744,6 +793,87 @@ const AdminProducts = () => {
                                     className="hover:text-destructive"
                                   >
                                     <X className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Color Links - независимая секция для ссылок на товары в других цветах */}
+                      <div>
+                        <Label>Ссылки на товары в других цветах</Label>
+                        <p className="text-xs text-muted-foreground mt-1 mb-2">
+                          Выберите цвета для ссылок на этот же товар в других цветах
+                        </p>
+
+                        {/* Чекбоксы для выбора цветов */}
+                        <div className="flex flex-wrap gap-2 mt-2 p-3 border rounded-md">
+                          {availableColorOptions.map((color) => (
+                            <label
+                              key={color}
+                              className="flex items-center gap-2 cursor-pointer hover:bg-muted px-3 py-1.5 rounded"
+                            >
+                              <Checkbox
+                                checked={color in formData.color_links}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    addColorLink(color);
+                                  } else {
+                                    removeColorLink(color);
+                                  }
+                                }}
+                              />
+                              <span className="text-sm">{color}</span>
+                            </label>
+                          ))}
+                        </div>
+
+                        {/* Input для добавления своего цвета */}
+                        <div className="flex gap-2 mt-3">
+                          <Input
+                            placeholder="Добавить свой цвет"
+                            value={customColorLinkInput}
+                            onChange={(e) => setCustomColorLinkInput(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                addCustomColorLink();
+                              }
+                            }}
+                          />
+                          <Button type="button" variant="outline" onClick={addCustomColorLink}>
+                            <Plus className="w-4 h-4" />
+                          </Button>
+                        </div>
+
+                        {/* Выбранные цвета с полями для ссылок */}
+                        {Object.keys(formData.color_links).length > 0 && (
+                          <div className="mt-3">
+                            <p className="text-sm text-muted-foreground mb-2">Выбрано (укажите ссылки):</p>
+                            <div className="space-y-2">
+                              {Object.entries(formData.color_links).map(([color, link]) => (
+                                <div key={color} className="flex items-center gap-2">
+                                  <span className="text-sm w-28 shrink-0">{color}:</span>
+                                  <Input
+                                    placeholder="/product/..."
+                                    value={link}
+                                    onChange={(e) => setFormData({
+                                      ...formData,
+                                      color_links: {
+                                        ...formData.color_links,
+                                        [color]: e.target.value
+                                      }
+                                    })}
+                                    className="flex-1"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => removeColorLink(color)}
+                                    className="hover:text-destructive"
+                                  >
+                                    <X className="w-4 h-4" />
                                   </button>
                                 </div>
                               ))}
