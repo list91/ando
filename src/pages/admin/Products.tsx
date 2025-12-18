@@ -74,6 +74,7 @@ const AdminProducts = () => {
     stock_quantity: '0',
     category_id: '',
     material: '',
+    composition: '',
     description: '',
     care_instructions: '',
     delivery_info: '',
@@ -193,6 +194,7 @@ const AdminProducts = () => {
         stock_quantity: parseInt(formData.stock_quantity),
         category_id: formData.category_id || null,
         material: formData.material.trim() || null,
+        composition: formData.composition.trim() || null,
         description: formData.description.trim() || null,
         care_instructions: formData.care_instructions.trim() || null,
         delivery_info: formData.delivery_info.trim() || null,
@@ -274,6 +276,7 @@ const AdminProducts = () => {
       stock_quantity: '0',
       category_id: '',
       material: '',
+      composition: '',
       description: '',
       care_instructions: '',
       delivery_info: '',
@@ -436,6 +439,7 @@ const AdminProducts = () => {
       stock_quantity: data.stock_quantity.toString(),
       category_id: data.category_id || '',
       material: data.material || '',
+      composition: data.composition || '',
       description: data.description || '',
       care_instructions: data.care_instructions || '',
       delivery_info: data.delivery_info || '',
@@ -602,13 +606,27 @@ const AdminProducts = () => {
                       </div>
 
                       <div>
-                        <Label htmlFor="material">Материал</Label>
+                        <Label htmlFor="material">Материал (для фильтров)</Label>
                         <Input
                           id="material"
                           value={formData.material}
                           onChange={(e) =>
                             setFormData({ ...formData, material: e.target.value })
                           }
+                          placeholder="Хлопок, Шерсть, Лён..."
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="composition">Состав (полное описание)</Label>
+                        <Textarea
+                          id="composition"
+                          value={formData.composition}
+                          onChange={(e) =>
+                            setFormData({ ...formData, composition: e.target.value })
+                          }
+                          placeholder="100% хлопок, 5% эластан"
+                          rows={2}
                         />
                       </div>
 

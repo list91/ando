@@ -140,14 +140,14 @@ const goToImage = (index: number) => {    setCurrentImage(index);    zoomRef.cur
           </div>
         )}
 
-        {/* Color and Material */}
-        {(product.available_colors?.[selectedColor] || product.material) && (
+        {/* Color and Composition */}
+        {(product.available_colors?.[selectedColor] || product.composition || product.material) && (
           <div className="space-y-1 mb-6 text-sm">
             {product.available_colors?.[selectedColor] && (
               <div>Цвет: {product.available_colors[selectedColor]}</div>
             )}
-            {product.material && (
-              <div>Состав: {product.material}</div>
+            {(product.composition || product.material) && (
+              <div>Состав: {product.composition || product.material}</div>
             )}
           </div>
         )}
