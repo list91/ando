@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import SchemaOrg from "@/components/SchemaOrg";
 import { Helmet } from "react-helmet-async";
+import { getMediumUrl } from "@/lib/imageUrl";
 
 const Product = () => {
   const { id } = useParams();
@@ -213,7 +214,7 @@ const Product = () => {
                   contentClass="!w-full !h-full flex items-center justify-center"
                 >
                   <img
-                    src={mainImages[currentImage]}
+                    src={getMediumUrl(mainImages[currentImage])}
                     alt={product.name}
                     className="w-full h-full object-contain select-none"
                     loading="eager"

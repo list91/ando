@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { usePriceFilterStore } from "@/stores/priceFilterStore";
 import CategoryDropdown from "@/components/CategoryDropdown";
+import { getThumbUrl } from "@/lib/imageUrl";
 
 
 interface CatalogProps {
@@ -241,7 +242,7 @@ const ProductGrid = memo(({ products, gridCols, getColorHex, user, isFavorite, t
                   </div>
                 )}
                 <img
-                  src={currentImage}
+                  src={getThumbUrl(currentImage)}
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
