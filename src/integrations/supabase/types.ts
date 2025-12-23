@@ -418,7 +418,6 @@ export type Database = {
           is_new: boolean
           is_sale: boolean | null
           material: string | null
-          composition: string | null
           name: string
           old_price: number | null
           payment_info: string | null
@@ -445,7 +444,6 @@ export type Database = {
           is_new?: boolean
           is_sale?: boolean | null
           material?: string | null
-          composition?: string | null
           name: string
           old_price?: number | null
           payment_info?: string | null
@@ -472,7 +470,6 @@ export type Database = {
           is_new?: boolean
           is_sale?: boolean | null
           material?: string | null
-          composition?: string | null
           name?: string
           old_price?: number | null
           payment_info?: string | null
