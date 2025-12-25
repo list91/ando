@@ -414,6 +414,7 @@ export type Database = {
           delivery_info: string | null
           description: string | null
           display_order: number
+          gender: string | null
           id: string
           is_new: boolean
           is_sale: boolean | null
@@ -440,6 +441,7 @@ export type Database = {
           delivery_info?: string | null
           description?: string | null
           display_order?: number
+          gender?: string | null
           id?: string
           is_new?: boolean
           is_sale?: boolean | null
@@ -466,6 +468,7 @@ export type Database = {
           delivery_info?: string | null
           description?: string | null
           display_order?: number
+          gender?: string | null
           id?: string
           is_new?: boolean
           is_sale?: boolean | null
