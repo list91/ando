@@ -446,7 +446,7 @@ const AdminProducts = () => {
       payment_info: data.payment_info || '',
       available_sizes: data.available_sizes || [],
       available_colors: data.available_colors || [],
-      color_links: data.color_links || {},
+      color_links: (data.color_links as Record<string, string>) || {},
     });
     setDialogOpen(true);
   };
