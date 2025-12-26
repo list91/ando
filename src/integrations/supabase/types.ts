@@ -425,6 +425,7 @@ export type Database = {
           price: number
           sale_end_date: string | null
           sale_start_date: string | null
+          size_quantities: Json | null
           slug: string
           stock_quantity: number | null
           updated_at: string
@@ -452,6 +453,7 @@ export type Database = {
           price: number
           sale_end_date?: string | null
           sale_start_date?: string | null
+          size_quantities?: Json | null
           slug: string
           stock_quantity?: number | null
           updated_at?: string
@@ -479,6 +481,7 @@ export type Database = {
           price?: number
           sale_end_date?: string | null
           sale_start_date?: string | null
+          size_quantities?: Json | null
           slug?: string
           stock_quantity?: number | null
           updated_at?: string
