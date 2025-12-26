@@ -115,6 +115,8 @@ export type Database = {
           display_order: number
           id: string
           image_url: string
+          image_url_mobile: string | null
+          image_url_tablet: string | null
           is_active: boolean
           subtitle: string | null
           title: string
@@ -125,6 +127,8 @@ export type Database = {
           display_order?: number
           id?: string
           image_url: string
+          image_url_mobile?: string | null
+          image_url_tablet?: string | null
           is_active?: boolean
           subtitle?: string | null
           title: string
@@ -135,6 +139,8 @@ export type Database = {
           display_order?: number
           id?: string
           image_url?: string
+          image_url_mobile?: string | null
+          image_url_tablet?: string | null
           is_active?: boolean
           subtitle?: string | null
           title?: string
