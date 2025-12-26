@@ -9,11 +9,13 @@ interface LayoutProps {
   children: ReactNode;
   selectedCategory: string;
   onCategoryChange: (category: string) => void;
+  selectedGender: string | null;
+  onGenderChange: (gender: string | null) => void;
   activeInfoSection: string;
   onInfoSectionChange: (section: string) => void;
 }
 
-const Layout = ({ children, selectedCategory, onCategoryChange, activeInfoSection, onInfoSectionChange }: LayoutProps) => {
+const Layout = ({ children, selectedCategory, onCategoryChange, selectedGender, onGenderChange, activeInfoSection, onInfoSectionChange }: LayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
@@ -32,10 +34,15 @@ const Layout = ({ children, selectedCategory, onCategoryChange, activeInfoSectio
         transform transition-transform duration-300 ease-in-out
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
-        <AppSidebar 
-          selectedCategory={selectedCategory} 
+        <AppSidebar
+          selectedCategory={selectedCategory}
           onCategoryChange={(category) => {
             onCategoryChange(category);
+            setIsSidebarOpen(false);
+          }}
+          selectedGender={selectedGender}
+          onGenderChange={(gender) => {
+            onGenderChange(gender);
             setIsSidebarOpen(false);
           }}
           activeInfoSection={activeInfoSection}

@@ -73,25 +73,28 @@ const queryClient = new QueryClient({
 
 const AppContent = () => {
   const [selectedCategory, setSelectedCategory] = useState("Все товары");
+  const [selectedGender, setSelectedGender] = useState<string | null>(null);
   const [activeInfoSection, setActiveInfoSection] = useState("delivery");
   const { lastAddedProduct, clearLastAdded } = useCart();
-  
+
   // Track page views
   usePageTracking();
 
   return (
     <>
-      <Layout 
+      <Layout
         selectedCategory={selectedCategory}
         onCategoryChange={setSelectedCategory}
+        selectedGender={selectedGender}
+        onGenderChange={setSelectedGender}
         activeInfoSection={activeInfoSection}
         onInfoSectionChange={setActiveInfoSection}
       >
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route 
-            path="/catalog" 
-            element={<Catalog selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />} 
+          <Route
+            path="/catalog"
+            element={<Catalog selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} selectedGender={selectedGender} setSelectedGender={setSelectedGender} />}
           />
           <Route path="/product/:id" element={<Product />} />
           <Route path="/lookbook" element={<LookbookList />} />

@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export interface ProductFilters {
   categoryId?: string | null;
+  gender?: string | null;
   isSale?: boolean;
   isNew?: boolean;
   materials?: string[];
@@ -32,6 +33,10 @@ export const useProducts = (filters?: ProductFilters) => {
 
       if (filters?.categoryId) {
         query = query.eq('category_id', filters.categoryId);
+      }
+
+      if (filters?.gender) {
+        query = query.eq('gender', filters.gender);
       }
 
       if (filters?.isSale) {

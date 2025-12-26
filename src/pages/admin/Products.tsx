@@ -73,6 +73,7 @@ const AdminProducts = () => {
     is_new: false,
     stock_quantity: '0',
     category_id: '',
+    gender: '' as string,
     material: '',
     composition: '',
     description: '',
@@ -193,6 +194,7 @@ const AdminProducts = () => {
         is_new: formData.is_new,
         stock_quantity: parseInt(formData.stock_quantity),
         category_id: formData.category_id || null,
+        gender: formData.gender || null,
         material: formData.material.trim() || null,
         composition: formData.composition.trim() || null,
         description: formData.description.trim() || null,
@@ -275,6 +277,7 @@ const AdminProducts = () => {
       is_new: false,
       stock_quantity: '0',
       category_id: '',
+      gender: '',
       material: '',
       composition: '',
       description: '',
@@ -438,6 +441,7 @@ const AdminProducts = () => {
       is_new: data.is_new || false,
       stock_quantity: data.stock_quantity.toString(),
       category_id: data.category_id || '',
+      gender: data.gender || '',
       material: data.material || '',
       composition: data.composition || '',
       description: data.description || '',
@@ -601,6 +605,24 @@ const AdminProducts = () => {
                                 {category.name}
                               </SelectItem>
                             ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="gender">Пол</Label>
+                        <Select
+                          value={formData.gender}
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, gender: value })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Выберите пол" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="women">Женское</SelectItem>
+                            <SelectItem value="men">Мужское</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>

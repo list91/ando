@@ -1,11 +1,16 @@
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { ChevronDown } from "lucide-react";
 import { useCategories } from "@/hooks/useProducts";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import logoImage from "@/assets/logo.png";
 import verticalTextImage from "@/assets/vertical-text.png";
+
 interface AppSidebarProps {
   selectedCategory?: string;
   onCategoryChange?: (category: string) => void;
+  selectedGender?: string | null;
+  onGenderChange?: (gender: string | null) => void;
   activeInfoSection?: string;
   onInfoSectionChange?: (section: string) => void;
 }
@@ -55,9 +60,13 @@ const infoMenuItems = [{
 export function AppSidebar({
   selectedCategory,
   onCategoryChange,
+  selectedGender,
+  onGenderChange,
   activeInfoSection,
   onInfoSectionChange
 }: AppSidebarProps) {
+  const [womenExpanded, setWomenExpanded] = useState(true);
+  const [menExpanded, setMenExpanded] = useState(false);
   const location = useLocation();
   const isHomePage = location.pathname === "/";
   const isInfoPage = location.pathname === "/info";
@@ -99,18 +108,60 @@ export function AppSidebar({
         )}
 
         {isCatalogRelated && <nav className="flex flex-col pl-6 ml-[19px] mr-[55px] -mt-[37px] sidebar-menu-adaptive">
-            <Link to="/catalog" onClick={() => onCategoryChange?.("NEW")} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${selectedCategory === "NEW" ? "underline" : ""}`}>
-              NEW
-            </Link>
-            <Link to="/catalog" onClick={() => onCategoryChange?.("Все товары")} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${selectedCategory === "Все товары" ? "underline" : ""}`}>
-              Все товары
-            </Link>
-            {!isLoading && categories?.map(category => <Link key={category.id} to="/catalog" onClick={() => onCategoryChange?.(category.name)} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${category.name === selectedCategory ? "underline" : ""}`}>
-                {category.name}
-              </Link>)}
-            <Link to="/catalog" onClick={() => onCategoryChange?.("SALE")} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${selectedCategory === "SALE" ? "underline" : ""}`}>
-              SALE
-            </Link>
+            {/* Женское - аккордеон */}
+            <div>
+              <button
+                onClick={() => {
+                  setWomenExpanded(!womenExpanded);
+                  onGenderChange?.("women");
+                  onCategoryChange?.("Все товары");
+                }}
+                className={`flex items-center gap-1 w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${selectedGender === "women" && selectedCategory === "Все товары" ? "underline" : ""}`}
+              >
+                Женское
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${womenExpanded ? "rotate-180" : ""}`} />
+              </button>
+              {womenExpanded && (
+                <div className="ml-4 flex flex-col">
+                  <Link to="/catalog" onClick={() => { onGenderChange?.("women"); onCategoryChange?.("NEW"); }} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${selectedGender === "women" && selectedCategory === "NEW" ? "underline" : ""}`}>
+                    NEW
+                  </Link>
+                  <Link to="/catalog" onClick={() => { onGenderChange?.("women"); onCategoryChange?.("Все товары"); }} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${selectedGender === "women" && selectedCategory === "Все товары" ? "underline" : ""}`}>
+                    Все товары
+                  </Link>
+                  {!isLoading && categories?.map(category => (
+                    <Link key={category.id} to="/catalog" onClick={() => { onGenderChange?.("women"); onCategoryChange?.(category.name); }} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${selectedGender === "women" && category.name === selectedCategory ? "underline" : ""}`}>
+                      {category.name}
+                    </Link>
+                  ))}
+                  <Link to="/catalog" onClick={() => { onGenderChange?.("women"); onCategoryChange?.("SALE"); }} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${selectedGender === "women" && selectedCategory === "SALE" ? "underline" : ""}`}>
+                    SALE
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Мужское - аккордеон */}
+            <div className="mt-2">
+              <button
+                onClick={() => {
+                  setMenExpanded(!menExpanded);
+                  onGenderChange?.("men");
+                  onCategoryChange?.("Все товары");
+                }}
+                className={`flex items-center gap-1 w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${selectedGender === "men" && selectedCategory === "Все товары" ? "underline" : ""}`}
+              >
+                Мужское
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${menExpanded ? "rotate-180" : ""}`} />
+              </button>
+              {menExpanded && (
+                <div className="ml-4 flex flex-col">
+                  <span className="text-muted-foreground text-sm tracking-wide">
+                    Пусто
+                  </span>
+                </div>
+              )}
+            </div>
           </nav>}
 
         {isInfoPage && <nav className="flex flex-col pl-6 ml-[59px] -mt-[37px] sidebar-menu-adaptive">

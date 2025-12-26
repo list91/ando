@@ -18,6 +18,8 @@ import { getThumbUrl } from "@/lib/imageUrl";
 interface CatalogProps {
   selectedCategory: string;
   setSelectedCategory: (category: string) => void;
+  selectedGender: string | null;
+  setSelectedGender: (gender: string | null) => void;
 }
 
 // Полностью изолированный компонент фильтра цен
@@ -501,7 +503,7 @@ const ClearFiltersButton = memo(({ hasOtherFilters, onClear }: ClearFiltersButto
   );
 });
 
-const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
+const Catalog = ({ selectedCategory, setSelectedCategory, selectedGender, setSelectedGender }: CatalogProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState<ProductFilters>({});
   const { query: searchQuery } = useCatalogSearch();
@@ -567,6 +569,11 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
   useEffect(() => {
     const newFilters: ProductFilters = {};
 
+    // Фильтр по полу
+    if (selectedGender) {
+      newFilters.gender = selectedGender;
+    }
+
     if (selectedCategory === "Все товары") {
       newFilters.categoryId = null;
       newFilters.isSale = false;
@@ -607,7 +614,7 @@ const Catalog = ({ selectedCategory, setSelectedCategory }: CatalogProps) => {
       }
       return newFilters;
     });
-  }, [selectedCategory, categories, selectedMaterials, selectedColors, selectedSizes]);
+  }, [selectedCategory, selectedGender, categories, selectedMaterials, selectedColors, selectedSizes]);
 
   const clearFilters = useCallback(() => {
     setSelectedMaterials([]);

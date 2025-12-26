@@ -20,7 +20,7 @@ const About = () => {
   const founderImage = sections?.find((s) => s.section_key === "founder_image");
 
   return (
-    <div className="min-h-screen flex items-center py-8 px-8 lg:mt-[38px]">
+    <div className="min-h-screen py-8 px-8 lg:mt-[29px]">
       <div className="max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           {/* Left side - Text content */}
