@@ -10,6 +10,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import SchemaOrg from "@/components/SchemaOrg";
 import { Helmet } from "react-helmet-async";
 import { getMediumUrl } from "@/lib/imageUrl";
+import { sortSizes } from "@/lib/sizeUtils";
 
 const Product = () => {
   const { id } = useParams();
@@ -318,9 +319,11 @@ const Product = () => {
               .map(([size]) => size);
 
             // Fallback на старое поле available_sizes если size_quantities пустой
-            const sizesToShow = availableSizes.length > 0
-              ? availableSizes
-              : (product.available_sizes || []);
+            const sizesToShow = sortSizes(
+              availableSizes.length > 0
+                ? availableSizes
+                : (product.available_sizes || [])
+            );
 
             const hasStock = sizesToShow.length > 0;
             const selectedQty = selectedSize ? (sizeQty[selectedSize] || 0) : null;

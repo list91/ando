@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { usePriceFilterStore } from "@/stores/priceFilterStore";
 import CategoryDropdown from "@/components/CategoryDropdown";
 import { getThumbUrl } from "@/lib/imageUrl";
+import { sortSizes } from "@/lib/sizeUtils";
 
 
 interface CatalogProps {
@@ -324,9 +325,11 @@ const ProductGrid = memo(({ products, gridCols, getColorHex, user, isFavorite, t
                   .map(([size]) => size);
 
                 // Fallback на старое поле available_sizes если size_quantities пустой
-                const sizesToShow = availableSizes.length > 0
-                  ? availableSizes
-                  : (product.available_sizes || []);
+                const sizesToShow = sortSizes(
+                  availableSizes.length > 0
+                    ? availableSizes
+                    : (product.available_sizes || [])
+                );
 
                 if (sizesToShow.length === 0) {
                   return (

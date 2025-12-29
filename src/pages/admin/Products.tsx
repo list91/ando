@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProductImageManager } from '@/components/admin/ProductImageManager';
+import { SIZE_ORDER } from '@/lib/sizeUtils';
 
 interface Product {
   id: string;
@@ -86,7 +87,7 @@ const AdminProducts = () => {
     size_quantities: {} as Record<string, number>,
   });
 
-  const availableSizeOptions = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '42', '44', '46', '48', '50', '52', '54'];
+  const availableSizeOptions = SIZE_ORDER;
   const availableColorOptions = ['Черный', 'Белый', 'Серый', 'Бежевый', 'Коричневый', 'Синий', 'Голубой', 'Зеленый', 'Красный', 'Розовый', 'Желтый', 'Оранжевый', 'Фиолетовый', 'Бордовый', 'Хаки'];
 
   useEffect(() => {
