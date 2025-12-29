@@ -7,6 +7,8 @@ export interface HeroSlide {
   title: string;
   subtitle: string | null;
   image_url: string;
+  image_url_tablet: string | null;
+  image_url_mobile: string | null;
   display_order: number;
   is_active: boolean;
   created_at: string;

@@ -310,33 +310,62 @@ const Product = () => {
           )}
 
           {/* Size selection */}
-          {product.available_sizes && product.available_sizes.length > 0 && (
-            <div className="mb-4">
-              <div className="text-sm mb-3">Размер:</div>
-              <div className="flex gap-2 mb-3 flex-wrap">
-                {product.available_sizes.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`w-12 h-12 rounded-full border text-sm transition-all ${
-                      selectedSize === size
-                        ? "border-foreground bg-foreground text-background scale-110"
-                        : "border-border hover:border-foreground hover:scale-105"
-                    }`}
-                    aria-label={`Выбрать размер ${size}`}
-                  >
-                    {size}
-                  </button>
-                ))}
+          {(() => {
+            // Получаем размеры с количеством > 0
+            const sizeQty = (product.size_quantities as Record<string, number>) || {};
+            const availableSizes = Object.entries(sizeQty)
+              .filter(([_, qty]) => qty > 0)
+              .map(([size]) => size);
+
+            // Fallback на старое поле available_sizes если size_quantities пустой
+            const sizesToShow = availableSizes.length > 0
+              ? availableSizes
+              : (product.available_sizes || []);
+
+            const hasStock = sizesToShow.length > 0;
+            const selectedQty = selectedSize ? (sizeQty[selectedSize] || 0) : null;
+
+            if (!hasStock) {
+              return (
+                <div className="mb-4">
+                  <div className="text-sm text-muted-foreground">Нет в наличии</div>
+                </div>
+              );
+            }
+
+            return (
+              <div className="mb-4">
+                <div className="text-sm mb-3">Размер:</div>
+                <div className="flex gap-2 mb-3 flex-wrap">
+                  {sizesToShow.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`w-12 h-12 rounded-full border text-sm transition-all ${
+                        selectedSize === size
+                          ? "border-foreground bg-foreground text-background scale-110"
+                          : "border-border hover:border-foreground hover:scale-105"
+                      }`}
+                      aria-label={`Выбрать размер ${size}`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+                {selectedSize && selectedQty !== null && selectedQty > 0 && (
+                  <div className="text-sm text-muted-foreground mb-2">
+                    В наличии: {selectedQty} шт.
+                  </div>
+                )}
+                <Link
+                  to="/info?section=size-guide"
+                  className="text-xs underline hover:no-underline inline-block"
+                >
+                  Информация о размерах товара
+                </Link>
               </div>
-              <Link
-                to="/info?section=size-guide"
-                className="text-xs underline hover:no-underline inline-block"
-              >
-                Информация о размерах товара
-              </Link>
-            </div>
-          )}
+            );
+          })()}
 
           {/* Add to cart button and favorite */}
           <div className="flex gap-3 my-8">

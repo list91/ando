@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import { Upload, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -17,6 +17,7 @@ export const ImageUploader = ({
   currentImageUrl,
   maxSizeMB = 5,
 }: ImageUploaderProps) => {
+  const inputId = useId();
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null);
 
@@ -111,7 +112,7 @@ export const ImageUploader = ({
         <div className="border-2 border-dashed rounded-lg p-8 text-center">
           <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
           <div className="space-y-2">
-            <label htmlFor="image-upload" className="cursor-pointer">
+            <label htmlFor={inputId} className="cursor-pointer">
               <Button type="button" variant="outline" disabled={uploading} asChild>
                 <span>
                   {uploading ? (
@@ -126,7 +127,7 @@ export const ImageUploader = ({
               </Button>
             </label>
             <input
-              id="image-upload"
+              id={inputId}
               type="file"
               accept="image/*"
               className="hidden"

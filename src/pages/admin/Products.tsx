@@ -83,6 +83,7 @@ const AdminProducts = () => {
     available_sizes: [] as string[],
     available_colors: [] as string[],
     color_links: {} as Record<string, string>,
+    size_quantities: {} as Record<string, number>,
   });
 
   const availableSizeOptions = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '42', '44', '46', '48', '50', '52', '54'];
@@ -184,6 +185,14 @@ const AdminProducts = () => {
         processedColorLinks[color] = link?.trim() || '';
       });
 
+      // Фильтруем size_quantities - оставляем только размеры с количеством > 0
+      const processedSizeQuantities: Record<string, number> = {};
+      Object.entries(formData.size_quantities).forEach(([size, qty]) => {
+        if (qty > 0) {
+          processedSizeQuantities[size] = qty;
+        }
+      });
+
       const productData = {
         name: formData.name.trim(),
         slug: formData.slug.trim(),
@@ -204,6 +213,7 @@ const AdminProducts = () => {
         available_sizes: formData.available_sizes.length > 0 ? formData.available_sizes : null,
         available_colors: formData.available_colors.length > 0 ? formData.available_colors : null,
         color_links: Object.keys(processedColorLinks).length > 0 ? processedColorLinks : null,
+        size_quantities: Object.keys(processedSizeQuantities).length > 0 ? processedSizeQuantities : {},
       };
 
       if (editingProduct) {
@@ -287,6 +297,7 @@ const AdminProducts = () => {
       available_sizes: [],
       available_colors: [],
       color_links: {},
+      size_quantities: {},
     });
     setEditingProduct(null);
     setCustomSizeInput('');
@@ -439,7 +450,7 @@ const AdminProducts = () => {
       old_price: data.old_price?.toString() || '',
       is_sale: data.is_sale,
       is_new: data.is_new || false,
-      stock_quantity: data.stock_quantity.toString(),
+      stock_quantity: (data.stock_quantity ?? 0).toString(),
       category_id: data.category_id || '',
       gender: data.gender || '',
       material: data.material || '',
@@ -451,6 +462,7 @@ const AdminProducts = () => {
       available_sizes: data.available_sizes || [],
       available_colors: data.available_colors || [],
       color_links: (data.color_links as Record<string, string>) || {},
+      size_quantities: (data.size_quantities as Record<string, number>) || {},
     });
     setDialogOpen(true);
   };
@@ -701,34 +713,35 @@ const AdminProducts = () => {
                       </div>
 
                       <div>
-                        <Label>Доступные размеры</Label>
-                        <div className="flex flex-wrap gap-2 mt-2 p-3 border rounded-md">
+                        <Label>Количество по размерам</Label>
+                        <p className="text-xs text-muted-foreground mt-1 mb-2">
+                          Укажите количество для каждого размера. Размеры с 0 не будут показаны на сайте.
+                        </p>
+                        <div className="grid grid-cols-4 gap-3 mt-2 p-3 border rounded-md">
                           {availableSizeOptions.map((size) => (
-                            <label
-                              key={size}
-                              className="flex items-center gap-2 cursor-pointer hover:bg-muted px-3 py-1.5 rounded"
-                            >
-                              <Checkbox
-                                checked={formData.available_sizes.includes(size)}
-                                onCheckedChange={(checked) => {
-                                  if (checked) {
-                                    setFormData({
-                                      ...formData,
-                                      available_sizes: [...formData.available_sizes, size]
-                                    });
-                                  } else {
-                                    setFormData({
-                                      ...formData,
-                                      available_sizes: formData.available_sizes.filter(s => s !== size)
-                                    });
-                                  }
+                            <div key={size} className="flex items-center gap-2">
+                              <span className="text-sm w-12">{size}:</span>
+                              <Input
+                                type="number"
+                                min="0"
+                                className="w-20"
+                                value={formData.size_quantities[size] || ''}
+                                placeholder="0"
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value) || 0;
+                                  setFormData({
+                                    ...formData,
+                                    size_quantities: {
+                                      ...formData.size_quantities,
+                                      [size]: value
+                                    }
+                                  });
                                 }}
                               />
-                              <span className="text-sm">{size}</span>
-                            </label>
+                            </div>
                           ))}
                         </div>
-                        
+
                         <div className="flex gap-2 mt-3">
                           <Input
                             placeholder="Добавить свой размер"
@@ -737,34 +750,74 @@ const AdminProducts = () => {
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
                                 e.preventDefault();
-                                addCustomSize();
+                                if (customSizeInput.trim()) {
+                                  setFormData({
+                                    ...formData,
+                                    size_quantities: {
+                                      ...formData.size_quantities,
+                                      [customSizeInput.trim()]: 0
+                                    }
+                                  });
+                                  setCustomSizeInput('');
+                                }
                               }
                             }}
                           />
-                          <Button type="button" variant="outline" onClick={addCustomSize}>
+                          <Button type="button" variant="outline" onClick={() => {
+                            if (customSizeInput.trim()) {
+                              setFormData({
+                                ...formData,
+                                size_quantities: {
+                                  ...formData.size_quantities,
+                                  [customSizeInput.trim()]: 0
+                                }
+                              });
+                              setCustomSizeInput('');
+                            }
+                          }}>
                             <Plus className="w-4 h-4" />
                           </Button>
                         </div>
 
-                        {formData.available_sizes.length > 0 && (
+                        {Object.keys(formData.size_quantities).filter(s => !availableSizeOptions.includes(s)).length > 0 && (
                           <div className="mt-3">
-                            <p className="text-sm text-muted-foreground mb-2">Выбрано:</p>
-                            <div className="flex flex-wrap gap-2">
-                              {formData.available_sizes.map((size) => (
-                                <div
-                                  key={size}
-                                  className="inline-flex items-center gap-1 bg-secondary px-2 py-1 rounded text-sm"
-                                >
-                                  {size}
-                                  <button
-                                    type="button"
-                                    onClick={() => removeSize(size)}
-                                    className="hover:text-destructive"
-                                  >
-                                    <X className="w-3 h-3" />
-                                  </button>
-                                </div>
-                              ))}
+                            <p className="text-sm text-muted-foreground mb-2">Дополнительные размеры:</p>
+                            <div className="flex flex-wrap gap-3">
+                              {Object.entries(formData.size_quantities)
+                                .filter(([size]) => !availableSizeOptions.includes(size))
+                                .map(([size, qty]) => (
+                                  <div key={size} className="flex items-center gap-2 bg-secondary px-2 py-1 rounded">
+                                    <span className="text-sm">{size}:</span>
+                                    <Input
+                                      type="number"
+                                      min="0"
+                                      className="w-16 h-7"
+                                      value={qty || ''}
+                                      placeholder="0"
+                                      onChange={(e) => {
+                                        const value = parseInt(e.target.value) || 0;
+                                        setFormData({
+                                          ...formData,
+                                          size_quantities: {
+                                            ...formData.size_quantities,
+                                            [size]: value
+                                          }
+                                        });
+                                      }}
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const newSizeQty = { ...formData.size_quantities };
+                                        delete newSizeQty[size];
+                                        setFormData({ ...formData, size_quantities: newSizeQty });
+                                      }}
+                                      className="hover:text-destructive"
+                                    >
+                                      <X className="w-3 h-3" />
+                                    </button>
+                                  </div>
+                                ))}
                             </div>
                           </div>
                         )}
