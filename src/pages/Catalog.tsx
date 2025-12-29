@@ -316,15 +316,34 @@ const ProductGrid = memo(({ products, gridCols, getColorHex, user, isFavorite, t
                 )}
               </div>
 
-              {product.available_sizes && product.available_sizes.length > 0 && (
-                <div className="flex gap-2 lg:gap-3 text-[10px] lg:text-xs text-muted-foreground">
-                  {product.available_sizes.map((size: string) => (
-                    <span key={size}>
-                      {size}
-                    </span>
-                  ))}
-                </div>
-              )}
+              {(() => {
+                // Получаем размеры с количеством > 0
+                const sizeQty = (product.size_quantities as Record<string, number>) || {};
+                const availableSizes = Object.entries(sizeQty)
+                  .filter(([_, qty]) => qty > 0)
+                  .map(([size]) => size);
+
+                // Fallback на старое поле available_sizes если size_quantities пустой
+                const sizesToShow = availableSizes.length > 0
+                  ? availableSizes
+                  : (product.available_sizes || []);
+
+                if (sizesToShow.length === 0) {
+                  return (
+                    <div className="text-[10px] lg:text-xs text-muted-foreground">
+                      Нет в наличии
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="flex gap-2 lg:gap-3 text-[10px] lg:text-xs text-muted-foreground">
+                    {sizesToShow.map((size: string) => (
+                      <span key={size}>{size}</span>
+                    ))}
+                  </div>
+                );
+              })()}
             </Link>
           </div>
         );

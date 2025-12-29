@@ -76,10 +76,16 @@ export const useProducts = (filters?: ProductFilters) => {
       }
 
       if (filters?.sizes && filters.sizes.length > 0) {
-        filteredData = filteredData.filter(product =>
-          product.available_sizes && 
-          product.available_sizes.some((size: string) => filters.sizes!.includes(size))
-        );
+        filteredData = filteredData.filter(product => {
+          // Используем size_quantities если есть, иначе fallback на available_sizes
+          if (product.size_quantities && typeof product.size_quantities === 'object') {
+            const sizeQty = product.size_quantities as Record<string, number>;
+            return filters.sizes!.some(size => (sizeQty[size] || 0) > 0);
+          }
+          // Fallback для старых данных
+          return product.available_sizes &&
+            product.available_sizes.some((size: string) => filters.sizes!.includes(size));
+        });
       }
 
       return filteredData;
