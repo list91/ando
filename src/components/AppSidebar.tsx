@@ -133,7 +133,7 @@ export function AppSidebar({
             <Link
               to={`/catalog?gender=${currentGender}`}
               onClick={() => onCategoryChange?.("SALE")}
-              className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${selectedCategory === "SALE" ? "underline" : ""}`}
+              className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap text-red-600 ${selectedCategory === "SALE" ? "underline" : ""}`}
             >
               SALE
             </Link>
