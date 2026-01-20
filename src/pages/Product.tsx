@@ -299,10 +299,10 @@ const Product = () => {
           )}
 
           {/* Color and Composition */}
-          {(product.available_colors?.[selectedColor] || product.composition || product.material) && (
+          {(product.available_colors?.length > 0 || product.composition || product.material) && (
             <div className="space-y-1 mb-6 text-sm">
-              {product.available_colors?.[selectedColor] && (
-                <div>Цвет: {product.available_colors[selectedColor]}</div>
+              {product.available_colors?.length > 0 && (
+                <div>Цвет: {product.available_colors.join(', ')}</div>
               )}
               {(product.composition || product.material) && (
                 <div>Состав: {product.composition || product.material}</div>

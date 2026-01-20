@@ -79,7 +79,7 @@ const About = () => {
               <img
                 src={founderImage?.image_url || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80"}
                 alt={founderImage?.title || "Основатели бренда"}
-                className="w-full h-full object-cover grayscale"
+                className="w-full h-full object-cover"
               />
             </div>
           </div>

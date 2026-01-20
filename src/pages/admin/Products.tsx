@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useCategories } from '@/hooks/useProducts';
 import { Button } from '@/components/ui/button';
-import { Plus, Edit, Trash2, X, GripVertical } from 'lucide-react';
+import { Plus, Edit, Trash2, X, GripVertical, Settings } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -61,6 +61,10 @@ const AdminProducts = () => {
   const [customColorInput, setCustomColorInput] = useState('');
   const [customColorLinkInput, setCustomColorLinkInput] = useState('');
   const [draggedItem, setDraggedItem] = useState<Product | null>(null);
+  const [dbColors, setDbColors] = useState<{name: string, hex_code: string}[]>([]);
+  const [colorManagementOpen, setColorManagementOpen] = useState(false);
+  const [newColorInput, setNewColorInput] = useState('');
+  const [newColorHex, setNewColorHex] = useState('#CCCCCC');
   const { toast } = useToast();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
 
@@ -88,10 +92,21 @@ const AdminProducts = () => {
   });
 
   const availableSizeOptions = SIZE_ORDER;
-  const availableColorOptions = ['Черный', 'Белый', 'Серый', 'Бежевый', 'Коричневый', 'Синий', 'Голубой', 'Зеленый', 'Красный', 'Розовый', 'Желтый', 'Оранжевый', 'Фиолетовый', 'Бордовый', 'Хаки'];
+  const availableColorOptions = dbColors.map(c => c.name);
+
+  const fetchColors = async () => {
+    const { data, error } = await supabase
+      .from('colors')
+      .select('name, hex_code')
+      .order('display_order');
+    if (!error && data) {
+      setDbColors(data.map(c => ({ name: c.name, hex_code: c.hex_code || '#CCCCCC' })));
+    }
+  };
 
   useEffect(() => {
     fetchProducts();
+    fetchColors();
   }, []);
 
   useEffect(() => {
@@ -317,14 +332,27 @@ const AdminProducts = () => {
     }
   };
 
-  const addCustomColor = () => {
+  const addCustomColor = async () => {
     const trimmed = customColorInput.trim();
     if (trimmed && !formData.available_colors.includes(trimmed)) {
+      // Добавляем в форму
       setFormData({
         ...formData,
         available_colors: [...formData.available_colors, trimmed]
       });
       setCustomColorInput('');
+
+      // Сохраняем в БД если нет такого цвета
+      if (!dbColors.some(c => c.name === trimmed)) {
+        const maxOrder = dbColors.length + 1;
+        const { error } = await supabase
+          .from('colors')
+          .insert({ name: trimmed, hex_code: '#CCCCCC', display_order: maxOrder });
+        if (!error) {
+          setDbColors([...dbColors, { name: trimmed, hex_code: '#CCCCCC' }]);
+          toast({ title: `Цвет "${trimmed}" добавлен в базу` });
+        }
+      }
     }
   };
 
@@ -355,7 +383,7 @@ const AdminProducts = () => {
     }
   };
 
-  const addCustomColorLink = () => {
+  const addCustomColorLink = async () => {
     const trimmed = customColorLinkInput.trim();
     if (trimmed && !(trimmed in formData.color_links)) {
       setFormData({
@@ -366,6 +394,18 @@ const AdminProducts = () => {
         }
       });
       setCustomColorLinkInput('');
+
+      // Сохраняем в БД если нет такого цвета
+      if (!dbColors.some(c => c.name === trimmed)) {
+        const maxOrder = dbColors.length + 1;
+        const { error } = await supabase
+          .from('colors')
+          .insert({ name: trimmed, hex_code: '#CCCCCC', display_order: maxOrder });
+        if (!error) {
+          setDbColors([...dbColors, { name: trimmed, hex_code: '#CCCCCC' }]);
+          toast({ title: `Цвет "${trimmed}" добавлен в базу` });
+        }
+      }
     }
   };
 
@@ -376,6 +416,71 @@ const AdminProducts = () => {
       ...formData,
       color_links: newColorLinks
     });
+  };
+
+  // Функции для модалки управления цветами
+  const addColorToDb = async () => {
+    const trimmed = newColorInput.trim();
+    if (!trimmed) return;
+    if (dbColors.some(c => c.name === trimmed)) {
+      toast({ title: `Цвет "${trimmed}" уже существует`, variant: 'destructive' });
+      return;
+    }
+    const maxOrder = dbColors.length + 1;
+    const { error } = await supabase
+      .from('colors')
+      .insert({ name: trimmed, hex_code: newColorHex, display_order: maxOrder });
+    if (!error) {
+      setDbColors([...dbColors, { name: trimmed, hex_code: newColorHex }]);
+      setNewColorInput('');
+      setNewColorHex('#CCCCCC');
+      toast({ title: `Цвет "${trimmed}" добавлен` });
+    }
+  };
+
+  const deleteColorFromDb = async (colorName: string) => {
+    // Находим товары с этим цветом
+    const productsWithColor = products.filter(p =>
+      (p as any).available_colors?.includes(colorName)
+    );
+
+    if (productsWithColor.length > 0) {
+      const confirm = window.confirm(
+        `Цвет "${colorName}" используется в ${productsWithColor.length} товар(ах). Удалить цвет везде?`
+      );
+      if (!confirm) return;
+
+      // Удаляем цвет из available_colors каждого товара
+      for (const product of productsWithColor) {
+        const currentColors = (product as any).available_colors || [];
+        const newColors = currentColors.filter((c: string) => c !== colorName);
+
+        await supabase
+          .from('products')
+          .update({ available_colors: newColors })
+          .eq('id', product.id);
+      }
+
+      // Обновляем локальный state
+      setProducts(products.map(p => {
+        const currentColors = (p as any).available_colors || [];
+        if (currentColors.includes(colorName)) {
+          return { ...p, available_colors: currentColors.filter((c: string) => c !== colorName) };
+        }
+        return p;
+      }));
+    }
+
+    // Удаляем из таблицы colors
+    const { error } = await supabase
+      .from('colors')
+      .delete()
+      .eq('name', colorName);
+
+    if (!error) {
+      setDbColors(dbColors.filter(c => c.name !== colorName));
+      toast({ title: `Цвет "${colorName}" полностью удалён` });
+    }
   };
 
   const handleDragStart = (e: React.DragEvent, product: Product) => {
@@ -825,7 +930,19 @@ const AdminProducts = () => {
                       </div>
 
                       <div>
-                        <Label>Доступные цвета</Label>
+                        <div className="flex items-center justify-between">
+                          <Label>Доступные цвета</Label>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setColorManagementOpen(true)}
+                            className="h-7 px-2 text-xs"
+                          >
+                            <Settings className="w-3 h-3 mr-1" />
+                            Управление
+                          </Button>
+                        </div>
                         <div className="flex flex-wrap gap-2 mt-2 p-3 border rounded-md">
                           {availableColorOptions.map((color) => (
                             <label
@@ -1098,6 +1215,67 @@ const AdminProducts = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Модалка управления цветами */}
+      <Dialog open={colorManagementOpen} onOpenChange={setColorManagementOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Управление цветами</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="max-h-[300px] overflow-y-auto space-y-2">
+              {dbColors.map((color) => (
+                <div
+                  key={color.name}
+                  className="flex items-center justify-between p-2 border rounded hover:bg-muted"
+                >
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="w-6 h-6 rounded border"
+                      style={{ backgroundColor: color.hex_code }}
+                    />
+                    <span>{color.name}</span>
+                    <span className="text-xs text-muted-foreground">{color.hex_code}</span>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => deleteColorFromDb(color.name)}
+                    className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-2 items-center">
+              <Input
+                placeholder="Новый цвет..."
+                value={newColorInput}
+                onChange={(e) => setNewColorInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addColorToDb();
+                  }
+                }}
+                className="flex-1"
+              />
+              <input
+                type="color"
+                value={newColorHex}
+                onChange={(e) => setNewColorHex(e.target.value)}
+                className="w-10 h-10 rounded border cursor-pointer"
+                title="Выберите цвет"
+              />
+              <Button type="button" onClick={addColorToDb}>
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

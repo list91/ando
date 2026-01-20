@@ -14,6 +14,7 @@ import { usePriceFilterStore } from "@/stores/priceFilterStore";
 import CategoryDropdown from "@/components/CategoryDropdown";
 import { getThumbUrl } from "@/lib/imageUrl";
 import { sortSizes } from "@/lib/sizeUtils";
+import { supabase } from "@/integrations/supabase/client";
 
 
 interface CatalogProps {
@@ -569,13 +570,27 @@ const Catalog = ({ selectedCategory, setSelectedCategory, selectedGender, setSel
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Get color map from settings
-  const colorMap = settings?.find(s => s.key === 'product_colors')?.value as Record<string, string> || {};
+  // Get color map from colors table
+  const [colorMap, setColorMap] = useState<Record<string, string>>({});
+  const [colorsLoaded, setColorsLoaded] = useState(false);
+
+  useEffect(() => {
+    const loadColors = async () => {
+      const { data } = await supabase.from('colors').select('name, hex_code');
+      if (data) {
+        const map: Record<string, string> = {};
+        data.forEach(c => { map[c.name.toLowerCase().trim()] = c.hex_code || '#CCCCCC'; });
+        setColorMap(map);
+      }
+      setColorsLoaded(true);
+    };
+    loadColors();
+  }, []);
 
   const getColorHex = useCallback((colorName: string): string => {
     const lowerName = colorName.toLowerCase().trim();
     return colorMap[lowerName] || '#CCCCCC'; // Default gray if color not found
-  }, [colorMap]);
+  }, [colorMap, colorsLoaded]);
 
   // Update URL params when filters change (NOT price - updated on popover close)
   useEffect(() => {

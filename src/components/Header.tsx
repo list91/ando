@@ -51,7 +51,7 @@ const Header = () => {
   return <>
       <header className="sticky top-0 z-50 bg-background border-b border-border">
         <div className="h-40 px-4 lg:px-8">
-          <div className="hidden lg:grid lg:grid-cols-[auto_1fr_auto] items-center h-full gap-12">
+          <div className="hidden lg:grid lg:grid-cols-[auto_1fr] items-center h-full gap-12">
             {/* Desktop Navigation - left */}
             <nav className="flex items-center gap-2 justify-start" role="navigation" aria-label="Основная навигация">
               <Link to="/catalog?gender=women" className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-all px-6 py-6 whitespace-nowrap ${(location.pathname === '/catalog' || location.pathname.startsWith('/product/')) && currentGender === 'women' ? 'bg-secondary' : ''}`}>
@@ -68,15 +68,12 @@ const Header = () => {
               </Link>
             </nav>
 
-            {/* Search Bar - center */}
-            <div className="flex items-center justify-center px-8">
-              <div className="w-full max-w-[280px]">
-                <ProductSearch />
-              </div>
-            </div>
-
-            {/* Right Icons */}
+            {/* Search + Right Icons - fixed together on right */}
             <div className="flex items-center gap-6 justify-end">
+            {/* Search */}
+            <div className="w-[280px]">
+              <ProductSearch />
+            </div>
             {/* Cart */}
             <button onClick={() => setIsCartOpen(true)} className="hover:opacity-60 transition-opacity relative min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Корзина">
               <ShoppingCart className="w-5 h-5" />

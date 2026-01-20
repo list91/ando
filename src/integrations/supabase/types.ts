@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      colors: {
+        Row: {
+          id: string
+          name: string
+          hex_code: string
+          display_order: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          hex_code?: string
+          display_order?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          hex_code?: string
+          display_order?: number
+          created_at?: string
+        }
+        Relationships: []
+      }
       about_page: {
         Row: {
           content: string | null
