@@ -9,6 +9,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { CatalogSearchProvider } from "@/contexts/CatalogSearchContext";
 import { CookieBanner } from "@/components/CookieBanner";
+import { SupportChat } from "@/components/SupportChat";
 import { AddToCartModal } from "@/components/AddToCartModal";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -161,6 +162,7 @@ const App = () => {
                     <CatalogSearchProvider>
                       <AppContent />
                       <CookieBanner />
+                      <SupportChat />
                     </CatalogSearchProvider>
                   </BrowserRouter>
                 </TooltipProvider>

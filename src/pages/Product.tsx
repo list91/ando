@@ -268,12 +268,12 @@ const Product = () => {
         {/* Right side - Product info */}
         <div className="w-full lg:w-[480px] border-t lg:border-t-0 lg:border-l border-border py-6 lg:py-16 px-6 lg:px-12 lg:overflow-y-auto">
           {/* Title and discount badge */}
-          <div className="flex items-start justify-between mb-6">
-            <h1 className="text-sm tracking-[0.15em] uppercase font-light flex-1">
+          <div className="flex items-center gap-3 mb-6">
+            <h1 className="text-sm tracking-[0.15em] uppercase font-light">
               {product.name}
             </h1>
             {product.is_sale && discount > 0 && (
-              <div className="bg-primary/10 text-primary px-2.5 py-1 text-[11px] font-medium tabular-nums border border-primary/20 ml-3 flex-shrink-0">
+              <div className="bg-[#C6121F] text-white px-4 py-1.5 text-xs font-medium rounded-full ml-[40px]">
                 −{discount}%
               </div>
             )}
