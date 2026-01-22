@@ -10,6 +10,7 @@ import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { CatalogSearchProvider } from "@/contexts/CatalogSearchContext";
 import { CookieBanner } from "@/components/CookieBanner";
 import { SupportChat } from "@/components/SupportChat";
+// Build: 2026-01-22T02:50
 import { AddToCartModal } from "@/components/AddToCartModal";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ErrorBoundary from "@/components/ErrorBoundary";
