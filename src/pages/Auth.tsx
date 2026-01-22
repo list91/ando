@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -137,13 +137,6 @@ const Auth = () => {
                 maxLength={100}
               />
             </div>
-            {!isSignUp && (
-              <div className="text-right">
-                <Link to="/forgot-password" className="text-sm text-muted-foreground hover:underline">
-                  Забыли пароль?
-                </Link>
-              </div>
-            )}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Загрузка...' : isSignUp ? 'Зарегистрироваться' : 'Войти'}
             </Button>
