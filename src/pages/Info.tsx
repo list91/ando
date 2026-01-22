@@ -60,10 +60,18 @@ const Info = ({ activeSection, setActiveSection }: InfoProps) => {
       {activePage ? (
         <div className="space-y-8">
           <h2 className="text-2xl mb-6 tracking-[0.15em] uppercase">{activePage.title}</h2>
-          <div 
-            className="text-sm leading-relaxed whitespace-pre-wrap"
-            dangerouslySetInnerHTML={{ __html: activePage.content }}
-          />
+          {activePage.image_url ? (
+            <img
+              src={activePage.image_url}
+              alt={activePage.title}
+              className="w-full max-w-2xl rounded-lg"
+            />
+          ) : activePage.content ? (
+            <div
+              className="text-sm leading-relaxed whitespace-pre-wrap"
+              dangerouslySetInnerHTML={{ __html: activePage.content }}
+            />
+          ) : null}
         </div>
       ) : (
         <>

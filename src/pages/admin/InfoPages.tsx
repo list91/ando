@@ -9,11 +9,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { DeleteConfirmDialog } from '@/components/admin/DeleteConfirmDialog';
-import { Loader2, Plus, Edit, Trash2, Eye, EyeOff, Save, X } from 'lucide-react';
+import { ImageUploader } from '@/components/admin/ImageUploader';
+import { Loader2, Plus, Edit, Trash2, Eye, EyeOff, Save, X, Image } from 'lucide-react';
 
 export default function InfoPages() {
   const { data: pages, isLoading } = useInfoPages();
@@ -29,6 +29,7 @@ export default function InfoPages() {
     page_key: '',
     title: '',
     content: '',
+    image_url: '',
     display_order: 0,
     is_visible: true,
   });
@@ -38,6 +39,7 @@ export default function InfoPages() {
       page_key: '',
       title: '',
       content: '',
+      image_url: '',
       display_order: 0,
       is_visible: true,
     });
@@ -50,6 +52,7 @@ export default function InfoPages() {
       page_key: page.page_key,
       title: page.title,
       content: page.content,
+      image_url: page.image_url || '',
       display_order: page.display_order,
       is_visible: page.is_visible,
     });
@@ -128,14 +131,19 @@ export default function InfoPages() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="content">Содержание</Label>
-              <Textarea
-                id="content"
-                value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                placeholder="Текст страницы..."
-                rows={10}
+              <Label className="flex items-center gap-2">
+                <Image className="h-4 w-4" />
+                Изображение
+              </Label>
+              <ImageUploader
+                bucket="site-images"
+                currentImageUrl={formData.image_url || undefined}
+                onUploadComplete={(url) => setFormData({ ...formData, image_url: url })}
+                maxSizeMB={2}
               />
+              <p className="text-xs text-muted-foreground">
+                Рекомендуемый размер: 1200×800 px • Макс. вес: 2 MB • Форматы: PNG, SVG, WEBP
+              </p>
             </div>
 
             {/* Скрыто: управление видимостью
@@ -151,7 +159,7 @@ export default function InfoPages() {
             <div className="flex gap-2">
               <Button
                 onClick={handleSave}
-                disabled={!formData.page_key || !formData.title || !formData.content}
+                disabled={!formData.page_key || !formData.title || !formData.image_url}
               >
                 <Save className="h-4 w-4 mr-2" />
                 Сохранить
@@ -199,6 +207,16 @@ export default function InfoPages() {
                     Ключ: <code className="bg-muted px-1 rounded">{page.page_key}</code>
                   </p>
                   <p className="text-sm line-clamp-2">{page.content}</p>
+                  {page.image_url && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <Image className="h-4 w-4 text-muted-foreground" />
+                      <img
+                        src={page.image_url}
+                        alt="Превью"
+                        className="h-12 rounded border"
+                      />
+                    </div>
+                  )}
                 </div>
                 <div className="flex gap-2 ml-4">
                   <Button
