@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useCategories } from '@/hooks/useProducts';
@@ -65,7 +66,11 @@ const AdminProducts = () => {
   const [colorManagementOpen, setColorManagementOpen] = useState(false);
   const [newColorInput, setNewColorInput] = useState('');
   const [newColorHex, setNewColorHex] = useState('#CCCCCC');
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [newCategorySlug, setNewCategorySlug] = useState('');
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
 
   const [formData, setFormData] = useState({
@@ -483,6 +488,97 @@ const AdminProducts = () => {
     }
   };
 
+  // Транслитерация кириллицы для slug
+  const transliterate = (text: string): string => {
+    const map: Record<string, string> = {
+      'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo',
+      'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+      'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+      'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ъ': '',
+      'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
+    };
+    return text.toLowerCase().split('').map(char => map[char] || char).join('');
+  };
+
+  const addCategory = async () => {
+    const name = newCategoryName.trim();
+    if (!name) {
+      toast({ title: 'Введите название категории', variant: 'destructive' });
+      return;
+    }
+
+    // Генерируем slug из названия если не указан
+    const slug = newCategorySlug.trim() || transliterate(name)
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
+
+    if (!slug) {
+      toast({ title: 'Не удалось сгенерировать slug', variant: 'destructive' });
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('categories')
+      .insert({ name, slug })
+      .select()
+      .single();
+
+    if (error) {
+      toast({ title: 'Ошибка', description: error.message, variant: 'destructive' });
+      return;
+    }
+
+    // Обновляем список категорий
+    queryClient.invalidateQueries({ queryKey: ['categories'] });
+
+    // Авто-выбор созданной категории
+    if (data) {
+      setFormData({ ...formData, category_id: data.id });
+    }
+
+    setNewCategoryName('');
+    setNewCategorySlug('');
+    toast({ title: `Категория "${name}" создана` });
+  };
+
+  const deleteCategory = async (categoryId: string, categoryName: string) => {
+    // Проверяем, есть ли товары в этой категории
+    const productsWithCategory = products.filter(p => p.category_id === categoryId);
+
+    if (productsWithCategory.length > 0) {
+      const confirmed = window.confirm(
+        `Категория "${categoryName}" используется в ${productsWithCategory.length} товар(ах). Удалить категорию? Товары останутся, но без категории.`
+      );
+      if (!confirmed) return;
+
+      // Убираем категорию у товаров
+      for (const product of productsWithCategory) {
+        await supabase
+          .from('products')
+          .update({ category_id: null })
+          .eq('id', product.id);
+      }
+
+      // Обновляем локальный state
+      setProducts(products.map(p =>
+        p.category_id === categoryId ? { ...p, category_id: null as string | null } : p
+      ));
+    }
+
+    const { error } = await supabase
+      .from('categories')
+      .delete()
+      .eq('id', categoryId);
+
+    if (error) {
+      toast({ title: 'Ошибка', description: error.message, variant: 'destructive' });
+      return;
+    }
+
+    queryClient.invalidateQueries({ queryKey: ['categories'] });
+    toast({ title: `Категория "${categoryName}" удалена` });
+  };
+
   const handleDragStart = (e: React.DragEvent, product: Product) => {
     setDraggedItem(product);
     e.dataTransfer.effectAllowed = 'move';
@@ -708,23 +804,34 @@ const AdminProducts = () => {
 
                       <div>
                         <Label htmlFor="category_id">Категория</Label>
-                        <Select
-                          value={formData.category_id}
-                          onValueChange={(value) =>
-                            setFormData({ ...formData, category_id: value })
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Выберите категорию" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {categories?.map((category) => (
-                              <SelectItem key={category.id} value={category.id}>
-                                {category.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <div className="flex gap-2">
+                          <Select
+                            value={formData.category_id}
+                            onValueChange={(value) =>
+                              setFormData({ ...formData, category_id: value })
+                            }
+                          >
+                            <SelectTrigger className="flex-1">
+                              <SelectValue placeholder="Выберите категорию" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {categories?.map((category) => (
+                                <SelectItem key={category.id} value={category.id}>
+                                  {category.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => setCategoryModalOpen(true)}
+                            title="Управление категориями"
+                          >
+                            <Settings className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
 
                       <div>
@@ -1272,6 +1379,74 @@ const AdminProducts = () => {
               <Button type="button" onClick={addColorToDb}>
                 <Plus className="w-4 h-4" />
               </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Модалка управления категориями */}
+      <Dialog open={categoryModalOpen} onOpenChange={setCategoryModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Управление категориями</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {/* Список существующих категорий */}
+            <div className="max-h-[250px] overflow-y-auto space-y-2">
+              {categories && categories.length > 0 ? (
+                categories.map((category) => (
+                  <div
+                    key={category.id}
+                    className="flex items-center justify-between p-2 border rounded hover:bg-muted"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium truncate">{category.name}</div>
+                      <div className="text-xs text-muted-foreground truncate">/{category.slug}</div>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => deleteCategory(category.id, category.name)}
+                      className="h-7 w-7 p-0 text-destructive hover:text-destructive ml-2"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-4 text-muted-foreground">
+                  Категорий пока нет
+                </div>
+              )}
+            </div>
+
+            {/* Форма добавления новой категории */}
+            <div className="border-t pt-4 space-y-3">
+              <div className="text-sm font-medium">Добавить категорию</div>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Название"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addCategory();
+                    }
+                  }}
+                  className="flex-1"
+                />
+                <Button type="button" onClick={addCategory}>
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+              <Input
+                placeholder="Slug (авто-генерация)"
+                value={newCategorySlug}
+                onChange={(e) => setNewCategorySlug(e.target.value)}
+                className="text-sm"
+              />
             </div>
           </div>
         </DialogContent>
