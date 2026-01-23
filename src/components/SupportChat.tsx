@@ -65,7 +65,7 @@ export function SupportChat() {
     return (
       <button
         onClick={() => setState("chat")}
-        className="fixed bottom-6 right-4 md:right-6 z-50 w-14 h-14 rounded-full shadow-lg hover:scale-110 transition-transform duration-200 overflow-hidden"
+        className="hidden md:flex fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg hover:scale-110 transition-transform duration-200 overflow-hidden items-center justify-center"
         aria-label="Открыть чат поддержки"
       >
         <img

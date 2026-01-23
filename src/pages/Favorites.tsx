@@ -83,7 +83,7 @@ const Favorites = () => {
                     <div className="aspect-[3/4] overflow-hidden bg-muted mb-3 relative">
                       {/* NEW badge - top left */}
                       {product.is_new && (
-                        <div className="absolute top-4 left-4 z-10 bg-foreground text-background px-3 py-1 text-xs font-normal uppercase tracking-wider border border-foreground">
+                        <div className="absolute top-4 left-4 z-10 bg-black text-white px-3 py-1 text-xs font-normal uppercase tracking-wider rounded-full">
                           NEW
                         </div>
                       )}
@@ -100,7 +100,7 @@ const Favorites = () => {
                         </div>
                       )}
                       {product.is_sale && (
-                        <div className="absolute top-3 left-3 bg-destructive text-destructive-foreground px-2 py-1 text-xs font-medium">
+                        <div className="absolute top-3 left-3 bg-[#C6121F] text-white px-2 py-1 text-xs font-medium rounded-full">
                           SALE
                         </div>
                       )}

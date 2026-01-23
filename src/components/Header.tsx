@@ -49,16 +49,16 @@ const Header = () => {
     navigate('/');
   };
   return <>
-      <header className="sticky top-0 z-50 bg-background border-b border-border">
+      <header className="sticky top-0 z-50 bg-background border-b border-border hidden md:block">
         <div className="h-40 px-4 lg:px-8">
           <div className="hidden lg:grid lg:grid-cols-[auto_1fr] items-center h-full gap-12">
             {/* Desktop Navigation - left */}
             <nav className="flex items-center gap-2 justify-start" role="navigation" aria-label="Основная навигация">
               <Link to="/catalog?gender=women" className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-all px-6 py-6 whitespace-nowrap ${(location.pathname === '/catalog' || location.pathname.startsWith('/product/')) && currentGender === 'women' ? 'bg-secondary' : ''}`}>
-                ДЛЯ НЕЁ
+                ЖЕНСКОЕ
               </Link>
               <Link to="/catalog?gender=men" className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-all px-6 py-6 whitespace-nowrap ${(location.pathname === '/catalog' || location.pathname.startsWith('/product/')) && currentGender === 'men' ? 'bg-secondary' : ''}`}>
-                ДЛЯ НЕГО
+                МУЖСКОЕ
               </Link>
               <Link to="/lookbook" className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-all px-6 py-6 whitespace-nowrap ${location.pathname === '/lookbook' ? 'bg-secondary' : ''}`}>
                 LOOKBOOK
@@ -123,8 +123,8 @@ const Header = () => {
             </div>
           </div>
 
-          {/* Mobile Layout */}
-          <div className="lg:hidden flex items-center justify-between h-full">
+          {/* Mobile Layout - Hidden on mobile, MobileBottomNav is used instead */}
+          <div className="hidden md:flex lg:hidden items-center justify-between h-full">
             {/* Mobile Menu Button */}
             <button className="hover:opacity-60 transition-opacity min-w-[44px] min-h-[44px] flex items-center justify-center" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Меню">
               <MenuIcon className="w-5 h-5" />
@@ -197,7 +197,7 @@ const Header = () => {
               <Link to="/favorites" className="hidden sm:flex hover:opacity-60 transition-opacity min-w-[44px] min-h-[44px] items-center justify-center" aria-label="Избранное">
                 <Heart className="w-5 h-5" />
               </Link>
-              
+
               {/* User Menu */}
               {user ? <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -236,13 +236,13 @@ const Header = () => {
         </div>
 
         {/* Mobile Navigation Menu */}
-        {isMobileMenuOpen && <div className="lg:hidden border-t border-border bg-background">
+        {isMobileMenuOpen && <div className="hidden md:block lg:hidden border-t border-border bg-background">
             <nav className="flex flex-col py-4" role="navigation" aria-label="Мобильная навигация">
               <Link to="/catalog?gender=women" className="px-6 py-3 text-sm uppercase tracking-[0.2em] hover:bg-muted transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
-                ДЛЯ НЕЁ
+                ЖЕНСКОЕ
               </Link>
               <Link to="/catalog?gender=men" className="px-6 py-3 text-sm uppercase tracking-[0.2em] hover:bg-muted transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
-                ДЛЯ НЕГО
+                МУЖСКОЕ
               </Link>
               <Link to="/lookbook" className="px-6 py-3 text-sm uppercase tracking-[0.2em] hover:bg-muted transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
                 LOOKBOOK

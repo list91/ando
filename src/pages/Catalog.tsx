@@ -235,13 +235,13 @@ const ProductGrid = memo(({ products, gridCols, getColorHex, user, isFavorite, t
                 onTouchEnd={handleTouchEnd}
               >
                 {product.is_new && (
-                  <div className="absolute top-3 left-3 lg:top-4 lg:left-4 z-10 bg-white text-black px-3 py-1 lg:px-4 lg:py-1.5 text-[10px] lg:text-xs font-medium uppercase tracking-wider rounded-full">
+                  <div className="absolute top-3 left-3 lg:top-4 lg:left-4 z-10 bg-black text-white px-3 py-1 lg:px-4 lg:py-1.5 text-[10px] lg:text-xs font-medium uppercase tracking-wider rounded-full">
                     NEW
                   </div>
                 )}
 
                 {product.is_sale && (
-                  <div className={`absolute ${product.is_new ? 'top-11 lg:top-14' : 'top-3 lg:top-4'} left-3 lg:left-4 z-10 bg-black text-white px-3 py-1 lg:px-4 lg:py-1.5 text-[10px] lg:text-xs font-medium uppercase tracking-wider rounded-full`}>
+                  <div className={`absolute ${product.is_new ? 'top-11 lg:top-14' : 'top-3 lg:top-4'} left-3 lg:left-4 z-10 bg-[#C6121F] text-white px-3 py-1 lg:px-4 lg:py-1.5 text-[10px] lg:text-xs font-medium uppercase tracking-wider rounded-full`}>
                     SALE
                   </div>
                 )}
@@ -285,7 +285,40 @@ const ProductGrid = memo(({ products, gridCols, getColorHex, user, isFavorite, t
             </button>
 
             <Link to={`/product/${product.slug}`}>
-              <h3 className="text-xs lg:text-sm mb-1.5 lg:mb-2 tracking-wide text-foreground line-clamp-2">{product.name}</h3>
+              {/* Название товара и размеры в одну строку */}
+              <div className="flex items-start justify-between gap-2 mb-1.5 lg:mb-2">
+                <h3 className="text-xs lg:text-sm tracking-wide text-foreground line-clamp-2 flex-1">{product.name}</h3>
+                {(() => {
+                  // Получаем размеры с количеством > 0
+                  const sizeQty = (product.size_quantities as Record<string, number>) || {};
+                  const availableSizes = Object.entries(sizeQty)
+                    .filter(([_, qty]) => qty > 0)
+                    .map(([size]) => size);
+
+                  // Fallback на старое поле available_sizes если size_quantities пустой
+                  const sizesToShow = sortSizes(
+                    availableSizes.length > 0
+                      ? availableSizes
+                      : (product.available_sizes || [])
+                  );
+
+                  if (sizesToShow.length === 0) {
+                    return (
+                      <span className="text-[10px] lg:text-xs text-muted-foreground whitespace-nowrap">
+                        Нет в наличии
+                      </span>
+                    );
+                  }
+
+                  return (
+                    <div className="flex gap-1.5 lg:gap-2 text-xs lg:text-sm text-muted-foreground whitespace-nowrap flex-shrink-0 pr-2">
+                      {sizesToShow.map((size: string) => (
+                        <span key={size}>{size}</span>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </div>
 
               <div className="flex flex-col gap-1 lg:gap-1.5 mb-1.5 lg:mb-2">
                 <div className="flex items-center gap-1.5 lg:gap-2">
@@ -298,6 +331,7 @@ const ProductGrid = memo(({ products, gridCols, getColorHex, user, isFavorite, t
                     </span>
                   )}
                 </div>
+                {/* СКРЫТО: Цветовые кружки в каталоге - раскомментировать для возврата
                 {product.available_colors && product.available_colors.length > 0 && (
                   <div className="flex items-center gap-1.5">
                     {product.available_colors.slice(0, 4).map((color: string, idx: number) => {
@@ -310,44 +344,13 @@ const ProductGrid = memo(({ products, gridCols, getColorHex, user, isFavorite, t
                             backgroundColor: colorHex,
                             boxShadow: colorHex.toLowerCase() === '#ffffff' ? 'inset 0 0 0 1px rgba(0,0,0,0.1)' : 'none'
                           }}
-                          title={color}
                         />
                       );
                     })}
                   </div>
                 )}
+                */}
               </div>
-
-              {(() => {
-                // Получаем размеры с количеством > 0
-                const sizeQty = (product.size_quantities as Record<string, number>) || {};
-                const availableSizes = Object.entries(sizeQty)
-                  .filter(([_, qty]) => qty > 0)
-                  .map(([size]) => size);
-
-                // Fallback на старое поле available_sizes если size_quantities пустой
-                const sizesToShow = sortSizes(
-                  availableSizes.length > 0
-                    ? availableSizes
-                    : (product.available_sizes || [])
-                );
-
-                if (sizesToShow.length === 0) {
-                  return (
-                    <div className="text-[10px] lg:text-xs text-muted-foreground">
-                      Нет в наличии
-                    </div>
-                  );
-                }
-
-                return (
-                  <div className="flex gap-2 lg:gap-3 text-[10px] lg:text-xs text-muted-foreground">
-                    {sizesToShow.map((size: string) => (
-                      <span key={size}>{size}</span>
-                    ))}
-                  </div>
-                );
-              })()}
             </Link>
           </div>
         );

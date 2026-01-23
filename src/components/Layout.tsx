@@ -2,6 +2,8 @@ import { ReactNode, useState } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import { AppSidebar } from "./AppSidebar";
+import { MobileBottomNav } from "./MobileBottomNav";
+import CartDrawer from "./CartDrawer";
 import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
 
@@ -17,62 +19,77 @@ interface LayoutProps {
 
 const Layout = ({ children, selectedCategory, onCategoryChange, selectedGender, onGenderChange, activeInfoSection, onInfoSectionChange }: LayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      {/* Mobile Sidebar Overlay */}
-      {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
-      
-      {/* Sidebar */}
-      <div className={`
-        fixed lg:static inset-y-0 left-0 z-50
-        transform transition-transform duration-300 ease-in-out
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-      `}>
-        <AppSidebar
-          selectedCategory={selectedCategory}
-          onCategoryChange={(category) => {
-            onCategoryChange(category);
-            setIsSidebarOpen(false);
-          }}
-          selectedGender={selectedGender}
-          onGenderChange={(gender) => {
-            onGenderChange(gender);
-            setIsSidebarOpen(false);
-          }}
-          activeInfoSection={activeInfoSection}
-          onInfoSectionChange={(section) => {
-            onInfoSectionChange(section);
-            setIsSidebarOpen(false);
-          }}
-        />
-      </div>
+    <>
+      <div className="flex h-screen overflow-hidden">
+        {/* Mobile Sidebar Overlay */}
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Mobile Menu Button */}
-        <div className="lg:hidden fixed top-4 left-4 z-30">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="bg-background shadow-md"
-          >
-            {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </Button>
+        {/* Sidebar */}
+        <div className={`
+          fixed lg:static inset-y-0 left-0 z-50
+          transform transition-transform duration-300 ease-in-out
+          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        `}>
+          <AppSidebar
+            selectedCategory={selectedCategory}
+            onCategoryChange={(category) => {
+              onCategoryChange(category);
+              setIsSidebarOpen(false);
+            }}
+            selectedGender={selectedGender}
+            onGenderChange={(gender) => {
+              onGenderChange(gender);
+              setIsSidebarOpen(false);
+            }}
+            activeInfoSection={activeInfoSection}
+            onInfoSectionChange={(section) => {
+              onInfoSectionChange(section);
+              setIsSidebarOpen(false);
+            }}
+          />
         </div>
 
-        <Header />
-        <main className="flex-1 overflow-y-auto">
-          {children}
-        </main>
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Mobile Menu Button - hidden on mobile, MobileBottomNav handles it */}
+          <div className="hidden lg:block fixed top-4 left-4 z-30">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="bg-background shadow-md"
+            >
+              {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </Button>
+          </div>
+
+          <Header />
+          <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+
+      {/* Mobile Bottom Navigation - outside overflow container */}
+      <MobileBottomNav
+        onCartOpen={() => setIsCartOpen(true)}
+        selectedCategory={selectedCategory}
+        onCategoryChange={onCategoryChange}
+        activeInfoSection={activeInfoSection}
+        onInfoSectionChange={onInfoSectionChange}
+      />
+
+      {/* Cart Drawer for Mobile Bottom Nav */}
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+    </>
   );
 };
 

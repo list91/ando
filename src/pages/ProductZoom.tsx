@@ -161,10 +161,10 @@ const goToImage = (index: number) => {    setCurrentImage(index);    zoomRef.cur
                 <button
                   key={size}
                   onClick={() => setSelectedSize(size)}
-                  className={`w-12 h-12 rounded-full border text-sm transition-all ${
-                    selectedSize === size 
-                      ? "border-foreground bg-foreground text-background scale-110" 
-                      : "border-border hover:border-foreground hover:scale-105"
+                  className={`w-12 h-12 rounded-full border text-sm transition-colors ${
+                    selectedSize === size
+                      ? "border-foreground bg-foreground text-background"
+                      : "border-black hover:bg-black hover:text-white"
                   }`}
                   aria-label={`Выбрать размер ${size}`}
                 >
