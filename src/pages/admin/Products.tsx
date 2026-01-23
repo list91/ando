@@ -1121,7 +1121,19 @@ const AdminProducts = () => {
 
                       {/* Color Links - независимая секция для ссылок на товары в других цветах */}
                       <div>
-                        <Label>Ссылки на товары в других цветах</Label>
+                        <div className="flex items-center justify-between">
+                          <Label>Ссылки на товары в других цветах</Label>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setColorManagementOpen(true)}
+                            className="h-7 px-2 text-xs"
+                          >
+                            <Settings className="w-3 h-3 mr-1" />
+                            Управление
+                          </Button>
+                        </div>
                         <p className="text-xs text-muted-foreground mt-1 mb-2">
                           Выберите цвета для ссылок на этот же товар в других цветах
                         </p>

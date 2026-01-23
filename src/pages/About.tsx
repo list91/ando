@@ -20,9 +20,9 @@ const About = () => {
   const founderImage = sections?.find((s) => s.section_key === "founder_image");
 
   return (
-    <div className="min-h-screen py-8 px-8 lg:mt-[29px]">
+    <div className="min-h-screen py-6 md:py-8 px-4 md:px-8 lg:mt-[29px]">
       <div className="max-w-7xl mx-auto w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start">
           {/* Left side - Text content */}
           <div className="space-y-6">
             <h1 className="text-2xl mb-4 tracking-[0.2em] uppercase">
@@ -37,7 +37,7 @@ const About = () => {
               ))}
             </div>
 
-            <div className="grid grid-cols-2 gap-6 pt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 pt-4">
               {philosophy && (
                 <section>
                   <h2 className="text-sm mb-2 tracking-[0.15em] uppercase">

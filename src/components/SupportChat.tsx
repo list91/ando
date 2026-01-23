@@ -60,12 +60,12 @@ export function SupportChat() {
   };
 
   // Floating button
-  // Mobile: center bottom | Desktop: right bottom
+  // Mobile & Desktop: right bottom
   if (state === "closed") {
     return (
       <button
         onClick={() => setState("chat")}
-        className="fixed bottom-6 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-6 z-50 w-14 h-14 rounded-full shadow-lg hover:scale-110 transition-transform duration-200 overflow-hidden"
+        className="fixed bottom-6 right-4 md:right-6 z-50 w-14 h-14 rounded-full shadow-lg hover:scale-110 transition-transform duration-200 overflow-hidden"
         aria-label="Открыть чат поддержки"
       >
         <img

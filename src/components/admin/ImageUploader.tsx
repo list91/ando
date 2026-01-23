@@ -91,53 +91,57 @@ export const ImageUploader = ({
 
   return (
     <div className="space-y-4">
-      {previewUrl ? (
-        <div className="relative inline-block">
+      {/* Всегда показываем кнопку загрузки */}
+      <div className="border-2 border-dashed rounded-lg p-6 text-center">
+        <Upload className="mx-auto h-10 w-10 text-muted-foreground mb-3" />
+        <div className="space-y-2">
+          <label htmlFor={inputId} className="cursor-pointer">
+            <Button type="button" variant="outline" disabled={uploading} asChild>
+              <span>
+                {uploading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Загрузка...
+                  </>
+                ) : (
+                  'Выбрать изображение'
+                )}
+              </span>
+            </Button>
+          </label>
+          <input
+            id={inputId}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileSelect}
+            disabled={uploading}
+          />
+          <p className="text-sm text-muted-foreground">
+            PNG, JPG, WEBP до {maxSizeMB}MB
+          </p>
+        </div>
+      </div>
+
+      {/* Показываем превью последней загрузки если есть */}
+      {previewUrl && (
+        <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
           <img
             src={previewUrl}
             alt="Preview"
-            className="max-w-xs max-h-48 rounded-lg border"
+            className="w-16 h-16 object-cover rounded border"
           />
+          <div className="flex-1 text-sm text-muted-foreground">
+            Последнее загруженное
+          </div>
           <Button
             type="button"
-            variant="destructive"
-            size="icon"
-            className="absolute -top-2 -right-2"
+            variant="ghost"
+            size="sm"
             onClick={handleRemove}
           >
             <X className="h-4 w-4" />
           </Button>
-        </div>
-      ) : (
-        <div className="border-2 border-dashed rounded-lg p-8 text-center">
-          <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-          <div className="space-y-2">
-            <label htmlFor={inputId} className="cursor-pointer">
-              <Button type="button" variant="outline" disabled={uploading} asChild>
-                <span>
-                  {uploading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Загрузка...
-                    </>
-                  ) : (
-                    'Выбрать изображение'
-                  )}
-                </span>
-              </Button>
-            </label>
-            <input
-              id={inputId}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleFileSelect}
-              disabled={uploading}
-            />
-            <p className="text-sm text-muted-foreground">
-              PNG, JPG, WEBP до {maxSizeMB}MB
-            </p>
-          </div>
         </div>
       )}
     </div>
