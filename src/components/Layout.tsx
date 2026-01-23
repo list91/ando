@@ -1,4 +1,5 @@
 import { ReactNode, useState } from "react";
+import { Link } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import { AppSidebar } from "./AppSidebar";
@@ -6,6 +7,8 @@ import { MobileBottomNav } from "./MobileBottomNav";
 import CartDrawer from "./CartDrawer";
 import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
+import logoImage from "@/assets/logo.png";
+import logoMobile from "@/assets/logo-mobile.png";
 
 interface LayoutProps {
   children: ReactNode;
@@ -72,6 +75,14 @@ const Layout = ({ children, selectedCategory, onCategoryChange, selectedGender, 
           </div>
 
           <Header />
+
+          {/* Mobile Header with Logo - only on mobile */}
+          <div className="md:hidden sticky top-0 z-40 bg-background border-b border-border">
+            <Link to="/" className="flex justify-center py-4">
+              <img src={logoMobile} alt="ANDO JV" className="w-36 h-auto" />
+            </Link>
+          </div>
+
           <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
             {children}
           </main>

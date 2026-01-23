@@ -372,71 +372,60 @@ export const MobileBottomNav = ({
         role="navigation"
         aria-label="Мобильная навигация"
       >
-        <div className="flex justify-around items-center h-16 px-2 max-w-lg mx-auto">
+        <div className="flex justify-around items-center h-14 px-4 max-w-md mx-auto">
           {/* Menu */}
           <button
             onClick={() => setIsMenuOpen(true)}
-            className="flex flex-col items-center justify-center gap-1 px-3 py-2 hover:opacity-60 transition-opacity min-w-[56px]"
+            className="flex items-center justify-center p-3 hover:opacity-60 transition-opacity"
             aria-label="Открыть меню"
           >
-            <Menu className="w-5 h-5" />
-            <span className="text-[10px] uppercase tracking-wider">Меню</span>
+            <Menu className="w-7 h-7" strokeWidth={1.5} />
           </button>
 
           {/* Search */}
           <button
             onClick={handleSearchClick}
-            className="flex flex-col items-center justify-center gap-1 px-3 py-2 hover:opacity-60 transition-opacity min-w-[56px]"
+            className="flex items-center justify-center p-3 hover:opacity-60 transition-opacity"
             aria-label="Поиск"
           >
-            <Search className="w-5 h-5" />
-            <span className="text-[10px] uppercase tracking-wider">Поиск</span>
+            <Search className="w-7 h-7" strokeWidth={1.5} />
+          </button>
+
+          {/* Cart */}
+          <button
+            onClick={onCartOpen}
+            className="flex items-center justify-center p-3 hover:opacity-60 transition-opacity relative"
+            aria-label="Корзина"
+          >
+            <ShoppingBag className="w-7 h-7" strokeWidth={1.5} />
+            {totalItems > 0 && (
+              <span className="absolute top-1 right-1 bg-black text-white text-[10px] min-w-[18px] h-[18px] rounded-full flex items-center justify-center">
+                {totalItems > 99 ? '99+' : totalItems}
+              </span>
+            )}
           </button>
 
           {/* Favorites */}
           <Link
             to="/favorites"
-            className="flex flex-col items-center justify-center gap-1 px-3 py-2 hover:opacity-60 transition-opacity min-w-[56px] relative"
+            className="flex items-center justify-center p-3 hover:opacity-60 transition-opacity relative"
             aria-label="Избранное"
           >
-            <div className="relative">
-              <Heart className="w-5 h-5" />
-              {favoritesCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-foreground text-background text-[9px] min-w-[16px] h-4 rounded-full flex items-center justify-center px-1">
-                  {favoritesCount > 99 ? '99+' : favoritesCount}
-                </span>
-              )}
-            </div>
-            <span className="text-[10px] uppercase tracking-wider">Избранное</span>
+            <Heart className="w-7 h-7" strokeWidth={1.5} />
+            {favoritesCount > 0 && (
+              <span className="absolute top-1 right-1 bg-black text-white text-[10px] min-w-[18px] h-[18px] rounded-full flex items-center justify-center">
+                {favoritesCount > 99 ? '99+' : favoritesCount}
+              </span>
+            )}
           </Link>
-
-          {/* Cart */}
-          <button
-            onClick={onCartOpen}
-            className="flex flex-col items-center justify-center gap-1 px-3 py-2 hover:opacity-60 transition-opacity min-w-[56px] relative"
-            aria-label="Корзина"
-          >
-            <div className="relative">
-              <ShoppingBag className="w-5 h-5" />
-              {totalItems > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-foreground text-background text-[9px] min-w-[16px] h-4 rounded-full flex items-center justify-center px-1">
-                  {totalItems > 99 ? '99+' : totalItems}
-                </span>
-              )}
-            </div>
-            <span className="text-[10px] uppercase tracking-wider">Корзина</span>
-          </button>
 
           {/* Account */}
           <button
             onClick={handleAccountClick}
-            className="flex flex-col items-center justify-center gap-1 px-3 py-2 hover:opacity-60 transition-opacity min-w-[56px]"
+            className="flex items-center justify-center p-3 hover:opacity-60 transition-opacity"
             aria-label={user ? "Мои заказы" : "Войти"}
           >
-            <User className="w-5 h-5" />
-            <span className="text-[10px] uppercase tracking-wider">
-              {user ? "Профиль" : "Войти"}
-            </span>
+            <User className="w-7 h-7" strokeWidth={1.5} />
           </button>
         </div>
       </nav>
