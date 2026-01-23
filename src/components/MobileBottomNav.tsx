@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Menu, Search, Heart, ShoppingBag, User, X, ChevronLeft } from "lucide-react";
 import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
@@ -40,6 +40,9 @@ export const MobileBottomNav = ({
   onInfoSectionChange,
 }: MobileBottomNavProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [localSearchQuery, setLocalSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -48,6 +51,13 @@ export const MobileBottomNav = ({
   const { totalItems } = useCart();
   const { favorites } = useFavorites();
   const { user } = useAuth();
+
+  // Focus search input when search opens
+  useEffect(() => {
+    if (isSearchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isSearchOpen]);
   const { data: categories, isLoading: categoriesLoading } = useCategories();
 
   const favoritesCount = favorites.length;
@@ -59,7 +69,37 @@ export const MobileBottomNav = ({
   const isCatalogRelated = isCatalogPage || isProductPage;
 
   const handleSearchClick = () => {
-    navigate('/catalog');
+    setIsSearchOpen(true);
+  };
+
+  const handleSearchSubmit = () => {
+    if (localSearchQuery.trim()) {
+      // Navigate directly - catalog will read search from URL
+      const query = localSearchQuery.trim();
+      setIsSearchOpen(false);
+      setLocalSearchQuery('');
+      // Use setTimeout to ensure state updates complete before navigation
+      setTimeout(() => {
+        navigate(`/catalog?search=${encodeURIComponent(query)}`);
+      }, 0);
+    }
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape') {
+      if (localSearchQuery) {
+        setLocalSearchQuery('');
+      } else {
+        setIsSearchOpen(false);
+      }
+    } else if (e.key === 'Enter') {
+      handleSearchSubmit();
+    }
+  };
+
+  const handleSearchClose = () => {
+    setIsSearchOpen(false);
+    setLocalSearchQuery('');
   };
 
   const handleAccountClick = () => {
@@ -92,6 +132,76 @@ export const MobileBottomNav = ({
 
   return (
     <>
+      {/* Fullscreen Search Overlay */}
+      {isSearchOpen && (
+        <div className="fixed inset-0 bg-white z-[70] md:hidden flex flex-col">
+          {/* Header */}
+          <div className="flex items-center gap-3 p-4 border-b border-gray-100">
+            <button
+              onClick={handleSearchClose}
+              className="p-2 hover:opacity-60 transition-opacity"
+              aria-label="Закрыть поиск"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="flex-1 relative">
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Поиск товаров..."
+                value={localSearchQuery}
+                onChange={(e) => setLocalSearchQuery(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
+                className="w-full bg-gray-50 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all"
+                autoFocus
+              />
+              {localSearchQuery && (
+                <button
+                  onClick={() => setLocalSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  aria-label="Очистить"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+            <button
+              onClick={handleSearchSubmit}
+              disabled={!localSearchQuery.trim()}
+              className="p-2 hover:opacity-60 transition-opacity disabled:opacity-30"
+              aria-label="Найти"
+            >
+              <Search className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Search hints / recent */}
+          <div className="flex-1 overflow-y-auto p-4">
+            {!localSearchQuery && (
+              <div className="text-center text-gray-400 mt-8">
+                <Search className="w-12 h-12 mx-auto mb-4 opacity-30" />
+                <p className="text-sm">Введите название товара</p>
+                <p className="text-xs mt-1">например: пальто, куртка, брюки</p>
+              </div>
+            )}
+            {localSearchQuery && (
+              <div className="space-y-2">
+                <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">
+                  Нажмите Enter или кнопку поиска
+                </p>
+                <button
+                  onClick={handleSearchSubmit}
+                  className="w-full text-left px-4 py-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  <span className="text-sm">Искать: </span>
+                  <span className="font-medium">{localSearchQuery}</span>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Fullscreen Mobile Menu */}
       {isMenuOpen && (
         <div className="fixed inset-0 bg-white z-[70] md:hidden flex flex-col">
