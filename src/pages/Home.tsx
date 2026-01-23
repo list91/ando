@@ -15,63 +15,62 @@ const Home = () => {
   const tabletUrl = activeSlide?.image_url_tablet || desktopUrl;
   const mobileUrl = activeSlide?.image_url_mobile || tabletUrl;
 
-  // Scroll hijacking с ручной анимацией через requestAnimationFrame
+  // Scroll hijacking - ручная анимация с редиректом на 50%
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     let hasNavigated = false;
     let isAnimating = false;
-    let animationId: number | null = null;
 
-    // Ручная анимация скролла - гарантированно доходит до конца
+    // Ручная анимация скролла
     const animateScroll = () => {
+      if (isAnimating || hasNavigated) return;
+      isAnimating = true;
+
       const startTime = performance.now();
       const startScroll = container.scrollTop;
-      // Всегда вычисляем target в момент старта анимации
-      const targetScroll = container.scrollHeight - container.clientHeight;
-      const duration = 800; // мс
+      const maxScroll = container.scrollHeight - container.clientHeight;
+      const redirectPoint = maxScroll * 0.5;
+      const duration = 800;
+
+      if (maxScroll <= 0) return;
 
       const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
       const animate = (currentTime: number) => {
+        if (hasNavigated) return;
+
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
         const eased = easeOutCubic(progress);
 
-        const currentScroll = startScroll + (targetScroll - startScroll) * eased;
-        container.scrollTop = currentScroll;
+        const targetScroll = startScroll + (maxScroll - startScroll) * eased;
+        container.scrollTop = targetScroll;
 
-        // Обновляем визуальный прогресс
-        const visualProgress = targetScroll > 0 ? currentScroll / targetScroll : 0;
+        const visualProgress = maxScroll > 0 ? targetScroll / maxScroll : 0;
         setScrollProgress(visualProgress);
 
-        // Навигация на 50%
-        if (visualProgress >= 0.5 && !hasNavigated) {
+        // Редирект на 50%
+        if (targetScroll >= redirectPoint && !hasNavigated) {
           hasNavigated = true;
           navigate('/catalog');
+          return;
         }
 
-        if (progress < 1 && !hasNavigated) {
-          animationId = requestAnimationFrame(animate);
+        if (progress < 1) {
+          requestAnimationFrame(animate);
         }
       };
 
-      animationId = requestAnimationFrame(animate);
-    };
-
-    // Запуск анимации
-    const triggerAnimation = () => {
-      if (isAnimating || hasNavigated) return;
-      isAnimating = true;
-      animateScroll();
+      requestAnimationFrame(animate);
     };
 
     // Перехват колеса мыши
     const handleWheel = (e: WheelEvent) => {
       if (e.deltaY > 0) {
         e.preventDefault();
-        triggerAnimation();
+        animateScroll();
       }
     };
 
@@ -87,7 +86,7 @@ const Home = () => {
 
       if (deltaY > 30) {
         e.preventDefault();
-        triggerAnimation();
+        animateScroll();
       }
     };
 
@@ -99,9 +98,8 @@ const Home = () => {
       container.removeEventListener('wheel', handleWheel);
       container.removeEventListener('touchmove', handleTouchMove);
       container.removeEventListener('touchstart', handleTouchStart);
-      if (animationId) cancelAnimationFrame(animationId);
     };
-  }, [navigate]);
+  }, [navigate, isLoading]); // Перезапуск когда данные загрузились
 
   // Кнопка стрелки тоже запускает анимацию (но нужен ref на triggerAnimation)
   // Пока используем простой вариант
