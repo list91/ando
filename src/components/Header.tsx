@@ -51,27 +51,27 @@ const Header = () => {
   return <>
       <header className="sticky top-0 z-50 bg-background border-b border-border hidden md:block">
         <div className="h-40 px-4 lg:px-8">
-          <div className="hidden lg:grid lg:grid-cols-[auto_1fr] items-center h-full gap-12">
+          <div className="hidden lg:flex items-center justify-between h-full gap-4 xl:gap-8">
             {/* Desktop Navigation - left */}
-            <nav className="flex items-center gap-2 justify-start" role="navigation" aria-label="Основная навигация">
-              <Link to="/catalog?gender=women" className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-all px-6 py-6 whitespace-nowrap ${(location.pathname === '/catalog' || location.pathname.startsWith('/product/')) && currentGender === 'women' ? 'bg-secondary' : ''}`}>
+            <nav className="flex items-center gap-0 xl:gap-1 justify-start flex-shrink-0" role="navigation" aria-label="Основная навигация">
+              <Link to="/catalog?gender=women" className={`text-sm uppercase tracking-[0.15em] xl:tracking-[0.2em] hover:opacity-60 transition-all px-3 xl:px-5 py-6 whitespace-nowrap ${(location.pathname === '/catalog' || location.pathname.startsWith('/product/')) && currentGender === 'women' ? 'bg-secondary' : ''}`}>
                 ЖЕНСКОЕ
               </Link>
-              <Link to="/catalog?gender=men" className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-all px-6 py-6 whitespace-nowrap ${(location.pathname === '/catalog' || location.pathname.startsWith('/product/')) && currentGender === 'men' ? 'bg-secondary' : ''}`}>
+              <Link to="/catalog?gender=men" className={`text-sm uppercase tracking-[0.15em] xl:tracking-[0.2em] hover:opacity-60 transition-all px-3 xl:px-5 py-6 whitespace-nowrap ${(location.pathname === '/catalog' || location.pathname.startsWith('/product/')) && currentGender === 'men' ? 'bg-secondary' : ''}`}>
                 МУЖСКОЕ
               </Link>
-              <Link to="/lookbook" className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-all px-6 py-6 whitespace-nowrap ${location.pathname === '/lookbook' ? 'bg-secondary' : ''}`}>
+              <Link to="/lookbook" className={`text-sm uppercase tracking-[0.15em] xl:tracking-[0.2em] hover:opacity-60 transition-all px-3 xl:px-5 py-6 whitespace-nowrap ${location.pathname === '/lookbook' ? 'bg-secondary' : ''}`}>
                 LOOKBOOK
               </Link>
-              <Link to="/info" className={`text-sm uppercase tracking-[0.2em] hover:opacity-60 transition-all px-6 py-6 whitespace-nowrap ${location.pathname === '/info' ? 'bg-secondary' : ''}`}>
+              <Link to="/info" className={`text-sm uppercase tracking-[0.15em] xl:tracking-[0.2em] hover:opacity-60 transition-all px-3 xl:px-5 py-6 whitespace-nowrap ${location.pathname === '/info' ? 'bg-secondary' : ''}`}>
                 INFO +
               </Link>
             </nav>
 
             {/* Search + Right Icons - fixed together on right */}
-            <div className="flex items-center gap-6 justify-end">
+            <div className="flex items-center gap-3 xl:gap-6 justify-end flex-shrink-0">
             {/* Search */}
-            <div className="w-[280px]">
+            <div className="w-[180px] xl:w-[280px]">
               <ProductSearch />
             </div>
             {/* Cart */}

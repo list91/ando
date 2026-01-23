@@ -5,6 +5,7 @@ import { TransformWrapper, TransformComponent, ReactZoomPanPinchRef } from "reac
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useProduct } from "@/hooks/useProducts";
+import { useColorMap } from "@/hooks/useColorMap";
 import { toast } from "sonner";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import SchemaOrg from "@/components/SchemaOrg";
@@ -17,6 +18,7 @@ const Product = () => {
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { data: product, isLoading } = useProduct(id || '');
+  const { getColorHex } = useColorMap();
 
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState(0);
@@ -298,15 +300,27 @@ const Product = () => {
             </div>
           )}
 
-          {/* Color and Composition */}
-          {(product.available_colors?.length > 0 || product.composition || product.material) && (
-            <div className="space-y-1 mb-6 text-sm">
-              {product.available_colors?.length > 0 && (
-                <div>Цвет: {product.available_colors.join(', ')}</div>
-              )}
-              {(product.composition || product.material) && (
-                <div>Состав: {product.composition || product.material}</div>
-              )}
+          {/* Color circles */}
+          {product.available_colors?.length > 0 && (
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-sm">Цвет:</span>
+              <div className="flex gap-1.5">
+                {product.available_colors.map((color) => (
+                  <span
+                    key={color}
+                    className="w-5 h-5 rounded-full border border-gray-300 hover:scale-110 transition-transform"
+                    style={{ backgroundColor: getColorHex(color) }}
+                    title={color}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Composition */}
+          {(product.composition || product.material) && (
+            <div className="mb-6 text-sm">
+              <div>Состав: {product.composition || product.material}</div>
             </div>
           )}
 
@@ -389,23 +403,30 @@ const Product = () => {
             </button>
           </div>
 
-          {/* Other colors - ссылки на товары в других цветах */}
+          {/* Other colors - кружочки с ссылками на товары в других цветах */}
           {product.color_links && Object.keys(product.color_links).length > 0 && (
-            <div className="text-sm mb-8">
-              В другом цвете:{" "}
-              {Object.entries(product.color_links)
-                .map(([colorName, colorLink], index, array) => (
-                  <span key={colorName}>
-                    {colorLink && colorLink.trim() !== '' ? (
-                      <Link to={colorLink} className="underline hover:no-underline">
-                        {colorName}
-                      </Link>
-                    ) : (
-                      <span>{colorName}</span>
-                    )}
-                    {index < array.length - 1 && ", "}
-                  </span>
-                ))}
+            <div className="flex items-center gap-2 text-sm mb-8">
+              <span>В другом цвете:</span>
+              <div className="flex gap-1.5">
+                {Object.entries(product.color_links).map(([colorName, colorLink]) =>
+                  colorLink && colorLink.trim() !== '' ? (
+                    <Link
+                      key={colorName}
+                      to={colorLink}
+                      className="w-5 h-5 rounded-full border border-gray-300 hover:scale-110 hover:border-gray-500 transition-all"
+                      style={{ backgroundColor: getColorHex(colorName) }}
+                      title={colorName}
+                    />
+                  ) : (
+                    <span
+                      key={colorName}
+                      className="w-5 h-5 rounded-full border border-gray-300"
+                      style={{ backgroundColor: getColorHex(colorName) }}
+                      title={colorName}
+                    />
+                  )
+                )}
+              </div>
             </div>
           )}
 

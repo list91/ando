@@ -21,6 +21,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
+import { DualScrollTable } from '@/components/ui/DualScrollTable';
 
 interface Order {
   id: string;
@@ -209,64 +210,68 @@ const AdminOrders = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Номер</TableHead>
-                <TableHead>Клиент</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Телефон</TableHead>
-                <TableHead>Сумма</TableHead>
-                <TableHead>Статус</TableHead>
-                <TableHead>Дата</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredOrders.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                    {searchQuery || statusFilter !== 'all'
-                      ? 'Заказы не найдены. Попробуйте изменить фильтры.'
-                      : 'Заказы отсутствуют.'}
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredOrders.map((order) => (
-                <TableRow key={order.id}>
-                  <TableCell className="font-mono text-sm">
-                    {order.order_number}
-                  </TableCell>
-                  <TableCell>{order.customer_name}</TableCell>
-                  <TableCell>{order.customer_email}</TableCell>
-                  <TableCell>{order.customer_phone}</TableCell>
-                  <TableCell>{order.total_amount} ₽</TableCell>
-                  <TableCell>
-                    <Select
-                      value={order.status}
-                      onValueChange={(value) =>
-                        updateOrderStatus(order.id, value)
-                      }
-                    >
-                      <SelectTrigger className="w-[140px]">
-                        <SelectValue>{getStatusBadge(order.status)}</SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">Ожидает</SelectItem>
-                        <SelectItem value="processing">В обработке</SelectItem>
-                        <SelectItem value="shipped">Отправлен</SelectItem>
-                        <SelectItem value="delivered">Доставлен</SelectItem>
-                        <SelectItem value="cancelled">Отменен</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                  <TableCell>
-                    {new Date(order.created_at).toLocaleDateString('ru-RU')}
-                  </TableCell>
-                </TableRow>
-              ))
-              )}
-            </TableBody>
-          </Table>
+          <DualScrollTable>
+            <div className="min-w-[1100px]">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Номер</TableHead>
+                    <TableHead>Клиент</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Телефон</TableHead>
+                    <TableHead>Сумма</TableHead>
+                    <TableHead>Статус</TableHead>
+                    <TableHead>Дата</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredOrders.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                        {searchQuery || statusFilter !== 'all'
+                          ? 'Заказы не найдены. Попробуйте изменить фильтры.'
+                          : 'Заказы отсутствуют.'}
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredOrders.map((order) => (
+                    <TableRow key={order.id}>
+                      <TableCell className="font-mono text-sm">
+                        {order.order_number}
+                      </TableCell>
+                      <TableCell>{order.customer_name}</TableCell>
+                      <TableCell>{order.customer_email}</TableCell>
+                      <TableCell>{order.customer_phone}</TableCell>
+                      <TableCell>{order.total_amount} ₽</TableCell>
+                      <TableCell>
+                        <Select
+                          value={order.status}
+                          onValueChange={(value) =>
+                            updateOrderStatus(order.id, value)
+                          }
+                        >
+                          <SelectTrigger className="w-[140px]">
+                            <SelectValue>{getStatusBadge(order.status)}</SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Ожидает</SelectItem>
+                            <SelectItem value="processing">В обработке</SelectItem>
+                            <SelectItem value="shipped">Отправлен</SelectItem>
+                            <SelectItem value="delivered">Доставлен</SelectItem>
+                            <SelectItem value="cancelled">Отменен</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        {new Date(order.created_at).toLocaleDateString('ru-RU')}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </DualScrollTable>
           
           <div className="mt-4 text-sm text-muted-foreground">
             Показано заказов: {filteredOrders.length} из {orders.length}
