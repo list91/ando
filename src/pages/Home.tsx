@@ -8,6 +8,7 @@ const Home = () => {
   const navigate = useNavigate();
   const { data: slides, isLoading } = useHeroSlides();
   const containerRef = useRef<HTMLDivElement>(null);
+  const spacerRef = useRef<HTMLElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
   const activeSlide = slides?.find(slide => slide.is_active);
@@ -18,16 +19,18 @@ const Home = () => {
   // Scroll hijacking - один скролл вниз запускает полную анимацию
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
+    const spacer = spacerRef.current;
+    if (!container || !spacer) return;
 
     let hasNavigated = false;
     let isAnimating = false;
 
-    // Обновление прогресса анимации
+    // Обновление прогресса анимации - используем реальные размеры контейнера
     const handleScroll = () => {
       const scrollTop = container.scrollTop;
-      const heroHeight = window.innerHeight;
-      const progress = Math.min(scrollTop / heroHeight, 1);
+      const maxScroll = container.scrollHeight - container.clientHeight;
+      // Прогресс от 0 до 1 на основе реального скролла
+      const progress = maxScroll > 0 ? Math.min(scrollTop / maxScroll, 1) : 0;
       setScrollProgress(progress);
 
       // Переход на середине анимации (50%)
@@ -37,21 +40,18 @@ const Home = () => {
       }
     };
 
-    // Перехват колеса мыши - запуск полной анимации
-    const handleWheel = (e: WheelEvent) => {
+    // Запуск анимации - scrollIntoView гарантирует полный скролл
+    const triggerFullScroll = () => {
       if (isAnimating || hasNavigated) return;
+      isAnimating = true;
+      spacer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
 
-      // Скролл вниз - запускаем анимацию
+    // Перехват колеса мыши
+    const handleWheel = (e: WheelEvent) => {
       if (e.deltaY > 0) {
         e.preventDefault();
-        isAnimating = true;
-
-        // Динамически вычисляем максимальную прокрутку (работает при любом zoom/resize)
-        const maxScroll = container.scrollHeight - container.clientHeight;
-        container.scrollTo({
-          top: maxScroll,
-          behavior: 'smooth'
-        });
+        triggerFullScroll();
       }
     };
 
@@ -62,22 +62,13 @@ const Home = () => {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (isAnimating || hasNavigated) return;
-
       const touchY = e.touches[0].clientY;
       const deltaY = touchStartY - touchY;
 
-      // Свайп вверх (скролл вниз) - запускаем анимацию
+      // Свайп вверх (скролл вниз)
       if (deltaY > 30) {
         e.preventDefault();
-        isAnimating = true;
-
-        // Динамически вычисляем максимальную прокрутку
-        const maxScroll = container.scrollHeight - container.clientHeight;
-        container.scrollTo({
-          top: maxScroll,
-          behavior: 'smooth'
-        });
+        triggerFullScroll();
       }
     };
 
@@ -95,10 +86,7 @@ const Home = () => {
   }, [navigate]);
 
   const scrollToContent = () => {
-    const container = containerRef.current;
-    if (!container) return;
-    const maxScroll = container.scrollHeight - container.clientHeight;
-    container.scrollTo({ top: maxScroll, behavior: 'smooth' });
+    spacerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   if (isLoading || !desktopUrl) {
@@ -186,7 +174,7 @@ const Home = () => {
         </main>
 
         {/* Spacer section для активации скролла */}
-        <section className="h-screen snap-start bg-background" />
+        <section ref={spacerRef} className="h-screen snap-start bg-background" />
       </div>
     </>
   );
