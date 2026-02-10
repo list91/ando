@@ -17,7 +17,13 @@
     "test:admin-info-pages": "node tests/run-admin-info-test.cjs",
     "test:toggle-edit": "node tests/run-toggle-edit-test.cjs",
     "screenshot:catalog-mobile-before": "node tests/catalog-mobile-screenshot.cjs",
-    "populate-info-pages": "node scripts/populate-info-pages.mjs"
+    "populate-info-pages": "node scripts/populate-info-pages.mjs",
+    "import-data": "node scripts/import-data.mjs",
+    "create-admin": "node scripts/create-admin.mjs",
+    "supabase:start": "docker compose --env-file docker/.env up -d",
+    "supabase:stop": "docker compose down",
+    "supabase:logs": "docker compose logs -f",
+    "supabase:reset": "docker compose down -v && docker compose --env-file docker/.env up -d"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -76,6 +82,9 @@
     "workbox-window": "^7.3.0",
     "zod": "^3.25.76",
     "zustand": "^5.0.9"
+  },
+  "optionalDependencies": {
+    "csv-parse": "^5.5.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",

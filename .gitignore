@@ -11,6 +11,12 @@ lerna-debug.log*
 .env
 .env.local
 .env.*.local
+docker/.env
+
+# Docker volumes (data and storage)
+docker/volumes/db/data/
+docker/volumes/storage/
+docker/volumes/logs/
 
 node_modules
 # dist - коммитим для деплоя
