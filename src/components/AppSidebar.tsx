@@ -87,7 +87,7 @@ export function AppSidebar({
   const instagramUrl = getSetting('social_instagram', 'https://instagram.com');
   const telegramUrl = getSetting('social_telegram', 'https://t.me');
   const vkUrl = getSetting('social_vk', 'https://vk.com');
-  return <aside className="w-[307px] border-r border-border bg-muted flex-shrink-0 h-screen flex flex-col overflow-hidden">
+  return <aside className="w-[260px] border-r border-border bg-muted flex-shrink-0 h-screen flex flex-col overflow-hidden">
       {/* Логотип — фиксированный */}
       <div className="flex-shrink-0 px-6">
         <Link
