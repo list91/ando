@@ -4,8 +4,16 @@ const { test, expect } = require('@playwright/test');
 test('Main shop page loads without crashes', async ({ page }) => {
   // Отслеживаем критичные ошибки
   const errors = [];
+  const consoleErrors = [];
+
   page.on('pageerror', error => {
     errors.push(error.message);
+  });
+
+  page.on('console', msg => {
+    if (msg.type() === 'error') {
+      consoleErrors.push(msg.text());
+    }
   });
 
   // Перейти на главную (в CI тестируем локальный билд, иначе production)
@@ -27,10 +35,14 @@ test('Main shop page loads without crashes', async ({ page }) => {
 
   // Проверить что нет критичных JS ошибок (НЕ фильтруем - ловим ВСЁ!)
   if (errors.length > 0) {
-    console.error('❌ JavaScript errors detected:', errors);
+    console.error('❌ Page errors detected:', errors);
+  }
+  if (consoleErrors.length > 0) {
+    console.error('❌ Console errors detected:', consoleErrors);
   }
 
   expect(errors.length).toBe(0);
+  expect(consoleErrors.length).toBe(0);
 
   console.log('✅ Main page loaded successfully, no critical errors');
 });
