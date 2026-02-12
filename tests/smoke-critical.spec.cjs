@@ -1,4 +1,11 @@
 // Smoke Critical Tests - проверка критичных компонентов продакшена
+//
+// Эти тесты проверяют основные функции интернет-магазина:
+// 1. Database API Health Check - доступность базы данных через Supabase REST API
+// 2. Catalog Page Loads - загрузка каталога товаров и отображение продуктов
+//
+// Запуск: npm run test:smoke-critical
+// ENV: BASE_URL (default: http://83.166.246.253), SUPABASE_ANON_KEY
 const { test, expect } = require('@playwright/test');
 
 // URL сервера из переменной окружения
