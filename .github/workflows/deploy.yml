@@ -15,9 +15,13 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -e  # Exit immediately if any command fails
+            set -x  # Print commands for debugging
+
             cd /opt/ando
             git pull origin main
             npm ci --legacy-peer-deps
             npm run build
             docker compose restart nginx
+
             echo "✅ Deployed successfully"
