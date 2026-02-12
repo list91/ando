@@ -14,8 +14,6 @@ services:
   frontend:
     build:
       target: development
-    ports:
-      - "5173:5173"  # Vite dev server
     volumes:
       # Hot-reload для разработки
       - ./src:/app/src
@@ -27,16 +25,12 @@ services:
       - NODE_ENV=development
 
   # ===========================================
-  # NGINX - Disabled in dev (direct access to services)
+  # NGINX - Enabled with custom ports
   # ===========================================
   nginx:
-    # В локальной разработке nginx можно отключить или использовать только для тестирования
-    # Если хотите его использовать, раскомментируйте:
-    # ports:
-    #   - "80:80"
-    #   - "8080:8080"
-    profiles:
-      - nginx-dev  # Запускается только при: docker-compose --profile nginx-dev up
+    ports:
+      - "5173:80"
+      - "8001:8080"
 
   # ===========================================
   # DATABASE - Exposed для локального доступа
