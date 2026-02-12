@@ -25,15 +25,12 @@ test('Main shop page loads without crashes', async ({ page }) => {
   const bodyText = await page.locator('body').textContent();
   expect(bodyText.length).toBeGreaterThan(0);
 
-  // Проверить что нет критичных JS ошибок
-  const criticalErrors = errors.filter(err =>
-    !err.includes('favicon') &&
-    !err.includes('404') &&
-    !err.includes('Third-party') &&
-    !err.includes('net::ERR')
-  );
+  // Проверить что нет критичных JS ошибок (НЕ фильтруем - ловим ВСЁ!)
+  if (errors.length > 0) {
+    console.error('❌ JavaScript errors detected:', errors);
+  }
 
-  expect(criticalErrors.length).toBe(0);
+  expect(errors.length).toBe(0);
 
   console.log('✅ Main page loaded successfully, no critical errors');
 });
