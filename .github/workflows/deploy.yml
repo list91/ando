@@ -28,7 +28,7 @@ jobs:
       - name: Run smoke test
         run: |
           echo "🧪 Running smoke test for main shop page..."
-          npx playwright test tests/smoke-main-page.spec.js --project=chromium
+          npx playwright test tests/smoke-main-page.spec.cjs --project=chromium
         continue-on-error: false
 
       - name: Upload test results
