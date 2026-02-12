@@ -1,0 +1,90 @@
+# Docker Compose Override for LOCAL DEVELOPMENT
+# This file is automatically loaded by docker-compose
+# No need to specify it explicitly - it merges with docker-compose.yml
+#
+# Usage: docker-compose up
+# (override is applied automatically)
+
+version: "3.8"
+
+services:
+  # ===========================================
+  # FRONTEND - Development Mode
+  # ===========================================
+  frontend:
+    build:
+      target: development
+    ports:
+      - "5173:5173"  # Vite dev server
+    volumes:
+      # Hot-reload для разработки
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./index.html:/app/index.html
+      - ./vite.config.ts:/app/vite.config.ts
+      - ./tsconfig.json:/app/tsconfig.json
+    environment:
+      - NODE_ENV=development
+
+  # ===========================================
+  # NGINX - Disabled in dev (direct access to services)
+  # ===========================================
+  nginx:
+    # В локальной разработке nginx можно отключить или использовать только для тестирования
+    # Если хотите его использовать, раскомментируйте:
+    # ports:
+    #   - "80:80"
+    #   - "8080:8080"
+    profiles:
+      - nginx-dev  # Запускается только при: docker-compose --profile nginx-dev up
+
+  # ===========================================
+  # DATABASE - Exposed для локального доступа
+  # ===========================================
+  db:
+    ports:
+      - "5432:5432"  # Доступ с хоста для pgAdmin/DBeaver
+    environment:
+      # В dev режиме можно включить более подробные логи
+      POSTGRES_LOG_STATEMENT: all
+    volumes:
+      # Локальный volume - не будет конфликтовать с prod
+      - ./docker/volumes/db-local:/var/lib/postgresql/data:Z
+      # Init scripts остаются из базового файла
+      - ./docker/volumes/db/webhooks.sql:/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql:Z
+      - ./docker/volumes/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:Z
+      - ./docker/volumes/db/jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:Z
+      - ./docker/volumes/db/realtime.sql:/docker-entrypoint-initdb.d/migrations/99-realtime.sql:Z
+      - ./docker/volumes/db/init/00-migrations.sql:/docker-entrypoint-initdb.d/migrations/00-migrations.sql:Z
+      - ./docker/volumes/db/init/01-seed-admin.sql:/docker-entrypoint-initdb.d/migrations/01-seed-admin.sql:Z
+
+  # ===========================================
+  # KONG - Доступ к API Gateway для тестирования
+  # ===========================================
+  kong:
+    ports:
+      - "8000:8000"  # HTTP API
+      - "8443:8443"  # HTTPS API
+    environment:
+      KONG_LOG_LEVEL: debug  # Подробные логи в dev
+
+  # ===========================================
+  # STUDIO - Доступ к Supabase Dashboard
+  # ===========================================
+  studio:
+    ports:
+      - "3000:3000"  # Direct access в dev (без nginx basic auth)
+
+  # ===========================================
+  # STORAGE - Локальный volume для файлов
+  # ===========================================
+  storage:
+    volumes:
+      - ./docker/volumes/storage-local:/var/lib/storage:z
+
+  # ===========================================
+  # IMGPROXY - Доступ к локальному storage
+  # ===========================================
+  imgproxy:
+    volumes:
+      - ./docker/volumes/storage-local:/var/lib/storage:ro
