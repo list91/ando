@@ -75,6 +75,9 @@ const queryClient = new QueryClient({
 });
 
 const AppContent = () => {
+  // BREAKING CHANGE: This will crash the app!
+  throw new Error("💥 CRITICAL ERROR: Testing smoke test protection!");
+
   const [selectedCategory, setSelectedCategory] = useState("Все товары");
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
   const [activeInfoSection, setActiveInfoSection] = useState("delivery");
