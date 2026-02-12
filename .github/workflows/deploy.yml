@@ -24,12 +24,28 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
+      - name: Build application
+        run: |
+          echo "🏗️ Building application..."
+          npm run build
+        env:
+          VITE_SUPABASE_URL: http://localhost
+          VITE_SUPABASE_PUBLISHABLE_KEY: test-key
+          VITE_SUPABASE_PROJECT_ID: test-project
+
+      - name: Start preview server
+        run: |
+          echo "🚀 Starting preview server..."
+          npx serve -s dist -p 3000 &
+          sleep 3
+          curl -f http://localhost:3000 || exit 1
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
       - name: Run smoke test
         run: |
-          echo "🧪 Running smoke test for main shop page..."
+          echo "🧪 Running smoke test on built app..."
           npx playwright test tests/smoke-main-page.spec.cjs --project=chromium
         continue-on-error: false
 

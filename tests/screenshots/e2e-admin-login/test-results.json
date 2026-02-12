@@ -1,0 +1,94 @@
+{
+  "timestamp": "2026-02-10T14:49:56.296Z",
+  "base_url": "http://83.166.246.253",
+  "tests": [
+    {
+      "name": "Homepage Load",
+      "status": "success",
+      "title": "ANDO JV — Feel the moment | Российский бренд минималистичной одежды",
+      "hasMainContent": true,
+      "productsFound": 0,
+      "url": "http://83.166.246.253/",
+      "timestamp": "2026-02-10T14:50:04.161Z"
+    },
+    {
+      "name": "Product Page",
+      "status": "success",
+      "url": "http://83.166.246.253/catalog?gender=women",
+      "hasProductDetails": true,
+      "productClicked": true,
+      "timestamp": "2026-02-10T14:50:07.722Z"
+    },
+    {
+      "name": "Admin Login - Find Page",
+      "status": "success",
+      "url": "http://83.166.246.253/admin",
+      "timestamp": "2026-02-10T14:50:09.166Z"
+    },
+    {
+      "name": "Admin Login - Authentication",
+      "status": "success",
+      "finalUrl": "http://83.166.246.253/auth",
+      "hasAdminContent": true,
+      "timestamp": "2026-02-10T14:50:12.539Z"
+    },
+    {
+      "name": "Admin Dashboard",
+      "status": "failed",
+      "url": "http://83.166.246.253/auth",
+      "foundIndicators": [],
+      "redirectedToLogin": false,
+      "timestamp": "2026-02-10T14:50:14.780Z"
+    }
+  ],
+  "errors": [],
+  "console_logs": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+    }
+  ],
+  "network_errors": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Hint:wght@300;400;500;600&display=swap",
+      "failure": "net::ERR_BLOCKED_BY_ORB",
+      "method": "GET"
+    },
+    {
+      "url": "https://region1.google-analytics.com/g/collect?v=2&tid=G-XXXXXXXXXX&gtm=45je6290h2za200&_p=1770735001409&gcd=13l3l3l2l1l1&npa=1&dma_cps=syphamo&dma=1&cid=463598250.1770735002&ul=ru&sr=1920x1080&are=1&frm=0&pscdl=noapi&_s=1&tag_exp=102015666~103116026~103200004~104527907~104528501~104684208~104684211~115938465~115938469~116185181~116185182~116988315&sid=1770735002&sct=1&seg=0&dl=http%3A%2F%2F83.166.246.253%2F&dt=ANDO%20JV%20%E2%80%94%20Feel%20the%20moment%20%7C%20%D0%A0%D0%BE%D1%81%D1%81%D0%B8%D0%B9%D1%81%D0%BA%D0%B8%D0%B9%20%D0%B1%D1%80%D0%B5%D0%BD%D0%B4%20%D0%BC%D0%B8%D0%BD%D0%B8%D0%BC%D0%B0%D0%BB%D0%B8%D1%81%D1%82%D0%B8%D1%87%D0%BD%D0%BE%D0%B9%20%D0%BE%D0%B4%D0%B5%D0%B6%D0%B4%D1%8B&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=4603",
+      "failure": "net::ERR_ABORTED",
+      "method": "POST"
+    },
+    {
+      "url": "https://region1.google-analytics.com/g/collect?v=2&tid=G-XXXXXXXXXX&gtm=45je6290h2za200&_p=1770735001409&gcd=13l3l3l2l1l1&npa=1&dma_cps=syphamo&dma=1&cid=463598250.1770735002&ul=ru&sr=1920x1080&are=1&frm=0&pscdl=noapi&_eu=AAAAAAQ&_s=2&tag_exp=102015666~103116026~103200004~104527907~104528501~104684208~104684211~115938465~115938469~116185181~116185182~116988315&sid=1770735002&sct=1&seg=0&dl=http%3A%2F%2F83.166.246.253%2F&dt=ANDO%20JV%20%E2%80%94%20Feel%20the%20moment%20%7C%20%D0%A0%D0%BE%D1%81%D1%81%D0%B8%D0%B9%D1%81%D0%BA%D0%B8%D0%B9%20%D0%B1%D1%80%D0%B5%D0%BD%D0%B4%20%D0%BC%D0%B8%D0%BD%D0%B8%D0%BC%D0%B0%D0%BB%D0%B8%D1%81%D1%82%D0%B8%D1%87%D0%BD%D0%BE%D0%B9%20%D0%BE%D0%B4%D0%B5%D0%B6%D0%B4%D1%8B&en=user_engagement&_et=2033&tfd=6636",
+      "failure": "net::ERR_ABORTED",
+      "method": "POST"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Hint:wght@300;400;500;600&display=swap",
+      "failure": "net::ERR_BLOCKED_BY_ORB",
+      "method": "GET"
+    },
+    {
+      "url": "https://region1.google-analytics.com/g/collect?v=2&tid=G-XXXXXXXXXX&gtm=45je6290h2za200&_p=1770735004304&gcd=13l3l3l2l1l1&npa=1&dma_cps=syphamo&dma=1&cid=463598250.1770735002&ul=ru&sr=1920x1080&are=1&frm=0&pscdl=noapi&_eu=AAAAAAQ&tag_exp=102015666~103116026~103200004~104527906~104528501~104684208~104684211~115938466~115938469~116185181~116185182~116988315&sid=1770735002&sct=1&seg=1&dl=http%3A%2F%2F83.166.246.253%2Fcatalog%3Fgender%3Dwomen&dt=ANDO%20JV%20%E2%80%94%20Feel%20the%20moment%20%7C%20%D0%A0%D0%BE%D1%81%D1%81%D0%B8%D0%B9%D1%81%D0%BA%D0%B8%D0%B9%20%D0%B1%D1%80%D0%B5%D0%BD%D0%B4%20%D0%BC%D0%B8%D0%BD%D0%B8%D0%BC%D0%B0%D0%BB%D0%B8%D1%81%D1%82%D0%B8%D1%87%D0%BD%D0%BE%D0%B9%20%D0%BE%D0%B4%D0%B5%D0%B6%D0%B4%D1%8B&_s=1&tfd=3703",
+      "failure": "net::ERR_ABORTED",
+      "method": "POST"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Hint:wght@300;400;500;600&display=swap",
+      "failure": "net::ERR_BLOCKED_BY_ORB",
+      "method": "GET"
+    },
+    {
+      "url": "https://region1.google-analytics.com/g/collect?v=2&tid=G-XXXXXXXXXX&gtm=45je6290h2za200&_p=1770735008053&gcd=13l3l3l2l1l1&npa=1&dma_cps=syphamo&dma=1&cid=463598250.1770735002&ul=ru&sr=1920x1080&are=1&frm=0&pscdl=noapi&_eu=AAAAAAQ&tag_exp=102015666~103116026~103200004~104527906~104528500~104684208~104684211~115616985~115938465~115938468~116185181~116185182~116988315&sid=1770735002&sct=1&seg=1&dl=http%3A%2F%2F83.166.246.253%2Fauth&dt=ANDO%20JV%20%E2%80%94%20Feel%20the%20moment%20%7C%20%D0%A0%D0%BE%D1%81%D1%81%D0%B8%D0%B9%D1%81%D0%BA%D0%B8%D0%B9%20%D0%B1%D1%80%D0%B5%D0%BD%D0%B4%20%D0%BC%D0%B8%D0%BD%D0%B8%D0%BC%D0%B0%D0%BB%D0%B8%D1%81%D1%82%D0%B8%D1%87%D0%BD%D0%BE%D0%B9%20%D0%BE%D0%B4%D0%B5%D0%B6%D0%B4%D1%8B&_s=1&tfd=4824",
+      "failure": "net::ERR_ABORTED",
+      "method": "POST"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Hint:wght@300;400;500;600&display=swap",
+      "failure": "net::ERR_BLOCKED_BY_ORB",
+      "method": "GET"
+    }
+  ],
+  "fixes_applied": []
+}
