@@ -35,22 +35,21 @@ jobs:
           VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
 
       - name: Package & Copy to server
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
           echo "📦 Creating archive..."
           tar -czf dist.tar.gz dist/
 
           echo "🔑 Setting up SSH..."
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/deploy_key
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts 2>/dev/null
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
 
           echo "🚀 Copying to server..."
-          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no dist.tar.gz $SERVER_USER@$SERVER_HOST:/opt/ando/
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -v dist.tar.gz ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/opt/ando/ 2>&1 || {
+            echo "❌ SCP failed with exit code $?"
+            exit 1
+          }
 
       - name: Deploy & Restart
         uses: appleboy/ssh-action@v1.0.3
