@@ -34,17 +34,25 @@ jobs:
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
           VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
 
-      - name: Copy build to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "dist/"
-          target: "/opt/ando/"
-          strip_components: 0
+      - name: Package & Copy to server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          echo "📦 Creating archive..."
+          tar -czf dist.tar.gz dist/
 
-      - name: Restart server
+          echo "🔑 Setting up SSH..."
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts 2>/dev/null
+
+          echo "🚀 Copying to server..."
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no dist.tar.gz $SERVER_USER@$SERVER_HOST:/opt/ando/
+
+      - name: Deploy & Restart
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -52,6 +60,14 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /opt/ando
+
+            echo "📂 Extracting build..."
+            rm -rf dist.old
+            [ -d dist ] && mv dist dist.old
+            tar -xzf dist.tar.gz
+            rm dist.tar.gz
+
+            echo "🐳 Restarting nginx..."
             docker compose restart nginx
             sleep 5
 
