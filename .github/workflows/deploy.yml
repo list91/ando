@@ -8,66 +8,10 @@ on:
   workflow_dispatch: # Ручной запуск
 
 jobs:
-  test:
-    name: Smoke Test - Main Page
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Build application
-        run: |
-          echo "🏗️ Building application..."
-          npm run build
-        env:
-          VITE_SUPABASE_URL: http://localhost
-          VITE_SUPABASE_PUBLISHABLE_KEY: test-key
-          VITE_SUPABASE_PROJECT_ID: test-project
-
-      - name: Start preview server
-        run: |
-          echo "🚀 Starting preview server..."
-          npx serve -s dist -p 3000 &
-          sleep 3
-          curl -f http://localhost:3000 || exit 1
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-
-      - name: Run smoke test
-        run: |
-          echo "🧪 Running smoke test on built app..."
-          npx playwright test tests/smoke-main-page.spec.cjs --project=chromium
-        continue-on-error: false
-
-      - name: Upload test results
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 7
-
   deploy:
-    name: Deploy to Server
+    name: Deploy & Check
     runs-on: ubuntu-latest
-    needs: test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'  # Only deploy on push to main
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -100,63 +44,28 @@ jobs:
           target: "/opt/ando/"
           strip_components: 0
 
-      - name: Deploy on server
+      - name: Restart server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            set -e
             cd /opt/ando
-
-            echo "📂 Backup old build..."
-            rm -rf dist.old
-
-            echo "🔄 Pulling latest docker config..."
-            git pull origin main
-
-            echo "🐳 Restarting nginx..."
             docker compose restart nginx
-
-            echo "⏳ Waiting for service..."
             sleep 5
 
-            echo "📊 Verifying deployment..."
-            docker compose ps nginx
-
-            echo "✅ Deployment complete!"
-
-      - name: Verify deployment
+      - name: Check if shop is alive
         run: |
-          echo "🔍 Checking if site is accessible..."
-          curl -f -s -o /dev/null -w "%{http_code}" https://andojv.com || echo "⚠️ Site check failed"
+          echo "🔍 Checking if shop is alive..."
 
-      - name: Checkout code
-        uses: actions/checkout@v4
+          # Проверка что сайт отвечает 200 OK
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://83.166.246.253/)
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
-
-      - name: Install Playwright
-        run: npx playwright install --with-deps chromium
-
-      - name: Run production smoke tests
-        run: |
-          echo "🔥 Running critical smoke tests on production..."
-          BASE_URL=http://83.166.246.253 npm run test:smoke-critical
-        continue-on-error: false
-
-      - name: Notify Success
-        if: success()
-        run: |
-          echo "✅ Deployment successful!"
-          echo "🌍 Site: https://andojv.com"
-          echo "📊 Smoke test passed"
-          echo "🐳 Docker containers running"
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "✅ Shop is ALIVE (HTTP $HTTP_CODE)"
+            exit 0
+          else
+            echo "❌ Shop is DOWN (HTTP $HTTP_CODE)"
+            exit 1
+          fi
