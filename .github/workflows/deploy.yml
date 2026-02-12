@@ -68,16 +68,16 @@ jobs:
             git pull origin main
 
             echo "🐳 Building Docker containers with prod config..."
-            docker-compose -f docker-compose.yml -f docker-compose.prod.yml build frontend
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml build frontend
 
             echo "🚀 Restarting services..."
-            docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 
             echo "⏳ Waiting for containers to start..."
             sleep 10
 
             echo "📊 Verifying deployment..."
-            docker-compose -f docker-compose.yml -f docker-compose.prod.yml ps
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
 
             echo "🧹 Cleaning up old images..."
             docker image prune -f
