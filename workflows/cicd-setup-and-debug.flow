@@ -1,0 +1,59 @@
+# CI/CD Infrastructure Setup and Debug Cycle
+# Iterative workflow for setting up and debugging CI/CD infrastructure
+
+# Phase 1: Setup Infrastructure - Create all necessary configs
+[
+  general-purpose:"Create docker-compose.yml (base configuration for both local and prod). Include all services: frontend, supabase stack. Use env variables for differences.":docker_compose_base ||
+
+  general-purpose:"Create docker-compose.override.yml (auto-applied for local dev). Add volume mounts for hot-reload, expose ports (5173, 5432), dev-mode settings.":docker_compose_override ||
+
+  general-purpose:"Create docker-compose.prod.yml (explicit for production). Add restart policies, production volumes, closed ports, production build targets.":docker_compose_prod
+] ->
+
+# Phase 2: Setup CI/CD Pipeline
+general-purpose:"Update .github/workflows/deploy.yml with complete pipeline: 1) Run Playwright test for main shop page (check not crashing), 2) SSH deploy to server with docker-compose prod, 3) Verify deployment success.":cicd_pipeline_created ->
+
+# Phase 3: Setup Test - Create simple smoke test
+general-purpose:"Create Playwright test: tests/smoke-main-page.spec.js. Test should: 1) Navigate to https://andojv.com, 2) Wait for page load, 3) Check no errors in console, 4) Verify shop title/logo visible. Keep it simple - just check page works.":smoke_test_created ->
+
+# Phase 4: Test Locally - Verify local setup works
+general-purpose:"Test docker-compose locally: 1) Run 'docker-compose up' (should use base + override), 2) Verify all containers start, 3) Check frontend accessible on localhost:5173, 4) Verify hot-reload works, 5) Document any issues found.":local_test_complete ->
+
+# Phase 5: Review Local Results
+@review-local-setup ->
+
+# Phase 6: Test CI/CD Pipeline - Push and verify
+general-purpose:"Test full CI/CD: 1) Push changes to main branch, 2) Monitor GitHub Actions workflow, 3) Check test execution, 4) Verify deployment to server, 5) Check https://andojv.com works. Document any failures.":cicd_test_complete ->
+
+# Phase 7: Analyze Issues (if any)
+[
+  Explore:"If deployment failed: Check GitHub Actions logs. Search for error patterns. Identify which step failed (test/build/deploy). Check server logs via SSH if needed.":failure_analyzed ||
+
+  general-purpose:"If tests failed: Analyze test output. Check if page actually broken or test flaky. Verify test assertions correct. Check network/timing issues.":test_failure_analyzed ||
+
+  general-purpose:"If Docker issues: Check compose file syntax. Verify environment variables. Check volume mounts. Verify network connectivity between containers.":docker_issues_analyzed
+] ->
+
+# Phase 8: Fix Issues
+general-purpose:"Based on analysis, implement fixes: Update configs, fix tests, adjust deployment scripts, fix Docker setup. Make targeted changes to resolve identified issues.":issues_fixed ->
+
+# Phase 9: Verify Fixes - Re-test everything
+[
+  general-purpose:"Re-test locally: docker-compose up, verify all works.":local_retest ||
+
+  general-purpose:"Re-test CI/CD: Push to main, monitor workflow, verify deployment.":cicd_retest ||
+
+  Bash:"SSH to server, verify containers running: docker-compose ps, check logs: docker-compose logs --tail=50":production_verified
+] ->
+
+# Phase 10: Check Success Criteria
+general-purpose:"Verify all 3 requirements met: ✅ 1) Auto-deploy on push to main works, ✅ 2) Smoke test (main page not crashing) runs before deploy, ✅ 3) Docker Compose works identically local and prod. If ANY not met, loop back to Phase 7.":success_verified ->
+
+# Phase 11: Final Review
+@review-cicd-complete ->
+
+# Phase 12: Documentation
+general-purpose:"Update project documentation: 1) Add CI/CD workflow explanation to README, 2) Document docker-compose usage (local vs prod), 3) Add troubleshooting section, 4) Update server справка with CI/CD info.":docs_updated ->
+
+# Phase 13: Complete
+@cicd-infrastructure-ready
