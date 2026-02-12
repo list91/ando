@@ -92,10 +92,10 @@ export function AppSidebar({
       <div className="flex-shrink-0 px-6">
         <Link
           to="/"
-          className="mb-8 flex justify-center -mt-2"
+          className="mb-2 flex justify-center -mt-2"
           aria-label="На главную страницу"
         >
-          <img src={logoImage} alt="ANDO JV" className="w-[432px]" />
+          <img src={logoImage} alt="ANDO JV" className="w-[150px]" />
         </Link>
       </div>
 
@@ -105,7 +105,7 @@ export function AppSidebar({
           <img src={verticalTextImage} alt="FEEL THE MOMENT - Соединение традиций и современности" className="-mt-[45px] w-auto max-w-[92px] h-full max-h-[400px] object-contain" />
         )}
 
-        {isCatalogRelated && <nav className="flex flex-col pl-6 ml-[19px] mr-[55px] -mt-[37px] sidebar-menu-adaptive">
+        {isCatalogRelated && <nav className="flex flex-col pl-6 ml-[19px] mr-[55px] -mt-[100px] sidebar-menu-adaptive">
             <Link
               to={`/catalog?gender=${currentGender}`}
               onClick={() => onCategoryChange?.("NEW")}
@@ -139,7 +139,7 @@ export function AppSidebar({
             </Link>
           </nav>}
 
-        {isInfoPage && <nav className="flex flex-col pl-6 ml-[59px] -mt-[37px] sidebar-menu-adaptive">
+        {isInfoPage && <nav className="flex flex-col pl-6 ml-[59px] -mt-[100px] sidebar-menu-adaptive">
             {infoMenuItems.map(item => <Link key={item.id} to="/info" onClick={() => onInfoSectionChange?.(item.id)} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity ${activeInfoSection === item.id ? "underline" : ""}`}>
                 {item.label}
               </Link>)}
