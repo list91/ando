@@ -18,6 +18,7 @@
     "test:toggle-edit": "node tests/run-toggle-edit-test.cjs",
     "test:smoke-critical": "playwright test tests/smoke-critical.spec.cjs",
     "screenshot:catalog-mobile-before": "node tests/catalog-mobile-screenshot.cjs",
+    "test:logo-layout": "node tests/smart-logo-check.mjs",
     "populate-info-pages": "node scripts/populate-info-pages.mjs",
     "import-data": "node scripts/import-data.mjs",
     "create-admin": "node scripts/create-admin.mjs",

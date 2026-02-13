@@ -9,15 +9,15 @@ lerna-debug.log*
 
 # Environment variables
 .env
-.env.local
-.env.*.local
-.env.production
+.env.*
+!.env.example
 docker/.env
 docker/.env.production
 docker/nginx/.htpasswd
 
 # Docker volumes (data and storage)
 docker/volumes/db/data/
+docker/volumes/db-local/
 docker/volumes/storage/
 docker/volumes/logs/
 
@@ -42,3 +42,14 @@ screenshots/*
 node_modules
 *.tsx.backup
 nul
+
+# Playwright test results
+test-results/
+playwright-report/
+
+# Temporary debug files
+test-catalog.html
+verify-catalog.js
+final-check.mjs
+catalog-screenshot.png
+test-results

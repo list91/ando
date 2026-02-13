@@ -14,7 +14,7 @@ $$;
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'authenticator') THEN
-        CREATE ROLE authenticator WITH LOGIN PASSWORD 'postgres' NOINHERIT;
+        CREATE ROLE authenticator WITH LOGIN PASSWORD 'your-super-secret-password' NOINHERIT;
     END IF;
 END
 $$;
