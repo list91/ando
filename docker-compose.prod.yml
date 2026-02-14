@@ -1,131 +1,21 @@
-# Docker Compose Configuration for PRODUCTION
-# This file must be explicitly specified when deploying to production
-#
-# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-#
-# IMPORTANT: Make sure to set all required environment variables in .env.production
-
-version: "3.8"
+# Production override for ANDO
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 
 services:
-  # ===========================================
-  # FRONTEND - Production Build
-  # ===========================================
+  # Disable frontend dev server in production
   frontend:
-    build:
-      target: production
-    restart: always
-    # Порты НЕ exposed - доступ только через nginx
+    profiles:
+      - dev-only
 
-  # ===========================================
-  # NGINX - Production Reverse Proxy
-  # ===========================================
+  # Production nginx config
   nginx:
-    restart: always
     ports:
-      - "80:80"      # HTTP
-      - "8080:8080"  # HTTP (альтернативный порт)
-      # Если нужен HTTPS, добавьте:
-      # - "443:443"
-    # Production nginx config с SSL и кэшированием
-    # volumes:
-    #   - ./docker/nginx/prod.conf:/etc/nginx/conf.d/default.conf:ro
-    #   - ./docker/ssl:/etc/nginx/ssl:ro
-
-  # ===========================================
-  # KONG - Production API Gateway
-  # ===========================================
-  kong:
-    restart: always
-    environment:
-      KONG_LOG_LEVEL: warn  # Только важные логи в prod
-    # Порты НЕ exposed - доступ только через nginx
-
-  # ===========================================
-  # STUDIO - Production Dashboard (protected by nginx)
-  # ===========================================
-  studio:
-    restart: always
-    # Порт НЕ exposed - доступ только через nginx с basic auth
-
-  # ===========================================
-  # DATABASE - Production PostgreSQL
-  # ===========================================
-  db:
-    restart: always
-    # Порт НЕ exposed - доступ только из docker network
+      - "80:80"
+      - "8001:8080"
     volumes:
-      # Production data path
-      - /opt/ando/docker/volumes/db/data:/var/lib/postgresql/data:Z
-      # Init scripts остаются из базового файла
-      - ./docker/volumes/db/webhooks.sql:/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql:Z
-      - ./docker/volumes/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:Z
-      - ./docker/volumes/db/jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:Z
-      - ./docker/volumes/db/realtime.sql:/docker-entrypoint-initdb.d/migrations/99-realtime.sql:Z
-      - ./docker/volumes/db/init/00-migrations.sql:/docker-entrypoint-initdb.d/migrations/00-migrations.sql:Z
-      - ./docker/volumes/db/init/01-seed-admin.sql:/docker-entrypoint-initdb.d/migrations/01-seed-admin.sql:Z
-    # Production tuning
-    command:
-      - postgres
-      - -c
-      - config_file=/etc/postgresql/postgresql.conf
-      - -c
-      - log_min_messages=warning
-      - -c
-      - max_connections=200
-      - -c
-      - shared_buffers=256MB
-      - -c
-      - effective_cache_size=1GB
-
-  # ===========================================
-  # AUTH - Production GoTrue
-  # ===========================================
-  auth:
-    restart: always
-
-  # ===========================================
-  # REST - Production PostgREST
-  # ===========================================
-  rest:
-    restart: always
-
-  # ===========================================
-  # REALTIME - Production Websockets
-  # ===========================================
-  realtime:
-    restart: always
-
-  # ===========================================
-  # STORAGE - Production File Storage
-  # ===========================================
-  storage:
-    restart: always
-    volumes:
-      - /opt/ando/docker/volumes/storage:/var/lib/storage:z
-
-  # ===========================================
-  # IMGPROXY - Production Image Processing
-  # ===========================================
-  imgproxy:
-    restart: always
-    volumes:
-      - /opt/ando/docker/volumes/storage:/var/lib/storage:ro
-
-  # ===========================================
-  # META - Production Database Metadata
-  # ===========================================
-  meta:
-    restart: always
-
-  # ===========================================
-  # FUNCTIONS - Production Edge Functions
-  # ===========================================
-  functions:
-    restart: always
-
-  # ===========================================
-  # ANALYTICS - Production Logflare
-  # ===========================================
-  analytics:
-    restart: always
+      - ./docker/nginx/prod.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./docker/nginx/.htpasswd:/etc/nginx/.htpasswd:ro
+      - ./dist:/var/www/html:ro
+    depends_on:
+      - kong
+      - studio

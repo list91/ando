@@ -50,11 +50,11 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
 
-            # Rebuild and restart containers if configs changed
-            docker compose pull --ignore-pull-failures
-            docker compose up -d --build --remove-orphans
+            # Production deploy with override config
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml pull --ignore-pull-failures
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build --remove-orphans
 
             # Cleanup old images
             docker image prune -f
 
-            echo "✅ Full deploy completed at $(date)"
+            echo "✅ Production deploy completed at $(date)"
