@@ -28,6 +28,7 @@ import About from "./pages/About";
 import Info from "./pages/Info";
 import Auth from "./pages/Auth";
 import ForgotPassword from "./pages/ForgotPassword";
+import TestEmailVerification from "./pages/TestEmailVerification";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import AdminOrders from "./pages/admin/Orders";
@@ -109,6 +110,7 @@ const AppContent = () => {
           />
           <Route path="/auth" element={<Auth />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/test-email-verification" element={<TestEmailVerification />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/install" element={<Install />} />

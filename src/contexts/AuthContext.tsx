@@ -9,6 +9,9 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  // П-6: Email verification with OTP
+  signUpWithEmail: (email: string, fullName: string) => Promise<{ error: any }>;
+  verifyEmailCode: (email: string, token: string) => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -68,8 +71,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await supabase.auth.signOut();
   };
 
+  // П-6: Подтверждение email кодом
+  const signUpWithEmail = async (email: string, fullName: string) => {
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+        emailRedirectTo: `${window.location.origin}/`,
+      },
+    });
+
+    return { error };
+  };
+
+  const verifyEmailCode = async (email: string, token: string) => {
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: 'email',
+    });
+
+    return { error };
+  };
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, signUp, signIn, signOut, signUpWithEmail, verifyEmailCode }}>
       {children}
     </AuthContext.Provider>
   );

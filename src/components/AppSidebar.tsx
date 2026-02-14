@@ -87,25 +87,25 @@ export function AppSidebar({
   const instagramUrl = getSetting('social_instagram', 'https://instagram.com');
   const telegramUrl = getSetting('social_telegram', 'https://t.me');
   const vkUrl = getSetting('social_vk', 'https://vk.com');
-  return <aside className="w-[260px] border-r border-border bg-muted flex-shrink-0 h-screen flex flex-col overflow-hidden">
-      {/* Логотип — фиксированный */}
-      <div className="flex-shrink-0 px-6">
+  return <aside className="w-[200px] border-r border-border bg-muted flex-shrink-0 h-screen flex flex-col overflow-hidden">
+      {/* Логотип — фиксированный, по центру */}
+      <div className="flex-shrink-0 px-4 pt-[55px] pb-2">
         <Link
           to="/"
-          className="mb-2 flex justify-center -mt-2"
+          className="flex justify-center"
           aria-label="На главную страницу"
         >
-          <img src={logoImage} alt="ANDO JV" className="w-[120px]" />
+          <img src={logoImage} alt="ANDO JV" className="w-[80px]" />
         </Link>
       </div>
 
       {/* Контент — прижат к верху, масштабируется по высоте контейнера */}
-      <div className="flex-1 min-h-0 flex items-start justify-center overflow-visible px-6 sidebar-menu-container">
+      <div className="flex-1 min-h-0 flex items-start justify-start overflow-visible px-4 sidebar-menu-container">
         {(isHomePage || isAboutPage || isLookbookPage) && (
-          <img src={verticalTextImage} alt="FEEL THE MOMENT - Соединение традиций и современности" className="-mt-[45px] w-auto max-w-[92px] h-full max-h-[400px] object-contain" />
+          <img src={verticalTextImage} alt="FEEL THE MOMENT - Соединение традиций и современности" className="mt-2 w-auto max-w-[80px] h-full max-h-[350px] object-contain" />
         )}
 
-        {isCatalogRelated && <nav className="flex flex-col pl-6 ml-[19px] mr-[55px] -mt-[100px] sidebar-menu-adaptive">
+        {isCatalogRelated && <nav className="flex flex-col mt-4 ml-[44px] sidebar-menu-adaptive">
             <Link
               to={`/catalog?gender=${currentGender}`}
               onClick={() => onCategoryChange?.("NEW")}
@@ -139,7 +139,7 @@ export function AppSidebar({
             </Link>
           </nav>}
 
-        {isInfoPage && <nav className="flex flex-col pl-6 ml-[59px] -mt-[100px] sidebar-menu-adaptive">
+        {isInfoPage && <nav className="flex flex-col mt-4 ml-[44px] sidebar-menu-adaptive">
             {infoMenuItems.map(item => <Link key={item.id} to="/info" onClick={() => onInfoSectionChange?.(item.id)} className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity ${activeInfoSection === item.id ? "underline" : ""}`}>
                 {item.label}
               </Link>)}

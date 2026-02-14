@@ -702,9 +702,9 @@ const Catalog = ({ selectedCategory, setSelectedCategory, selectedGender, setSel
       </div>
 
       {/* Filters */}
-      <section className="border-b border-border py-3 px-3 lg:px-8 lg:py-4 catalog-filters-mt" aria-label="Фильтры товаров">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4 text-sm">
-          <div className="flex flex-wrap gap-2 lg:gap-8 items-center">
+      <section className="border-b border-border py-2 px-2 lg:px-2 lg:py-2 catalog-filters-mt" aria-label="Фильтры товаров">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2 lg:gap-4 text-sm">
+          <div className="flex flex-wrap gap-2 lg:gap-4 items-center">
             {/* Material Filter */}
             <Popover>
               <PopoverTrigger asChild>
@@ -823,9 +823,9 @@ const Catalog = ({ selectedCategory, setSelectedCategory, selectedGender, setSel
           </div>
 
           {/* Sorting and Grid View */}
-          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-2 lg:gap-4">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-2 lg:gap-2">
             {/* Mobile: Found count and Sorting */}
-            <div className="flex items-center gap-2 lg:gap-3 w-full lg:w-auto justify-between lg:justify-start order-1 lg:order-2">
+            <div className="flex items-center gap-2 lg:gap-2 lg:w-auto order-1 lg:order-2">
               <ProductCount products={products} searchQuery={searchQuery} />
               
               <Popover modal={true}>
