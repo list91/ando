@@ -49,8 +49,9 @@ services:
   kong:
     container_name: supabase-kong
     image: kong:2.8.1
+    ports:
+      - "8000:8000"
     expose:
-      - "8000"
       - "8443"
     environment:
       KONG_DATABASE: "off"
