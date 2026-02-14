@@ -27,7 +27,7 @@ jobs:
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
           VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
 
-      - name: Deploy via rsync
+      - name: Deploy dist via rsync
         uses: burnett01/rsync-deployments@7.0.1
         with:
           switches: -avzr --delete
@@ -37,7 +37,7 @@ jobs:
           remote_user: ${{ secrets.SERVER_USER }}
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Restart nginx
+      - name: Update server and restart services
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -45,5 +45,16 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /opt/ando
-            docker compose restart nginx
-            echo "✅ Deployed successfully"
+
+            # Pull latest changes (configs, docker-compose, etc.)
+            git fetch origin main
+            git reset --hard origin/main
+
+            # Rebuild and restart containers if configs changed
+            docker compose pull --ignore-pull-failures
+            docker compose up -d --build --remove-orphans
+
+            # Cleanup old images
+            docker image prune -f
+
+            echo "✅ Full deploy completed at $(date)"
