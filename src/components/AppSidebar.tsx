@@ -95,7 +95,7 @@ export function AppSidebar({
           className="mb-2 flex justify-center -mt-2"
           aria-label="На главную страницу"
         >
-          <img src={logoImage} alt="ANDO JV" className="w-[150px]" />
+          <img src={logoImage} alt="ANDO JV" className="w-[120px]" />
         </Link>
       </div>
 
