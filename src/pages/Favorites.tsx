@@ -84,7 +84,7 @@ const Favorites = () => {
                       {/* NEW badge - top left */}
                       {product.is_new && (
                         <div className="absolute top-4 left-4 z-10 bg-black text-white px-3 py-1 text-xs font-normal uppercase tracking-wider rounded-full">
-                          NEW
+                          НОВОЕ
                         </div>
                       )}
                       
@@ -100,8 +100,8 @@ const Favorites = () => {
                         </div>
                       )}
                       {product.is_sale && (
-                        <div className="absolute top-3 left-3 bg-[#C6121F] text-white px-2 py-1 text-xs font-medium rounded-full">
-                          SALE
+                        <div className="absolute top-3 left-3 bg-[#C6121F] text-white w-8 h-8 flex items-center justify-center text-sm font-bold rounded-full">
+                          %
                         </div>
                       )}
                     </div>

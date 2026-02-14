@@ -9,19 +9,48 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { z } from 'zod';
 
 const checkoutSchema = z.object({
-  fullName: z.string().min(2, 'Имя должно содержать минимум 2 символа').max(100),
+  firstName: z.string().min(2, 'Имя должно содержать минимум 2 символа').max(50),
+  lastName: z.string().min(2, 'Фамилия должна содержать минимум 2 символа').max(50),
   email: z.string().email('Неверный формат email').max(255),
   phone: z.string().min(10, 'Введите корректный номер телефона').max(20),
-  address: z.string().min(5, 'Введите адрес доставки').max(500),
+  dateOfBirth: z.string().optional(),
+  country: z.string().min(1, 'Выберите страну'),
+  address: z.string().max(500).optional(),
   deliveryMethod: z.enum(['courier', 'pickup']),
   paymentMethod: z.enum(['card', 'cash']),
   notes: z.string().max(1000).optional(),
+}).refine((data) => {
+  if (data.deliveryMethod === 'courier') {
+    return data.address && data.address.length >= 5;
+  }
+  return true;
+}, {
+  message: 'Введите адрес доставки (минимум 5 символов)',
+  path: ['address'],
 });
+
+const COUNTRIES = [
+  { value: 'RU', label: 'Россия' },
+  { value: 'BY', label: 'Беларусь' },
+  { value: 'KZ', label: 'Казахстан' },
+  { value: 'UA', label: 'Украина' },
+  { value: 'AM', label: 'Армения' },
+  { value: 'AZ', label: 'Азербайджан' },
+  { value: 'GE', label: 'Грузия' },
+  { value: 'KG', label: 'Киргизия' },
+  { value: 'MD', label: 'Молдова' },
+  { value: 'TJ', label: 'Таджикистан' },
+  { value: 'TM', label: 'Туркменистан' },
+  { value: 'UZ', label: 'Узбекистан' },
+];
+
+const DELIVERY_COST = 0; // Free delivery
 
 const Checkout = () => {
   const { user } = useAuth();
@@ -31,17 +60,26 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    fullName: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
+    dateOfBirth: '',
+    country: '',
     address: '',
     deliveryMethod: 'courier',
     paymentMethod: 'card',
     notes: '',
   });
 
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [personalDataProcessing, setPersonalDataProcessing] = useState(false);
+  const [dataSharing, setDataSharing] = useState(false);
   const [agreedToNewsletter, setAgreedToNewsletter] = useState(false);
+  const [showRegistrationPromo, setShowRegistrationPromo] = useState(true);
+
+  const subtotal = totalPrice;
+  const deliveryCost = formData.deliveryMethod === 'courier' ? DELIVERY_COST : 0;
+  const total = subtotal + deliveryCost;
 
   useEffect(() => {
     if (items.length === 0) {
@@ -49,11 +87,6 @@ const Checkout = () => {
     }
   }, [items, navigate]);
 
-  useEffect(() => {
-    if (!user) {
-      navigate('/auth');
-    }
-  }, [user, navigate]);
 
   useEffect(() => {
     if (user) {
@@ -65,15 +98,21 @@ const Checkout = () => {
           .single();
 
         if (data) {
+          // Split full_name into firstName and lastName
+          const nameParts = (data.full_name || '').split(' ');
+          const firstName = nameParts[0] || '';
+          const lastName = nameParts.slice(1).join(' ') || '';
+
           setFormData((prev) => ({
             ...prev,
-            fullName: data.full_name || '',
+            firstName,
+            lastName,
             email: data.email || user.email || '',
             phone: data.phone || '',
           }));
         }
       };
-      
+
       setTimeout(() => {
         fetchProfile();
       }, 0);
@@ -82,21 +121,20 @@ const Checkout = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!user) {
-      toast({
-        title: 'Ошибка',
-        description: 'Необходимо войти в систему',
-        variant: 'destructive',
-      });
-      navigate('/auth');
-      return;
-    }
 
-    if (!agreedToTerms) {
+    if (!personalDataProcessing) {
       toast({
         title: 'Требуется согласие',
         description: 'Необходимо согласиться на обработку персональных данных',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!dataSharing) {
+      toast({
+        title: 'Требуется согласие',
+        description: 'Необходимо согласиться на передачу данных третьим лицам',
         variant: 'destructive',
       });
       return;
@@ -108,18 +146,19 @@ const Checkout = () => {
       checkoutSchema.parse(formData);
 
       const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
 
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
-          user_id: user.id,
+          user_id: user?.id || null,
           order_number: orderNumber,
           status: 'pending',
-          total_amount: totalPrice,
-          customer_name: formData.fullName,
+          total_amount: total,
+          customer_name: fullName,
           customer_email: formData.email,
           customer_phone: formData.phone,
-          delivery_address: formData.address,
+          delivery_address: formData.deliveryMethod === 'courier' ? formData.address : null,
           delivery_method: formData.deliveryMethod === 'courier' ? 'Курьер' : 'Самовывоз',
           payment_method: formData.paymentMethod === 'card' ? 'Карта' : 'Наличные',
           notes: formData.notes,
@@ -154,14 +193,18 @@ const Checkout = () => {
           },
           body: JSON.stringify({
             orderNumber,
-            customerName: formData.fullName,
+            customerName: fullName,
             customerEmail: formData.email,
             customerPhone: formData.phone,
+            dateOfBirth: formData.dateOfBirth,
+            country: formData.country,
             address: formData.address,
             deliveryMethod: formData.deliveryMethod === 'courier' ? 'Курьер' : 'Самовывоз',
             paymentMethod: formData.paymentMethod === 'card' ? 'Карта' : 'Наличные',
             notes: formData.notes,
-            totalAmount: totalPrice,
+            totalAmount: total,
+            deliveryCost,
+            subscribedToNewsletter: agreedToNewsletter,
             items: items.map((item) => ({
               name: item.name,
               size: item.size,
@@ -202,7 +245,7 @@ const Checkout = () => {
     }
   };
 
-  if (!user || items.length === 0) {
+  if (items.length === 0) {
     return null;
   }
 
@@ -210,6 +253,70 @@ const Checkout = () => {
     <div className="min-h-full p-8">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl tracking-[0.15em] uppercase mb-8">Оформление заказа</h1>
+
+        {/* T8: Authorization prompt for guests */}
+        {!user && (
+          <Card className="mb-6 border-dashed">
+            <CardContent className="py-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Уже есть аккаунт?</p>
+                  <p className="text-sm text-muted-foreground">
+                    Войдите, чтобы использовать сохраненные данные и отслеживать заказы
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" asChild>
+                    <Link to="/login?redirect=/checkout">Войти</Link>
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <Link to="/register?redirect=/checkout">Регистрация</Link>
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* T11: Registration promo block with 5% discount for guests */}
+        {!user && showRegistrationPromo && (
+          <Card className="mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
+            <CardContent className="py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 text-amber-600">
+                    <span className="text-xl font-bold">%</span>
+                  </div>
+                  <div>
+                    <p className="font-medium text-amber-900">
+                      Зарегистрируйтесь и получите скидку 5% на первый заказ!
+                    </p>
+                    <p className="text-sm text-amber-700">
+                      Создайте аккаунт прямо сейчас и экономьте
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    className="bg-amber-500 hover:bg-amber-600 text-white"
+                    asChild
+                  >
+                    <Link to="/register?redirect=/checkout">Получить скидку</Link>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-amber-600 hover:text-amber-800 hover:bg-amber-100"
+                    onClick={() => setShowRegistrationPromo(false)}
+                    aria-label="Закрыть"
+                  >
+                    <span className="text-xl leading-none">&times;</span>
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
@@ -219,18 +326,48 @@ const Checkout = () => {
                   <CardTitle>Контактная информация</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* T3: Split fullName into firstName + lastName */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="firstName">Имя *</Label>
+                      <Input
+                        id="firstName"
+                        value={formData.firstName}
+                        onChange={(e) =>
+                          setFormData({ ...formData, firstName: e.target.value })
+                        }
+                        required
+                        maxLength={50}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="lastName">Фамилия *</Label>
+                      <Input
+                        id="lastName"
+                        value={formData.lastName}
+                        onChange={(e) =>
+                          setFormData({ ...formData, lastName: e.target.value })
+                        }
+                        required
+                        maxLength={50}
+                      />
+                    </div>
+                  </div>
+
+                  {/* T4: Date of birth field */}
                   <div>
-                    <Label htmlFor="fullName">Полное имя *</Label>
+                    <Label htmlFor="dateOfBirth">Дата рождения</Label>
                     <Input
-                      id="fullName"
-                      value={formData.fullName}
+                      id="dateOfBirth"
+                      type="date"
+                      value={formData.dateOfBirth}
                       onChange={(e) =>
-                        setFormData({ ...formData, fullName: e.target.value })
+                        setFormData({ ...formData, dateOfBirth: e.target.value })
                       }
-                      required
-                      maxLength={100}
+                      max={new Date().toISOString().split('T')[0]}
                     />
                   </div>
+
                   <div>
                     <Label htmlFor="email">Email *</Label>
                     <Input
@@ -258,6 +395,28 @@ const Checkout = () => {
                       maxLength={20}
                     />
                   </div>
+
+                  {/* T5: Country dropdown */}
+                  <div>
+                    <Label htmlFor="country">Страна *</Label>
+                    <Select
+                      value={formData.country}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, country: value })
+                      }
+                    >
+                      <SelectTrigger id="country">
+                        <SelectValue placeholder="Выберите страну" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {COUNTRIES.map((country) => (
+                          <SelectItem key={country.value} value={country.value}>
+                            {country.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -266,6 +425,7 @@ const Checkout = () => {
                   <CardTitle>Доставка</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* T6: Delivery method selector - address shown only for courier */}
                   <div>
                     <Label>Способ доставки *</Label>
                     <RadioGroup
@@ -288,19 +448,23 @@ const Checkout = () => {
                       </div>
                     </RadioGroup>
                   </div>
-                  <div>
-                    <Label htmlFor="address">Адрес доставки *</Label>
-                    <Textarea
-                      id="address"
-                      value={formData.address}
-                      onChange={(e) =>
-                        setFormData({ ...formData, address: e.target.value })
-                      }
-                      placeholder="Улица, дом, квартира"
-                      required
-                      maxLength={500}
-                    />
-                  </div>
+
+                  {/* T6: Address textarea only appears for courier delivery */}
+                  {formData.deliveryMethod === 'courier' && (
+                    <div>
+                      <Label htmlFor="address">Адрес доставки *</Label>
+                      <Textarea
+                        id="address"
+                        value={formData.address}
+                        onChange={(e) =>
+                          setFormData({ ...formData, address: e.target.value })
+                        }
+                        placeholder="Улица, дом, квартира"
+                        required
+                        maxLength={500}
+                      />
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
@@ -346,42 +510,66 @@ const Checkout = () => {
                 </CardContent>
               </Card>
 
+              {/* T7: Consent checkboxes */}
               <Card>
                 <CardHeader>
                   <CardTitle>Согласия</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* T7: personalDataProcessing - required */}
                   <div className="flex items-start space-x-2">
-                    <Checkbox 
-                      id="terms" 
-                      checked={agreedToTerms}
-                      onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
+                    <Checkbox
+                      id="personalDataProcessing"
+                      checked={personalDataProcessing}
+                      onCheckedChange={(checked) => setPersonalDataProcessing(checked as boolean)}
                       required
                       aria-required="true"
                     />
                     <div className="grid gap-1.5 leading-none">
                       <label
-                        htmlFor="terms"
+                        htmlFor="personalDataProcessing"
                         className="text-sm font-medium leading-relaxed cursor-pointer"
                       >
                         Я согласен(на) на обработку персональных данных *
                       </label>
                       <p className="text-xs text-muted-foreground">
                         Ознакомьтесь с{' '}
-                        <Link to="/info?section=agreement" className="underline hover:no-underline">
-                          пользовательским соглашением
-                        </Link>{' '}
-                        и{' '}
                         <Link to="/info?section=privacy" className="underline hover:no-underline">
                           политикой конфиденциальности
                         </Link>
                       </p>
                     </div>
                   </div>
-                  
+
+                  {/* T7: dataSharing - required */}
                   <div className="flex items-start space-x-2">
-                    <Checkbox 
-                      id="newsletter" 
+                    <Checkbox
+                      id="dataSharing"
+                      checked={dataSharing}
+                      onCheckedChange={(checked) => setDataSharing(checked as boolean)}
+                      required
+                      aria-required="true"
+                    />
+                    <div className="grid gap-1.5 leading-none">
+                      <label
+                        htmlFor="dataSharing"
+                        className="text-sm font-medium leading-relaxed cursor-pointer"
+                      >
+                        Я согласен(на) на передачу данных третьим лицам для обработки заказа *
+                      </label>
+                      <p className="text-xs text-muted-foreground">
+                        Ознакомьтесь с{' '}
+                        <Link to="/info?section=agreement" className="underline hover:no-underline">
+                          пользовательским соглашением
+                        </Link>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* T7: newsletter - optional (already existed as agreedToNewsletter) */}
+                  <div className="flex items-start space-x-2">
+                    <Checkbox
+                      id="newsletter"
                       checked={agreedToNewsletter}
                       onCheckedChange={(checked) => setAgreedToNewsletter(checked as boolean)}
                     />
@@ -395,19 +583,27 @@ const Checkout = () => {
                 </CardContent>
               </Card>
 
-              <Button type="submit" className="w-full" size="lg" disabled={loading || !agreedToTerms}>
-                {loading ? 'Оформление...' : `Оформить заказ на ${totalPrice} ₽`}
+              {/* T10: PAY button - dark background, full-width */}
+              <Button
+                type="submit"
+                className="w-full bg-black hover:bg-gray-800 text-white"
+                size="lg"
+                disabled={loading || !personalDataProcessing || !dataSharing}
+              >
+                {loading ? 'Оформление...' : `ОПЛАТИТЬ ${total} ₽`}
               </Button>
             </form>
           </div>
 
+          {/* T9: Sidebar with order summary */}
           <div>
-            <Card>
+            <Card className="sticky top-8">
               <CardHeader>
                 <CardTitle>Ваш заказ</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
+                  {/* T9: Items list */}
                   {items.map((item) => (
                     <div key={`${item.id}-${item.size}`} className="flex gap-3">
                       <img
@@ -421,15 +617,25 @@ const Checkout = () => {
                           Размер: {item.size}
                         </p>
                         <p className="text-muted-foreground">
-                          {item.quantity} × {item.price} ₽
+                          {item.quantity} x {item.price} ₽
                         </p>
                       </div>
                     </div>
                   ))}
-                  <div className="border-t pt-4">
-                    <div className="flex justify-between text-lg font-medium">
+
+                  {/* T9: Subtotal, delivery cost, total */}
+                  <div className="border-t pt-4 space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Подытог:</span>
+                      <span>{subtotal} ₽</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Доставка:</span>
+                      <span>{deliveryCost === 0 ? 'Бесплатно' : `${deliveryCost} ₽`}</span>
+                    </div>
+                    <div className="flex justify-between text-lg font-medium pt-2 border-t">
                       <span>Итого:</span>
-                      <span>{totalPrice} ₽</span>
+                      <span>{total} ₽</span>
                     </div>
                   </div>
                 </div>

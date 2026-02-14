@@ -187,14 +187,14 @@ const Product = () => {
               {/* NEW badge - inside image container */}
               {product.is_new && (
                 <div className="absolute top-3 left-[42px] z-20 bg-white text-black px-4 py-1.5 text-xs font-medium uppercase tracking-wider rounded-full">
-                  NEW
+                  НОВОЕ
                 </div>
               )}
 
               {/* SALE badge - inside image container */}
               {product.is_sale && discount > 0 && (
-                <div className={`absolute ${product.is_new ? 'top-12' : 'top-3'} left-[42px] z-20 bg-black text-white px-4 py-1.5 text-xs font-medium uppercase tracking-wider rounded-full`}>
-                  SALE
+                <div className={`absolute ${product.is_new ? 'top-12' : 'top-3'} left-[42px] z-20 bg-[#C6121F] text-white w-10 h-10 flex items-center justify-center text-base font-bold rounded-full`}>
+                  %
                 </div>
               )}
 

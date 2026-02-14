@@ -236,13 +236,13 @@ const ProductGrid = memo(({ products, gridCols, getColorHex, user, isFavorite, t
               >
                 {product.is_new && (
                   <div className="absolute top-3 left-3 lg:top-4 lg:left-4 z-10 bg-black text-white px-3 py-1 lg:px-4 lg:py-1.5 text-[10px] lg:text-xs font-medium uppercase tracking-wider rounded-full">
-                    NEW
+                    НОВОЕ
                   </div>
                 )}
 
                 {product.is_sale && (
-                  <div className={`absolute ${product.is_new ? 'top-11 lg:top-14' : 'top-3 lg:top-4'} left-3 lg:left-4 z-10 bg-[#C6121F] text-white px-3 py-1 lg:px-4 lg:py-1.5 text-[10px] lg:text-xs font-medium uppercase tracking-wider rounded-full`}>
-                    SALE
+                  <div className={`absolute ${product.is_new ? 'top-11 lg:top-14' : 'top-3 lg:top-4'} left-3 lg:left-4 z-10 bg-[#C6121F] text-white w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center text-sm lg:text-base font-bold rounded-full`}>
+                    %
                   </div>
                 )}
                 <img

@@ -77,8 +77,8 @@ const Layout = ({ children, selectedCategory, onCategoryChange, selectedGender, 
           <Header />
 
           {/* Mobile Header with Logo - only on mobile */}
-          <div className="md:hidden sticky top-0 z-40 bg-background border-b border-border">
-            <Link to="/" className="flex justify-center py-2">
+          <div className="md:hidden sticky top-0 z-40 bg-background border-b border-border -mt-[50px]">
+            <Link to="/" className="flex justify-center">
               <img src={logoMobile} alt="ANDO JV" className="w-36 h-auto" />
             </Link>
           </div>

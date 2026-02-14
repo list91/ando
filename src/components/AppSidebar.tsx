@@ -111,7 +111,7 @@ export function AppSidebar({
               onClick={() => onCategoryChange?.("NEW")}
               className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap ${selectedCategory === "NEW" ? "underline" : ""}`}
             >
-              NEW
+              НОВОЕ
             </Link>
             <Link
               to={`/catalog?gender=${currentGender}`}
@@ -135,7 +135,7 @@ export function AppSidebar({
               onClick={() => onCategoryChange?.("SALE")}
               className={`block w-full text-left tracking-wide hover:opacity-60 transition-opacity whitespace-nowrap text-red-600 ${selectedCategory === "SALE" ? "underline" : ""}`}
             >
-              SALE
+              РАСПРОДАЖА
             </Link>
           </nav>}
 

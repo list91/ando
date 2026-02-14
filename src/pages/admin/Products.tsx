@@ -787,7 +787,7 @@ const AdminProducts = () => {
                             setFormData({ ...formData, is_new: checked as boolean })
                           }
                         />
-                        <Label htmlFor="is_new">Новинка (бейдж NEW)</Label>
+                        <Label htmlFor="is_new">Новинка (бейдж НОВОЕ)</Label>
                       </div>
 
                       <div>
@@ -1279,8 +1279,8 @@ const AdminProducts = () => {
                 <TableHead>Slug</TableHead>
                 <TableHead>Цена</TableHead>
                 <TableHead>Склад</TableHead>
-                <TableHead>NEW</TableHead>
-                <TableHead>SALE</TableHead>
+                <TableHead>НОВОЕ</TableHead>
+                <TableHead>%</TableHead>
                 <TableHead>Действия</TableHead>
               </TableRow>
             </TableHeader>

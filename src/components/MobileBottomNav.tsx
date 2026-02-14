@@ -229,7 +229,7 @@ export const MobileBottomNav = ({
                   onClick={() => handleCategoryClick("NEW")}
                   className={`px-6 py-3 text-left text-lg tracking-wide hover:bg-gray-50 transition-colors ${selectedCategory === "NEW" ? "font-medium" : ""}`}
                 >
-                  NEW
+                  НОВОЕ
                 </button>
                 <button
                   onClick={() => handleCategoryClick("Все товары")}
@@ -250,7 +250,7 @@ export const MobileBottomNav = ({
                   onClick={() => handleCategoryClick("SALE")}
                   className={`px-6 py-3 text-left text-lg tracking-wide hover:bg-gray-50 transition-colors text-red-600 ${selectedCategory === "SALE" ? "font-medium" : ""}`}
                 >
-                  SALE
+                  РАСПРОДАЖА
                 </button>
 
                 {/* Divider */}
