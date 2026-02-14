@@ -101,15 +101,9 @@ console.log('━'.repeat(60));
         }
 
         // Скриншот header с лого (до скролла)
-        // На mobile используем div.md:hidden, на desktop/tablet - header
-        const headerSelector = bp.width < 768
-          ? 'div.md\\:hidden:has(img[alt="ANDO JV"])'
-          : 'header';
-
-        const header = page.locator(headerSelector).first();
+        const header = page.locator('header').first();
         await header.screenshot({
-          path: join(OUTPUT_DIR, `${testName}-header.png`),
-          timeout: 5000 // Уменьшен таймаут для быстрого fail
+          path: join(OUTPUT_DIR, `${testName}-header.png`)
         });
 
         // Проверка 3: Скролл-тест (проверить что лого не "плавает")
@@ -135,8 +129,7 @@ console.log('━'.repeat(60));
 
             // Скриншот после скролла
             await header.screenshot({
-              path: join(OUTPUT_DIR, `${testName}-header-SCROLL-ISSUE.png`),
-              timeout: 5000
+              path: join(OUTPUT_DIR, `${testName}-header-SCROLL-ISSUE.png`)
             });
           } else {
             console.log(`  ✅ ${pageInfo.name}: OK (${Math.round(box.width)}x${Math.round(box.height)}px, позиция стабильна)`);

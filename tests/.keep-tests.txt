@@ -1,0 +1,12 @@
+smart-logo-check.mjs
+smoke-critical.spec.cjs
+cookie-privacy-link.spec.cjs
+product-links.spec.cjs
+info-page-database.spec.cjs
+run-admin-info-test.cjs
+run-toggle-edit-test.cjs
+admin-info-pages.spec.cjs
+admin-toggle-edit-test.spec.cjs
+smoke-main-page.spec.cjs
+guest-flow.spec.cjs
+e2e-admin-login.spec.cjs
