@@ -53,3 +53,8 @@ verify-catalog.js
 final-check.mjs
 catalog-screenshot.png
 test-results
+tests/screenshots-tools-llm/localhost-catalog.png
+tests/screenshots-tools-llm/prod-after-fix.png
+tests/screenshots-tools-llm/prod-catalog.png
+tests/screenshots-tools-llm/prod-final.png
+tests/screenshots-tools-llm/prod-with-products.png

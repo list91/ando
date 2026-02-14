@@ -148,7 +148,7 @@ export function AppSidebar({
 
       {/* Копирайт — фиксированный внизу */}
       <div className="flex-shrink-0 text-xs text-center leading-snug text-muted-foreground py-4 px-4 bg-muted">
-        © 2026 ANDO JV.<br />
+        © 2025 ANDO JV.<br />
         Все права защищены.
       </div>
     </aside>;
