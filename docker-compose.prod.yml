@@ -2,12 +2,12 @@
 # Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 
 services:
-  # Disable frontend dev server in production
+  # Frontend dev server - replace with dummy that exits immediately
   frontend:
-    profiles:
-      - dev-only
+    entrypoint: ["echo", "Production mode - frontend served by nginx"]
+    restart: "no"
 
-  # Production nginx config
+  # Production nginx config - serves static files
   nginx:
     ports:
       - "80:80"
@@ -17,5 +17,5 @@ services:
       - ./docker/nginx/.htpasswd:/etc/nginx/.htpasswd:ro
       - ./dist:/var/www/html:ro
     depends_on:
-      - kong
-      - studio
+      kong:
+        condition: service_healthy
