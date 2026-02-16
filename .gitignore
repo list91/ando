@@ -85,3 +85,8 @@ tests/screenshots-output/sprint-final/06-cart-drawer-open.png
 tests/screenshots-output/sprint-final/07-mobile-support-button.png
 tests/screenshots-output/sprint-final/08-mobile-catalog.png
 tests/screenshots-output/sprint-final/09-favorites-page.png
+tests/screenshots-output/bugfix-verification/sidebar-area.png
+tests/screenshots-output/bugfix-verification/sidebar-full-page.png
+tests/screenshots-output/bugfix-verification/test-results.json
+tests/screenshots-output/bugfix-verification/zoom-before-hover.png
+tests/screenshots-output/bugfix-verification/zoom-with-magnifier.png

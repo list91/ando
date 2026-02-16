@@ -23,11 +23,16 @@ const ImageMagnifier = ({
   const [showMagnifier, setShowMagnifier] = useState(false);
   const [magnifierPosition, setMagnifierPosition] = useState({ x: 0, y: 0 });
   const [backgroundPosition, setBackgroundPosition] = useState({ x: 0, y: 0 });
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleMouseEnter = useCallback(() => {
     // Проверяем, что это не touch-устройство
     if (window.matchMedia("(pointer: fine)").matches) {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setContainerSize({ width: rect.width, height: rect.height });
+      }
       setShowMagnifier(true);
     }
   }, []);
@@ -53,13 +58,14 @@ const ImageMagnifier = ({
         y: y - magnifierSize / 2,
       });
 
-      // Позиция фона для zoom-эффекта (в процентах)
-      const bgX = (x / rect.width) * 100;
-      const bgY = (y / rect.height) * 100;
+      // Позиция фона для zoom-эффекта (в пикселях относительно увеличенного изображения)
+      // Вычисляем offset так, чтобы точка под курсором была в центре magnifier
+      const bgX = x * zoomLevel - magnifierSize / 2;
+      const bgY = y * zoomLevel - magnifierSize / 2;
 
       setBackgroundPosition({ x: bgX, y: bgY });
     },
-    [magnifierSize]
+    [magnifierSize, zoomLevel]
   );
 
   return (
@@ -79,7 +85,7 @@ const ImageMagnifier = ({
       />
 
       {/* Magnifier lens */}
-      {showMagnifier && (
+      {showMagnifier && containerSize.width > 0 && (
         <div
           className="pointer-events-none absolute rounded-full border-2 border-white/50 shadow-lg transition-opacity duration-150 ease-out"
           style={{
@@ -88,8 +94,10 @@ const ImageMagnifier = ({
             left: magnifierPosition.x,
             top: magnifierPosition.y,
             backgroundImage: `url(${src})`,
-            backgroundSize: `${zoomLevel * 100}%`,
-            backgroundPosition: `${backgroundPosition.x}% ${backgroundPosition.y}%`,
+            // Размер фона = размер контейнера * zoomLevel (реальное увеличение)
+            backgroundSize: `${containerSize.width * zoomLevel}px ${containerSize.height * zoomLevel}px`,
+            // Позиция фона в пикселях (отрицательная, т.к. двигаем фон)
+            backgroundPosition: `-${backgroundPosition.x}px -${backgroundPosition.y}px`,
             backgroundRepeat: "no-repeat",
             opacity: showMagnifier ? 1 : 0,
             // Subtle inner shadow for depth
