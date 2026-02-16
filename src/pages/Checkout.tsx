@@ -250,22 +250,22 @@ const Checkout = () => {
   }
 
   return (
-    <div className="min-h-full p-8">
+    <div className="min-h-full p-4 sm:p-8 pt-16 sm:pt-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl tracking-[0.15em] uppercase mb-8">Оформление заказа</h1>
+        <h1 className="text-2xl sm:text-3xl tracking-[0.15em] uppercase mb-6 sm:mb-8">Оформление заказа</h1>
 
         {/* T8: Authorization prompt for guests */}
         {!user && (
           <Card className="mb-6 border-dashed">
             <CardContent className="py-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                   <p className="font-medium">Уже есть аккаунт?</p>
                   <p className="text-sm text-muted-foreground">
                     Войдите, чтобы использовать сохраненные данные и отслеживать заказы
                   </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-shrink-0">
                   <Button variant="outline" asChild>
                     <Link to="/login?redirect=/checkout">Войти</Link>
                   </Button>
@@ -280,40 +280,36 @@ const Checkout = () => {
 
         {/* T11: Registration promo block with 5% discount for guests */}
         {!user && showRegistrationPromo && (
-          <Card className="mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
-            <CardContent className="py-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 text-amber-600">
-                    <span className="text-xl font-bold">%</span>
+          <Card className="mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200 relative overflow-hidden">
+            <CardContent className="py-4 pr-10">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                <div className="flex items-center gap-3 flex-1">
+                  <div className="flex items-center justify-center w-10 h-10 min-w-[40px] min-h-[40px] rounded-full bg-amber-100 text-amber-600 flex-shrink-0">
+                    <span className="text-lg font-bold">%</span>
                   </div>
-                  <div>
-                    <p className="font-medium text-amber-900">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-amber-900 text-sm sm:text-base">
                       Зарегистрируйтесь и получите скидку 5% на первый заказ!
                     </p>
-                    <p className="text-sm text-amber-700">
+                    <p className="text-xs sm:text-sm text-amber-700">
                       Создайте аккаунт прямо сейчас и экономьте
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    className="bg-amber-500 hover:bg-amber-600 text-white"
-                    asChild
-                  >
-                    <Link to="/register?redirect=/checkout">Получить скидку</Link>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-amber-600 hover:text-amber-800 hover:bg-amber-100"
-                    onClick={() => setShowRegistrationPromo(false)}
-                    aria-label="Закрыть"
-                  >
-                    <span className="text-xl leading-none">&times;</span>
-                  </Button>
-                </div>
+                <Button
+                  className="bg-amber-500 hover:bg-amber-600 text-white flex-shrink-0 w-full sm:w-auto"
+                  asChild
+                >
+                  <Link to="/register?redirect=/checkout">Получить скидку</Link>
+                </Button>
               </div>
+              <button
+                className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-amber-600 hover:text-amber-800 rounded-full hover:bg-amber-100"
+                onClick={() => setShowRegistrationPromo(false)}
+                aria-label="Закрыть"
+              >
+                <span className="text-lg leading-none">&times;</span>
+              </button>
             </CardContent>
           </Card>
         )}

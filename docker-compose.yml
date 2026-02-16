@@ -2,8 +2,6 @@
 # Base configuration - shared across all environments
 # https://github.com/supabase/supabase/tree/master/docker
 
-version: "3.8"
-
 services:
   # ===========================================
   # ANDO FRONTEND (Vite + React)

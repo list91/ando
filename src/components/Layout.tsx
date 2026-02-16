@@ -23,6 +23,11 @@ interface LayoutProps {
 const Layout = ({ children, selectedCategory, onCategoryChange, selectedGender, onGenderChange, activeInfoSection, onInfoSectionChange }: LayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const handleMainScroll = (e: React.UIEvent<HTMLElement>) => {
+    setIsScrolled(e.currentTarget.scrollTop > 10);
+  };
 
   return (
     <>
@@ -77,13 +82,17 @@ const Layout = ({ children, selectedCategory, onCategoryChange, selectedGender, 
           <Header />
 
           {/* Mobile Header with Logo - only on mobile */}
-          <div className="md:hidden sticky top-0 z-40 bg-background border-b border-border -mt-[50px]">
+          <div className={`md:hidden sticky top-0 z-40 transition-all duration-200 -mt-[50px]
+            ${isScrolled
+              ? 'bg-background border-b border-border shadow-sm'
+              : 'bg-transparent border-b border-transparent'
+            }`}>
             <Link to="/" className="flex justify-center">
               <img src={logoMobile} alt="ANDO JV" className="w-36 h-auto" />
             </Link>
           </div>
 
-          <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
+          <main onScroll={handleMainScroll} className="flex-1 overflow-y-auto pb-20 md:pb-0">
             {children}
           </main>
         </div>

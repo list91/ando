@@ -3,7 +3,7 @@
 # ===========================================
 # DEVELOPMENT STAGE (hot-reload with Vite)
 # ===========================================
-FROM node:20-alpine AS development
+FROM --platform=linux/amd64 node:20-alpine AS development
 
 WORKDIR /app
 
@@ -30,7 +30,7 @@ CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 # ===========================================
 # BUILD STAGE (production build)
 # ===========================================
-FROM node:20-alpine AS builder
+FROM --platform=linux/amd64 node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -54,7 +54,7 @@ RUN npm run build
 # ===========================================
 # PRODUCTION STAGE (nginx serving static files)
 # ===========================================
-FROM nginx:alpine AS production
+FROM --platform=linux/amd64 nginx:alpine AS production
 
 # Copy built files from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html

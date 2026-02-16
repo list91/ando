@@ -5,8 +5,6 @@
 # Usage: docker-compose up
 # (override is applied automatically)
 
-version: "3.8"
-
 services:
   # ===========================================
   # FRONTEND - Development Mode
