@@ -1,6 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { createSupabaseCRUD } from './createSupabaseCRUD';
 
 export interface HeroSlide {
   id: string;
@@ -15,112 +13,20 @@ export interface HeroSlide {
   updated_at: string;
 }
 
-export const useHeroSlides = () => {
-  return useQuery({
-    queryKey: ["hero-slides"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("hero_slides")
-        .select("*")
-        .order("display_order", { ascending: true });
+// Create CRUD hooks using factory
+const heroSlidesHooks = createSupabaseCRUD<HeroSlide>({
+  tableName: 'hero_slides',
+  queryKey: 'hero-slides',
+  messages: {
+    created: 'Слайд создан',
+    updated: 'Слайд обновлен',
+    deleted: 'Слайд удален',
+  },
+  orderBy: { column: 'display_order', ascending: true },
+});
 
-      if (error) throw error;
-      return data as HeroSlide[];
-    },
-  });
-};
-
-export const useCreateHeroSlide = () => {
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (slide: Omit<HeroSlide, "id" | "created_at" | "updated_at">) => {
-      const { data, error } = await supabase
-        .from("hero_slides")
-        .insert(slide)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hero-slides"] });
-      toast({
-        title: "Успешно",
-        description: "Слайд создан",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Ошибка",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-};
-
-export const useUpdateHeroSlide = () => {
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ id, ...updates }: Partial<HeroSlide> & { id: string }) => {
-      const { data, error } = await supabase
-        .from("hero_slides")
-        .update(updates)
-        .eq("id", id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hero-slides"] });
-      toast({
-        title: "Успешно",
-        description: "Слайд обновлен",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Ошибка",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-};
-
-export const useDeleteHeroSlide = () => {
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from("hero_slides")
-        .delete()
-        .eq("id", id);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hero-slides"] });
-      toast({
-        title: "Успешно",
-        description: "Слайд удален",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Ошибка",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-};
+// Export hooks with original names for backward compatibility
+export const useHeroSlides = heroSlidesHooks.useList;
+export const useCreateHeroSlide = heroSlidesHooks.useCreate;
+export const useUpdateHeroSlide = heroSlidesHooks.useUpdate;
+export const useDeleteHeroSlide = heroSlidesHooks.useDelete;

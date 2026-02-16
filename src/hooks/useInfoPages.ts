@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 export interface InfoPage {
   id: string;
@@ -62,17 +62,10 @@ export const useCreateInfoPage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['info-pages'] });
-      toast({
-        title: 'Успешно',
-        description: 'Страница создана',
-      });
+      toast.success('Страница создана');
     },
     onError: (error) => {
-      toast({
-        title: 'Ошибка',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast.error(error.message);
     },
   });
 };
@@ -94,17 +87,10 @@ export const useUpdateInfoPage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['info-pages'] });
-      toast({
-        title: 'Успешно',
-        description: 'Страница обновлена',
-      });
+      toast.success('Страница обновлена');
     },
     onError: (error) => {
-      toast({
-        title: 'Ошибка',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast.error(error.message);
     },
   });
 };
@@ -123,17 +109,10 @@ export const useDeleteInfoPage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['info-pages'] });
-      toast({
-        title: 'Успешно',
-        description: 'Страница удалена',
-      });
+      toast.success('Страница удалена');
     },
     onError: (error) => {
-      toast({
-        title: 'Ошибка',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast.error(error.message);
     },
   });
 };

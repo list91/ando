@@ -90,3 +90,13 @@ tests/screenshots-output/bugfix-verification/sidebar-full-page.png
 tests/screenshots-output/bugfix-verification/test-results.json
 tests/screenshots-output/bugfix-verification/zoom-before-hover.png
 tests/screenshots-output/bugfix-verification/zoom-with-magnifier.png
+.refactor-snapshots/20260216_171358/use-mobile.tsx
+.refactor-snapshots/20260216_171358/use-toast.ts
+.refactor-snapshots/20260216_171358/useAboutPage.ts
+.refactor-snapshots/20260216_171358/useColorMap.ts
+.refactor-snapshots/20260216_171358/useHeroSlides.ts
+.refactor-snapshots/20260216_171358/useInfoPages.ts
+.refactor-snapshots/20260216_171358/useLookbook.ts
+.refactor-snapshots/20260216_171358/usePageTracking.ts
+.refactor-snapshots/20260216_171358/useProducts.ts
+.refactor-snapshots/20260216_171358/useSiteSettings.ts

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 export interface SiteSetting {
   id: string;
@@ -71,17 +71,10 @@ export const useCreateSiteSetting = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['site-settings'] });
-      toast({
-        title: 'Успешно',
-        description: 'Настройка создана',
-      });
+      toast.success('Настройка создана');
     },
     onError: (error) => {
-      toast({
-        title: 'Ошибка',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast.error(error.message);
     },
   });
 };
@@ -108,17 +101,10 @@ export const useUpdateSiteSetting = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['site-settings'] });
-      toast({
-        title: 'Успешно',
-        description: 'Настройка обновлена',
-      });
+      toast.success('Настройка обновлена');
     },
     onError: (error) => {
-      toast({
-        title: 'Ошибка',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast.error(error.message);
     },
   });
 };
@@ -137,17 +123,10 @@ export const useDeleteSiteSetting = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['site-settings'] });
-      toast({
-        title: 'Успешно',
-        description: 'Настройка удалена',
-      });
+      toast.success('Настройка удалена');
     },
     onError: (error) => {
-      toast({
-        title: 'Ошибка',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast.error(error.message);
     },
   });
 };
