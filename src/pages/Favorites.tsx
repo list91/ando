@@ -1,4 +1,3 @@
-import { useAuth } from '@/contexts/AuthContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import { useProducts } from '@/hooks/useProducts';
 import { Button } from '@/components/ui/button';
@@ -7,36 +6,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 
 const Favorites = () => {
-  const { user, loading: authLoading } = useAuth();
+  // ЛК-3: Теперь гости тоже могут видеть избранное (из localStorage)
   const { favorites, isLoading: favoritesLoading, toggleFavorite } = useFavorites();
   const { data: products, isLoading: productsLoading } = useProducts();
   const { addToCart } = useCart();
   const navigate = useNavigate();
 
-  // Если не авторизован - показываем предложение войти
-  if (!authLoading && !user) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center px-4">
-        <div className="text-center max-w-md">
-          <Heart className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-          <h1 className="text-2xl font-semibold mb-2">Избранное</h1>
-          <p className="text-muted-foreground mb-6">
-            Войдите в аккаунт, чтобы сохранять понравившиеся товары
-          </p>
-          <div className="flex gap-3 justify-center">
-            <Button onClick={() => navigate('/auth')}>
-              Войти
-            </Button>
-            <Button variant="outline" onClick={() => navigate('/catalog')}>
-              В каталог
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (authLoading || favoritesLoading || productsLoading) {
+  if (favoritesLoading || productsLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />

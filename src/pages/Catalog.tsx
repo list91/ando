@@ -202,22 +202,16 @@ const ProductGrid = memo(({ products, gridCols, getColorHex, user, isFavorite, t
           setTouchProductId(null);
         };
 
+        // ЛК-3: Избранное работает и для гостей через localStorage
         const handleFavoriteClick = async (e: React.MouseEvent) => {
           e.preventDefault();
           e.stopPropagation();
 
-          if (!user) {
-            toast({
-              title: "Требуется авторизация",
-              description: "Войдите в аккаунт, чтобы добавить товар в избранное",
-            });
-            navigate('/auth', { state: { from: '/catalog' } });
-            return;
-          }
-
+          // Сохраняем текущее состояние ДО toggle для корректного сообщения
+          const wasInFavorites = isFavorite(product.id);
           await toggleFavorite(product.id);
           toast({
-            title: isFavorite(product.id) ? "Удалено из избранного" : "Добавлено в избранное",
+            title: wasInFavorites ? "Удалено из избранного" : "Добавлено в избранное",
             description: product.name,
           });
         };

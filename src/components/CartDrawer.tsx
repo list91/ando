@@ -25,7 +25,7 @@ const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
         onClick={onClose}
       />
       
-      <div className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-background z-50 shadow-xl flex flex-col">
+      <div data-testid="cart-drawer" className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-background z-50 shadow-xl flex flex-col">
         <div className="flex items-center justify-between p-6 border-b border-border">
           <h2 className="text-xl tracking-[0.15em] uppercase">Корзина</h2>
           <button onClick={onClose} className="hover:opacity-60 transition-opacity">

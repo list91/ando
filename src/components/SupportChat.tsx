@@ -65,7 +65,7 @@ export function SupportChat() {
     return (
       <button
         onClick={() => setState("chat")}
-        className="hidden md:flex fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg hover:scale-110 transition-transform duration-200 overflow-hidden items-center justify-center"
+        className="flex md:hidden fixed bottom-20 right-6 z-[60] w-14 h-14 rounded-full shadow-lg hover:scale-110 transition-transform duration-200 overflow-hidden items-center justify-center"
         aria-label="Открыть чат поддержки"
       >
         <img
@@ -87,7 +87,7 @@ export function SupportChat() {
 
       {/* Chat window */}
       {/* Mobile: bottom sheet full width | Desktop: popup right bottom */}
-      <div className="fixed z-50
+      <div className="fixed z-[60]
         bottom-0 left-0 right-0 md:bottom-6 md:left-auto md:right-6
         w-full md:w-[360px] md:max-w-[calc(100vw-2rem)]
         animate-in slide-in-from-bottom duration-300">

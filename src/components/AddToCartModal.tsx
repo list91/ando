@@ -1,5 +1,5 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { useNavigate } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
 import { ChevronRight } from "lucide-react";
 
 interface AddToCartModalProps {
@@ -15,13 +15,13 @@ interface AddToCartModalProps {
 }
 
 export function AddToCartModal({ isOpen, onClose, product }: AddToCartModalProps) {
-  const navigate = useNavigate();
+  const { openCartDrawer } = useCart();
 
   if (!product) return null;
 
   const handleGoToCart = () => {
     onClose();
-    navigate('/checkout');
+    openCartDrawer();
   };
 
   return (
@@ -54,6 +54,7 @@ export function AddToCartModal({ isOpen, onClose, product }: AddToCartModalProps
 
         <div className="p-6 pt-0">
           <button
+            data-testid="go-to-cart-modal"
             onClick={handleGoToCart}
             className="w-full bg-foreground text-background py-3 text-sm tracking-[0.1em] uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
           >

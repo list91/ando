@@ -10,13 +10,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 const Header = () => {
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   const { query: searchQuery, setQuery: setSearchQuery, clearQuery: clearSearchQuery } = useCatalogSearch();
   const {
-    totalItems
+    totalItems,
+    isCartDrawerOpen,
+    openCartDrawer,
+    closeCartDrawer
   } = useCart();
   const {
     user,
@@ -75,7 +77,7 @@ const Header = () => {
               <ProductSearch />
             </div>
             {/* Cart */}
-            <button onClick={() => setIsCartOpen(true)} className="hover:opacity-60 transition-opacity relative min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Корзина">
+            <button onClick={openCartDrawer} className="hover:opacity-60 transition-opacity relative min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Корзина">
               <ShoppingCart className="w-5 h-5" />
               {totalItems > 0 && <span className="absolute -top-1 -right-1 bg-foreground text-background text-xs w-5 h-5 rounded-full flex items-center justify-center">
                   {totalItems}
@@ -186,7 +188,7 @@ const Header = () => {
               </button>
 
               {/* Cart */}
-              <button onClick={() => setIsCartOpen(true)} className="hover:opacity-60 transition-opacity relative min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Корзина">
+              <button onClick={openCartDrawer} className="hover:opacity-60 transition-opacity relative min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Корзина">
                 <ShoppingCart className="w-5 h-5" />
                 {totalItems > 0 && <span className="absolute -top-1 -right-1 bg-foreground text-background text-xs w-5 h-5 rounded-full flex items-center justify-center">
                     {totalItems}
@@ -254,7 +256,7 @@ const Header = () => {
           </div>}
       </header>
     
-      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <CartDrawer isOpen={isCartDrawerOpen} onClose={closeCartDrawer} />
     </>;
 };
 export default Header;

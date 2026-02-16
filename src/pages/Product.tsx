@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Heart, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { TransformWrapper, TransformComponent, ReactZoomPanPinchRef } from "react-zoom-pan-pinch";
@@ -12,6 +12,8 @@ import SchemaOrg from "@/components/SchemaOrg";
 import { Helmet } from "react-helmet-async";
 import { getMediumUrl } from "@/lib/imageUrl";
 import { sortSizes } from "@/lib/sizeUtils";
+import ImageMagnifier from "@/components/ImageMagnifier";
+import ImageLightbox from "@/components/ImageLightbox";
 
 const Product = () => {
   const { id } = useParams();
@@ -30,6 +32,19 @@ const Product = () => {
 
   const zoomRef = useRef<ReactZoomPanPinchRef>(null);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+  // Detect desktop (pointer: fine) for hover magnifier
+  useEffect(() => {
+    const checkPointer = () => {
+      setIsDesktop(window.matchMedia("(pointer: fine)").matches);
+    };
+    checkPointer();
+    // Re-check on window resize (e.g., dev tools toggle)
+    window.addEventListener("resize", checkPointer);
+    return () => window.removeEventListener("resize", checkPointer);
+  }, []);
 
   // Swipe state test
   const touchStartX = useRef<number>(0);
@@ -198,33 +213,51 @@ const Product = () => {
                 </div>
               )}
 
-              <TransformWrapper
-                key={currentImage}
-                ref={zoomRef}
-                initialScale={1}
-                minScale={1}
-                maxScale={3}
-                doubleClick={{ mode: "toggle", step: 0.7 }}
-                panning={{ disabled: !isZoomed }}
-                pinch={{ step: 5 }}
-                wheel={{ disabled: true }}
-                onTransformed={(ref) => {
-                  setIsZoomed(ref.state.scale > 1);
-                }}
-              >
-                <TransformComponent
-                  wrapperClass="!w-full !h-full"
-                  contentClass="!w-full !h-full flex items-center justify-center"
+              {/* Desktop: Hover magnifier | Mobile: Pinch-to-zoom */}
+              {isDesktop ? (
+                <div
+                  onClick={() => setIsLightboxOpen(true)}
+                  className="cursor-zoom-in w-full h-full"
                 >
-                  <img
+                  <ImageMagnifier
+                    key={currentImage}
                     src={getMediumUrl(mainImages[currentImage])}
                     alt={product.name}
-                    className="w-full h-full object-contain select-none"
-                    loading="eager"
-                    draggable={false}
+                    className="w-full h-full"
+                    magnifierSize={200}
+                    zoomLevel={2.5}
                   />
-                </TransformComponent>
-              </TransformWrapper>
+                </div>
+              ) : (
+                <TransformWrapper
+                  key={currentImage}
+                  ref={zoomRef}
+                  initialScale={1}
+                  minScale={1}
+                  maxScale={3}
+                  doubleClick={{ mode: "toggle", step: 0.7 }}
+                  panning={{ disabled: !isZoomed }}
+                  pinch={{ step: 5 }}
+                  wheel={{ disabled: true }}
+                  onTransformed={(ref) => {
+                    setIsZoomed(ref.state.scale > 1);
+                  }}
+                >
+                  <TransformComponent
+                    wrapperClass="!w-full !h-full"
+                    contentClass="!w-full !h-full flex items-center justify-center"
+                  >
+                    <img
+                      src={getMediumUrl(mainImages[currentImage])}
+                      alt={product.name}
+                      className="w-full h-full object-contain select-none"
+                      loading="eager"
+                      draggable={false}
+                      onClick={() => !isZoomed && setIsLightboxOpen(true)}
+                    />
+                  </TransformComponent>
+                </TransformWrapper>
+              )}
             </div>
 
             {/* Navigation arrows - outside overflow-hidden for proper positioning */}
@@ -495,6 +528,20 @@ const Product = () => {
           </Collapsible>
         </div>
       </div>
+
+      {/* Fullscreen lightbox gallery */}
+      <ImageLightbox
+        images={mainImages}
+        currentIndex={currentImage}
+        isOpen={isLightboxOpen}
+        onClose={() => setIsLightboxOpen(false)}
+        onNavigate={(index) => {
+          setCurrentImage(index);
+          zoomRef.current?.resetTransform();
+          setIsZoomed(false);
+        }}
+        alt={product.name}
+      />
     </>
   );
 };

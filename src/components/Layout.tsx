@@ -9,6 +9,7 @@ import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
 import logoImage from "@/assets/logo.png";
 import logoMobile from "@/assets/logo-mobile.png";
+import { useCart } from "@/contexts/CartContext";
 
 interface LayoutProps {
   children: ReactNode;
@@ -22,7 +23,7 @@ interface LayoutProps {
 
 const Layout = ({ children, selectedCategory, onCategoryChange, selectedGender, onGenderChange, activeInfoSection, onInfoSectionChange }: LayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const { isCartDrawerOpen, openCartDrawer, closeCartDrawer } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
 
   const handleMainScroll = (e: React.UIEvent<HTMLElement>) => {
@@ -100,7 +101,7 @@ const Layout = ({ children, selectedCategory, onCategoryChange, selectedGender, 
 
       {/* Mobile Bottom Navigation - outside overflow container */}
       <MobileBottomNav
-        onCartOpen={() => setIsCartOpen(true)}
+        onCartOpen={openCartDrawer}
         selectedCategory={selectedCategory}
         onCategoryChange={onCategoryChange}
         activeInfoSection={activeInfoSection}
@@ -108,7 +109,7 @@ const Layout = ({ children, selectedCategory, onCategoryChange, selectedGender, 
       />
 
       {/* Cart Drawer for Mobile Bottom Nav */}
-      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <CartDrawer isOpen={isCartDrawerOpen} onClose={closeCartDrawer} />
     </>
   );
 };
