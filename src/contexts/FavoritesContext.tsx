@@ -1,8 +1,14 @@
-import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useCallback, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-
-const FAVORITES_STORAGE_KEY = 'ando_favorites';
+import {
+  useFavoritesStore,
+  selectFavorites,
+  selectIsLoading,
+  selectHasMigrated,
+  getGuestFavoritesFromStorage,
+  clearGuestFavoritesFromStorage,
+} from '@/stores/favoritesStore';
 
 interface FavoritesContextType {
   favorites: string[]; // array of product IDs
@@ -18,66 +24,29 @@ interface FavoritesContextType {
 
 const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined);
 
-// ЛК-3: Вспомогательные функции для работы с localStorage
-const getLocalStorageFavorites = (): string[] => {
-  try {
-    const stored = localStorage.getItem(FAVORITES_STORAGE_KEY);
-    if (!stored) return [];
-
-    const parsed = JSON.parse(stored);
-
-    // Validate: must be an array
-    if (!Array.isArray(parsed)) {
-      console.warn('Invalid favorites format in localStorage, clearing...');
-      localStorage.removeItem(FAVORITES_STORAGE_KEY);
-      return [];
-    }
-
-    // Filter out non-string values
-    const validFavorites = parsed.filter((id): id is string => typeof id === 'string');
-
-    // If some items were filtered out, save the cleaned data
-    if (validFavorites.length !== parsed.length) {
-      console.warn(`Removed ${parsed.length - validFavorites.length} invalid favorite items`);
-      localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(validFavorites));
-    }
-
-    return validFavorites;
-  } catch (error) {
-    console.error('Error parsing favorites from localStorage:', error);
-    localStorage.removeItem(FAVORITES_STORAGE_KEY);
-    return [];
-  }
-};
-
-const setLocalStorageFavorites = (favorites: string[]) => {
-  try {
-    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
-  } catch (error) {
-    console.error('Error saving favorites to localStorage:', error);
-  }
-};
-
-const clearLocalStorageFavorites = () => {
-  try {
-    localStorage.removeItem(FAVORITES_STORAGE_KEY);
-  } catch (error) {
-    console.error('Error clearing localStorage favorites:', error);
-  }
-};
-
 export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
-  const [favorites, setFavorites] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasMigrated, setHasMigrated] = useState(false);
+
+  // Use Zustand store
+  const favorites = useFavoritesStore(selectFavorites);
+  const isLoading = useFavoritesStore(selectIsLoading);
+  const hasMigrated = useFavoritesStore(selectHasMigrated);
+
+  const setFavorites = useFavoritesStore((state) => state.setFavorites);
+  const addFavorite = useFavoritesStore((state) => state.addFavorite);
+  const removeFavorite = useFavoritesStore((state) => state.removeFavorite);
+  const setIsLoading = useFavoritesStore((state) => state.setIsLoading);
+  const migrateGuestFavoritesStore = useFavoritesStore((state) => state.migrateGuestFavorites);
+  const setHasMigrated = useFavoritesStore((state) => state.setHasMigrated);
+  const resetMigrationState = useFavoritesStore((state) => state.resetMigrationState);
+  const clearFavorites = useFavoritesStore((state) => state.clearFavorites);
 
   // ЛК-3: Загрузка избранного из localStorage для гостей
   const loadGuestFavorites = useCallback(() => {
-    const guestFavorites = getLocalStorageFavorites();
+    const guestFavorites = getGuestFavoritesFromStorage();
     setFavorites(guestFavorites);
     setIsLoading(false);
-  }, []);
+  }, [setFavorites, setIsLoading]);
 
   // Загрузка избранного из БД для авторизованных
   const loadDbFavorites = useCallback(async () => {
@@ -98,13 +67,13 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [user]);
+  }, [user, setFavorites, setIsLoading]);
 
   // ЛК-4: Миграция избранного гостя в БД при авторизации
   const migrateGuestFavorites = useCallback(async () => {
     if (!user || hasMigrated) return;
 
-    const guestFavorites = getLocalStorageFavorites();
+    const guestFavorites = getGuestFavoritesFromStorage();
     if (guestFavorites.length === 0) {
       setHasMigrated(true);
       return;
@@ -117,10 +86,10 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
         .select('product_id')
         .eq('user_id', user.id);
 
-      const existingIds = new Set(existingFavorites?.map(f => f.product_id) || []);
+      const existingIds = existingFavorites?.map(f => f.product_id) || [];
 
-      // Фильтруем только новые (которых ещё нет в БД)
-      const newFavorites = guestFavorites.filter(id => !existingIds.has(id));
+      // Use store's migration logic to get new favorites
+      const newFavorites = migrateGuestFavoritesStore(guestFavorites, existingIds);
 
       if (newFavorites.length > 0) {
         // Добавляем новые в БД
@@ -135,15 +104,14 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
       }
 
       // ЛК-4: Очищаем localStorage после успешной миграции
-      clearLocalStorageFavorites();
-      setHasMigrated(true);
+      clearGuestFavoritesFromStorage();
 
       // Перезагружаем избранное из БД
       await loadDbFavorites();
     } catch (error) {
       console.error('Error migrating guest favorites:', error);
     }
-  }, [user, hasMigrated, loadDbFavorites]);
+  }, [user, hasMigrated, migrateGuestFavoritesStore, setHasMigrated, loadDbFavorites]);
 
   // Загрузка избранного при изменении пользователя
   useEffect(() => {
@@ -153,12 +121,12 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
     } else {
       // ЛК-3: Для гостей загружаем из localStorage
       loadGuestFavorites();
-      setHasMigrated(false);
+      resetMigrationState();
     }
-  }, [user, loadGuestFavorites, loadDbFavorites, migrateGuestFavorites]);
+  }, [user, loadGuestFavorites, loadDbFavorites, migrateGuestFavorites, resetMigrationState]);
 
   // ЛК-3: Добавление в избранное (работает и для гостей)
-  const addToFavorites = async (productId: string) => {
+  const addToFavorites = useCallback(async (productId: string) => {
     if (user) {
       // Авторизованный пользователь - сохраняем в БД
       try {
@@ -168,20 +136,18 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
 
         if (error) throw error;
 
-        setFavorites(prev => [...prev, productId]);
+        addFavorite(productId);
       } catch (error) {
         console.error('Error adding to favorites:', error);
       }
     } else {
-      // ЛК-3: Гость - сохраняем в localStorage
-      const updated = [...favorites, productId];
-      setFavorites(updated);
-      setLocalStorageFavorites(updated);
+      // ЛК-3: Гость - сохраняем через store (автоматически персистится)
+      addFavorite(productId);
     }
-  };
+  }, [user, addFavorite]);
 
   // ЛК-3: Удаление из избранного (работает и для гостей)
-  const removeFromFavorites = async (productId: string) => {
+  const removeFromFavorites = useCallback(async (productId: string) => {
     if (user) {
       // Авторизованный пользователь - удаляем из БД
       try {
@@ -193,40 +159,38 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
 
         if (error) throw error;
 
-        setFavorites(prev => prev.filter(id => id !== productId));
+        removeFavorite(productId);
       } catch (error) {
         console.error('Error removing from favorites:', error);
       }
     } else {
-      // ЛК-3: Гость - удаляем из localStorage
-      const updated = favorites.filter(id => id !== productId);
-      setFavorites(updated);
-      setLocalStorageFavorites(updated);
+      // ЛК-3: Гость - удаляем через store (автоматически персистится)
+      removeFavorite(productId);
     }
-  };
+  }, [user, removeFavorite]);
 
-  const isFavorite = (productId: string) => {
+  const isFavorite = useCallback((productId: string) => {
     return favorites.includes(productId);
-  };
+  }, [favorites]);
 
-  const toggleFavorite = async (productId: string) => {
+  const toggleFavorite = useCallback(async (productId: string) => {
     if (isFavorite(productId)) {
       await removeFromFavorites(productId);
     } else {
       await addToFavorites(productId);
     }
-  };
+  }, [isFavorite, removeFromFavorites, addToFavorites]);
 
   // Геттер для гостевых избранных (используется при миграции)
-  const getGuestFavorites = () => getLocalStorageFavorites();
+  const getGuestFavorites = useCallback(() => getGuestFavoritesFromStorage(), []);
 
   // Очистка гостевых избранных
-  const clearGuestFavorites = () => {
-    clearLocalStorageFavorites();
+  const clearGuestFavorites = useCallback(() => {
+    clearGuestFavoritesFromStorage();
     if (!user) {
-      setFavorites([]);
+      clearFavorites();
     }
-  };
+  }, [user, clearFavorites]);
 
   return (
     <FavoritesContext.Provider
