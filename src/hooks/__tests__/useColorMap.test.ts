@@ -6,40 +6,37 @@ const { mockSupabaseClient, setMockResponse, resetMock } = vi.hoisted(() => {
   let responseData: any = null;
   let responseError: any = null;
 
-  const createChainableMock = () => {
-    const mock: any = {
-      select: vi.fn().mockImplementation(() => {
-        // Capture current values at call time
-        const data = responseData;
-        const error = responseError;
-        return Promise.resolve({ data, error });
-      }),
+  // Create a Promise-like object that can be awaited
+  const createSelectResult = () => {
+    const promise = Promise.resolve({ data: responseData, error: responseError });
+    return {
+      then: promise.then.bind(promise),
+      catch: promise.catch.bind(promise),
+      finally: promise.finally.bind(promise),
     };
-    return mock;
   };
 
-  const chainableMock = createChainableMock();
+  const selectMock = vi.fn().mockImplementation(() => createSelectResult());
+
+  const fromMock = vi.fn().mockImplementation(() => ({
+    select: selectMock,
+  }));
 
   const mockSupabaseClient = {
-    from: vi.fn().mockReturnValue(chainableMock),
+    from: fromMock,
   };
 
   const setMockResponse = (data: any, error: any = null) => {
     responseData = data;
     responseError = error;
-    // Update the mock implementation with new data
-    chainableMock.select.mockImplementation(() => {
-      return Promise.resolve({ data, error });
-    });
   };
 
   const resetMock = () => {
     responseData = null;
     responseError = null;
-    mockSupabaseClient.from.mockClear();
-    chainableMock.select.mockImplementation(() => {
-      return Promise.resolve({ data: null, error: null });
-    });
+    // Only clear call history, don't reset implementations
+    fromMock.mockClear();
+    selectMock.mockClear();
   };
 
   return { mockSupabaseClient, setMockResponse, resetMock };
@@ -91,7 +88,8 @@ describe('useColorMap', () => {
   });
 
   afterEach(() => {
-    vi.resetAllMocks();
+    // Only clear mocks, not reset - resetAllMocks would clear implementations
+    vi.clearAllMocks();
   });
 
   describe('Initial state', () => {

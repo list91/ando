@@ -9,6 +9,19 @@ const __dirname = dirname(__filename);
 // Загружаем переменные окружения
 dotenv.config();
 
+// Validate required environment variables
+const requiredEnvVars = ['FTP_HOST', 'FTP_USER', 'FTP_PASSWORD', 'FTP_REMOTE_PATH'];
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingVars.length > 0) {
+  console.error('❌ Missing required environment variables:');
+  missingVars.forEach(v => console.error(`   - ${v}`));
+  console.error('\n   Set them in .env file or export them before running this script');
+  process.exit(1);
+}
+
+const DEPLOY_HOST = process.env.DEPLOY_HOST || 'andojv.com';
+
 const ftpDeploy = new FtpDeploy();
 
 const config = {
@@ -17,7 +30,7 @@ const config = {
   host: process.env.FTP_HOST,
   port: process.env.FTP_PORT || 21,
   localRoot: resolve(__dirname, './dist'),
-  remoteRoot: process.env.FTP_REMOTE_PATH || '/www/andojv.com/',
+  remoteRoot: process.env.FTP_REMOTE_PATH,
   include: ['*', '**/*'],
   exclude: [],
   deleteRemote: false,
@@ -38,7 +51,7 @@ ftpDeploy
   .deploy(config)
   .then((res) => {
     console.log('✅ Деплой завершен успешно!');
-    console.log('🌍 Сайт доступен по адресу: http://andojv.com');
+    console.log(`🌍 Сайт доступен по адресу: https://${DEPLOY_HOST}`);
   })
   .catch((err) => {
     console.error('❌ Ошибка деплоя:', err);

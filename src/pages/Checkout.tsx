@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { z } from 'zod';
+import { API_CONFIG } from '@/config/api';
 
 const checkoutSchema = z.object({
   firstName: z.string().min(2, 'Имя должно содержать минимум 2 символа').max(50),
@@ -186,7 +187,7 @@ const Checkout = () => {
 
       // Send email notification to order@andojv.com
       try {
-        await fetch('https://andojv.com/send-order.php', {
+        await fetch(API_CONFIG.ORDER_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -11,6 +11,7 @@ lerna-debug.log*
 .env
 .env.*
 !.env.example
+!.env.*.example
 docker/.env
 docker/.env.production
 docker/nginx/.htpasswd
@@ -46,6 +47,18 @@ nul
 # Playwright test results
 test-results/
 playwright-report/
+
+# SQL files with potential schema/data
+*.sql
+add-lookbook-data.sql
+complete-site-setup.sql
+
+# Scripts with potential sensitive data
+scripts/fix-lookbook-images.js
+
+# Debug and test artifacts
+debug-session/
+dev-server.log
 
 # Temporary debug files
 test-catalog.html
@@ -100,3 +113,6 @@ tests/screenshots-output/bugfix-verification/zoom-with-magnifier.png
 .refactor-snapshots/20260216_171358/usePageTracking.ts
 .refactor-snapshots/20260216_171358/useProducts.ts
 .refactor-snapshots/20260216_171358/useSiteSettings.ts
+
+# Debug scripts
+check-*.mjs

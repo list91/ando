@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { X, Send } from "lucide-react";
+import { API_CONFIG } from "@/config/api";
 
 type ChatState = "closed" | "chat" | "contact-form" | "success";
 
@@ -20,7 +21,7 @@ export function SupportChat() {
 
     setIsSubmitting(true);
     try {
-      await fetch("https://andojv.com/send-support.php", {
+      await fetch(API_CONFIG.SUPPORT_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
