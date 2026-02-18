@@ -39,6 +39,8 @@ temp-chunks
 *.sln
 *.sw?
 public/*
+!public/support-icon.png
+!public/support-logo.png
 screenshots/*
 node_modules
 *.tsx.backup
