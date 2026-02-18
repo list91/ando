@@ -2,15 +2,17 @@
 -- These roles are required for the Supabase services to function properly
 
 -- Create supabase_admin role (superuser for internal operations)
+-- Password must match POSTGRES_PASSWORD in .env
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'supabase_admin') THEN
-        CREATE ROLE supabase_admin WITH LOGIN PASSWORD 'postgres' SUPERUSER CREATEDB CREATEROLE REPLICATION BYPASSRLS;
+        CREATE ROLE supabase_admin WITH LOGIN PASSWORD 'your-super-secret-password' SUPERUSER CREATEDB CREATEROLE REPLICATION BYPASSRLS;
     END IF;
 END
 $$;
 
 -- Create authenticator role (used by PostgREST)
+-- Password must match POSTGRES_PASSWORD in .env
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'authenticator') THEN
@@ -47,28 +49,31 @@ END
 $$;
 
 -- Create supabase_auth_admin role (for GoTrue)
+-- Password must match POSTGRES_PASSWORD in .env
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'supabase_auth_admin') THEN
-        CREATE ROLE supabase_auth_admin WITH LOGIN PASSWORD 'postgres' NOINHERIT CREATEROLE;
+        CREATE ROLE supabase_auth_admin WITH LOGIN PASSWORD 'your-super-secret-password' NOINHERIT CREATEROLE;
     END IF;
 END
 $$;
 
 -- Create supabase_storage_admin role (for Storage)
+-- Password must match POSTGRES_PASSWORD in .env
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'supabase_storage_admin') THEN
-        CREATE ROLE supabase_storage_admin WITH LOGIN PASSWORD 'postgres' NOINHERIT;
+        CREATE ROLE supabase_storage_admin WITH LOGIN PASSWORD 'your-super-secret-password' NOINHERIT;
     END IF;
 END
 $$;
 
 -- Create supabase_realtime_admin role (for Realtime)
+-- Password must match POSTGRES_PASSWORD in .env
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'supabase_realtime_admin') THEN
-        CREATE ROLE supabase_realtime_admin WITH LOGIN PASSWORD 'postgres' NOINHERIT;
+        CREATE ROLE supabase_realtime_admin WITH LOGIN PASSWORD 'your-super-secret-password' NOINHERIT;
     END IF;
 END
 $$;

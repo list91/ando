@@ -325,7 +325,6 @@ const ProductGrid = memo(({ products, gridCols, getColorHex, user, isFavorite, t
                     </span>
                   )}
                 </div>
-                {/* СКРЫТО: Цветовые кружки в каталоге - раскомментировать для возврата
                 {product.available_colors && product.available_colors.length > 0 && (
                   <div className="flex items-center gap-1.5">
                     {product.available_colors.slice(0, 4).map((color: string, idx: number) => {
@@ -343,7 +342,6 @@ const ProductGrid = memo(({ products, gridCols, getColorHex, user, isFavorite, t
                     })}
                   </div>
                 )}
-                */}
               </div>
             </Link>
           </div>

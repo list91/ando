@@ -268,10 +268,10 @@ const Checkout = () => {
                 </div>
                 <div className="flex gap-2 flex-shrink-0">
                   <Button variant="outline" asChild>
-                    <Link to="/login?redirect=/checkout">Войти</Link>
+                    <Link to="/auth?redirect=/checkout">Войти</Link>
                   </Button>
                   <Button variant="outline" asChild>
-                    <Link to="/register?redirect=/checkout">Регистрация</Link>
+                    <Link to="/auth?redirect=/checkout">Регистрация</Link>
                   </Button>
                 </div>
               </div>
@@ -301,7 +301,7 @@ const Checkout = () => {
                   className="bg-amber-500 hover:bg-amber-600 text-white flex-shrink-0 w-full sm:w-auto"
                   asChild
                 >
-                  <Link to="/register?redirect=/checkout">Получить скидку</Link>
+                  <Link to="/auth?redirect=/checkout">Получить скидку</Link>
                 </Button>
               </div>
               <button

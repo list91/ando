@@ -116,3 +116,35 @@ tests/screenshots-output/bugfix-verification/zoom-with-magnifier.png
 
 # Debug scripts
 check-*.mjs
+tests/screenshots-tools-llm/screenshots/checkout-1771340286834.png
+tests/screenshots-tools-llm/screenshots/e2e-auth-1771339889261.png
+tests/screenshots-tools-llm/screenshots/e2e-auth-1771339954550.png
+tests/screenshots-tools-llm/screenshots/e2e-auth-1771340085498.png
+temp_config.txt
+tests/screenshots-tools-llm/screenshots/catalog-cards-1771341005264.png
+tests/screenshots-tools-llm/screenshots/catalog-cards-1771341123371.png
+tests/screenshots-tools-llm/screenshots/catalog-colors-large-1771341160644.png
+tests/screenshots-tools-llm/screenshots/checkout-after-click-1771340355504.png
+tests/screenshots-tools-llm/screenshots/checkout-after-click-1771340433105.png
+tests/screenshots-tools-llm/screenshots/checkout-before-click-1771340355504.png
+tests/screenshots-tools-llm/screenshots/checkout-before-click-1771340433105.png
+tests/screenshots-tools-llm/screenshots/color-filter-1771340772283.png
+tests/screenshots-tools-llm/screenshots/color-filter-open-1771340812000.png
+tests/screenshots-tools-llm/screenshots/color-filter-open-1771340898260.png
+tests/screenshots-tools-llm/screenshots/color-filter-open-1771340964590.png
+tests/screenshots-tools-llm/screenshots/debug-colors-1771341265379.png
+tests/screenshots-tools-llm/screenshots/final-1-home-1771341495979.png
+tests/screenshots-tools-llm/screenshots/final-1-home-1771392876093.png
+tests/screenshots-tools-llm/screenshots/final-2-auth-1771341495979.png
+tests/screenshots-tools-llm/screenshots/final-2-auth-1771392876093.png
+tests/screenshots-tools-llm/screenshots/final-3-catalog-colors-1771341495979.png
+tests/screenshots-tools-llm/screenshots/final-3-catalog-colors-1771392876093.png
+tests/screenshots-tools-llm/screenshots/final-4-checkout-1771392876093.png
+tests/screenshots-tools-llm/screenshots/final-5-mobile-1771392876093.png
+tests/screenshots-tools-llm/screenshots/home-hero-1771341328576.png
+tests/screenshots-tools-llm/screenshots/home-hero-1771341444633.png
+tests/screenshots-tools-llm/screenshots/mobile-catalog-support-1771340634752.png
+tests/screenshots-tools-llm/screenshots/mobile-product-support-1771340634752.png
+tests/screenshots-tools-llm/screenshots/mobile-support-1771340601422.png
+tests/screenshots-tools-llm/screenshots/product-page-1771341005264.png
+tests/screenshots-tools-llm/screenshots/product-page-1771341123371.png
