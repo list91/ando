@@ -122,7 +122,7 @@ const Orders = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="container mx-auto px-4 pt-2 pb-8 max-w-6xl content-baseline">
       <h1 className="text-3xl font-light mb-8 tracking-wide">Личный кабинет</h1>
 
       <Tabs defaultValue="orders" className="w-full">

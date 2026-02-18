@@ -147,4 +147,4 @@ tests/screenshots-tools-llm/screenshots/mobile-catalog-support-1771340634752.png
 tests/screenshots-tools-llm/screenshots/mobile-product-support-1771340634752.png
 tests/screenshots-tools-llm/screenshots/mobile-support-1771340601422.png
 tests/screenshots-tools-llm/screenshots/product-page-1771341005264.png
-tests/screenshots-tools-llm/screenshots/product-page-1771341123371.png
+tests/screenshots-tools-llm/screenshots/*.png

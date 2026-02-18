@@ -251,7 +251,7 @@ const Checkout = () => {
   }
 
   return (
-    <div className="min-h-full p-4 sm:p-8 pt-16 sm:pt-8">
+    <div className="min-h-full p-4 sm:p-8 pt-2 content-baseline">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-2xl sm:text-3xl tracking-[0.15em] uppercase mb-6 sm:mb-8">Оформление заказа</h1>
 
@@ -280,43 +280,46 @@ const Checkout = () => {
         )}
 
         {/* T11: Registration promo block with 5% discount for guests */}
+        {/* ДОР-11: верхняя плашка чёрная (белый текст), нижняя белая (чёрный текст), круг красный */}
         {!user && showRegistrationPromo && (
-          <Card className="mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200 relative overflow-hidden">
-            <CardContent className="py-4 pr-10">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                <div className="flex items-center gap-3 flex-1">
-                  <div className="flex items-center justify-center w-10 h-10 min-w-[40px] min-h-[40px] rounded-full bg-amber-100 text-amber-600 flex-shrink-0">
-                    <span className="text-lg font-bold">%</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-amber-900 text-sm sm:text-base">
-                      Зарегистрируйтесь и получите скидку 5% на первый заказ!
-                    </p>
-                    <p className="text-xs sm:text-sm text-amber-700">
-                      Создайте аккаунт прямо сейчас и экономьте
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  className="bg-amber-500 hover:bg-amber-600 text-white flex-shrink-0 w-full sm:w-auto"
-                  asChild
-                >
-                  <Link to="/auth?redirect=/checkout">Получить скидку</Link>
-                </Button>
+          <div className="mb-6 relative overflow-hidden">
+            {/* Верхняя плашка - чёрная с белым текстом */}
+            <div className="bg-black text-white p-4 pr-10 flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 min-w-[40px] min-h-[40px] rounded-full bg-red-500 text-white flex-shrink-0">
+                <span className="text-lg font-bold">%</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-sm sm:text-base">
+                  Зарегистрируйтесь и получите скидку 5% на первый заказ!
+                </p>
               </div>
               <button
-                className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-amber-600 hover:text-amber-800 rounded-full hover:bg-amber-100"
+                className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-white hover:text-gray-300 rounded-full hover:bg-gray-800"
                 onClick={() => setShowRegistrationPromo(false)}
                 aria-label="Закрыть"
               >
                 <span className="text-lg leading-none">&times;</span>
               </button>
-            </CardContent>
-          </Card>
+            </div>
+            {/* Нижняя плашка - белая с чёрным текстом */}
+            <div className="bg-white text-black border border-t-0 border-gray-200 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <p className="text-xs sm:text-sm text-gray-700">
+                Создайте аккаунт прямо сейчас и экономьте
+              </p>
+              <Button
+                className="bg-black hover:bg-gray-800 text-white flex-shrink-0 w-full sm:w-auto"
+                asChild
+              >
+                <Link to="/auth?redirect=/checkout">Получить скидку</Link>
+              </Button>
+            </div>
+          </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
+        {/* ДОР-10: Левая часть прокручивается, правая (summary) фиксирована */}
+        <div className="lg:flex lg:gap-8">
+          {/* Левая колонка - форма */}
+          <div className="flex-1 lg:flex-[2]">
             <form onSubmit={handleSubmit} className="space-y-6">
               <Card>
                 <CardHeader>
@@ -434,7 +437,7 @@ const Checkout = () => {
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="courier" id="courier" />
                         <Label htmlFor="courier" className="font-normal">
-                          Курьер (бесплатно)
+                          Курьер
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -580,21 +583,65 @@ const Checkout = () => {
                 </CardContent>
               </Card>
 
-              {/* T10: PAY button - dark background, full-width */}
+              {/* ДОР-10: Mobile order summary - показывается только на мобильных */}
+              <Card className="lg:hidden">
+                <CardHeader>
+                  <CardTitle>Ваш заказ</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {items.map((item) => (
+                      <div key={`${item.id}-${item.size}-mobile`} className="flex gap-3">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-16 h-20 object-cover"
+                        />
+                        <div className="flex-1 text-sm">
+                          <p className="font-medium">{item.name}</p>
+                          <p className="text-muted-foreground">
+                            Размер: {item.size}
+                          </p>
+                          <p className="text-muted-foreground">
+                            {item.quantity} x {item.price} ₽
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="border-t pt-4 space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Подытог:</span>
+                        <span>{subtotal} ₽</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Доставка:</span>
+                        <span>{formData.deliveryMethod === 'courier' ? 'Курьер' : 'Самовывоз'}</span>
+                      </div>
+                      <div className="flex justify-between text-lg font-medium pt-2 border-t">
+                        <span>Итого:</span>
+                        <span>{total} ₽</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* ДОР-12: Кнопка "Оформить заказ" */}
               <Button
                 type="submit"
                 className="w-full bg-black hover:bg-gray-800 text-white"
                 size="lg"
                 disabled={loading || !personalDataProcessing || !dataSharing}
               >
-                {loading ? 'Оформление...' : `ОПЛАТИТЬ ${total} ₽`}
+                {loading ? 'Оформление...' : 'Оформить заказ'}
               </Button>
             </form>
           </div>
 
           {/* T9: Sidebar with order summary */}
-          <div>
-            <Card className="sticky top-8">
+          {/* ДОР-10: Summary фиксирована при скролле - только на десктопе */}
+          <div className="hidden lg:block lg:flex-1 lg:min-w-[280px] lg:max-w-[350px]">
+            <Card className="sticky top-24">
               <CardHeader>
                 <CardTitle>Ваш заказ</CardTitle>
               </CardHeader>
@@ -628,7 +675,7 @@ const Checkout = () => {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Доставка:</span>
-                      <span>{deliveryCost === 0 ? 'Бесплатно' : `${deliveryCost} ₽`}</span>
+                      <span>{formData.deliveryMethod === 'courier' ? 'Курьер' : 'Самовывоз'}</span>
                     </div>
                     <div className="flex justify-between text-lg font-medium pt-2 border-t">
                       <span>Итого:</span>

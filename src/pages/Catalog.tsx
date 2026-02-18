@@ -229,13 +229,13 @@ const ProductGrid = memo(({ products, gridCols, getColorHex, user, isFavorite, t
                 onTouchEnd={handleTouchEnd}
               >
                 {product.is_new && (
-                  <div className="absolute top-3 left-3 lg:top-4 lg:left-4 z-10 bg-black text-white px-3 py-1 lg:px-4 lg:py-1.5 text-[10px] lg:text-xs font-medium uppercase tracking-wider rounded-full">
+                  <div className="absolute top-2 left-2 lg:top-2 lg:left-2 z-10 bg-black text-white px-1.5 py-0.5 lg:px-2 lg:py-0.5 text-[8px] lg:text-[10px] font-medium uppercase tracking-wider rounded-full">
                     НОВОЕ
                   </div>
                 )}
 
                 {product.is_sale && (
-                  <div className={`absolute ${product.is_new ? 'top-11 lg:top-14' : 'top-3 lg:top-4'} left-3 lg:left-4 z-10 bg-[#C6121F] text-white w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center text-sm lg:text-base font-bold rounded-full`}>
+                  <div className={`absolute ${product.is_new ? 'top-7 lg:top-8' : 'top-2 lg:top-2'} left-2 lg:left-2 z-10 bg-[#C6121F] text-white w-4 h-4 lg:w-5 lg:h-5 flex items-center justify-center text-[8px] lg:text-[10px] font-bold rounded-full`}>
                     %
                   </div>
                 )}

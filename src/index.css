@@ -94,7 +94,24 @@ All colors MUST be HSL.
 }
 
 /* Custom margin classes for catalog filters alignment */
+/* ДОР-7: Выравнивание блока категорий (сайдбар) с фильтрами (каталог) на одну линию */
 @media (min-width: 1024px) {
-  .catalog-filters-mt { margin-top: 0; }
+  .catalog-filters-mt {
+    margin-top: -24px; /* Компенсация md:pt-6 (24px) из Layout main для выравнивания с категориями */
+  }
+}
+
+/* ДОР-13: Базовая линия контента - унифицированный отступ сверху для всех страниц */
+/* Каталог использует catalog-filters-mt с margin-top: -24px на десктопе */
+/* Другие страницы должны начинаться на том же уровне */
+.content-baseline {
+  /* На мобильных: без дополнительного отступа */
+}
+
+@media (min-width: 1024px) {
+  .content-baseline {
+    /* На десктопе: компенсация md:pt-6 (24px) из Layout main, аналогично catalog-filters-mt */
+    margin-top: -24px;
+  }
 }
 

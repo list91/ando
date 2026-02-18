@@ -172,7 +172,7 @@ const Home = () => {
 
           <div className="relative h-full flex flex-col items-center justify-center text-white px-4 lg:px-8">
             <h1
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light mb-3 sm:mb-4 lg:mb-6 tracking-[0.3em] uppercase text-center max-w-4xl transition-all duration-300"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light mb-6 tracking-[0.3em] uppercase text-center max-w-4xl transition-all duration-300"
               style={{
                 transform: `translateY(${-scrollProgress * 30}px)`,
                 opacity: 1 - scrollProgress,

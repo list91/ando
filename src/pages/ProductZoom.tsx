@@ -115,7 +115,7 @@ const goToImage = (index: number) => {    setCurrentImage(index);    zoomRef.cur
             {product.name}
           </h1>
           {product.is_sale && discount > 0 && (
-            <div className="bg-[#C6121F] text-white px-4 py-1.5 text-xs font-medium rounded-full ml-[40px]">
+            <div className="bg-[#C6121F] text-white px-2 py-0.5 text-[10px] font-medium rounded-full ml-[40px]">
               −{discount}%
             </div>
           )}

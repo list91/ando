@@ -66,7 +66,7 @@ export function SupportChat() {
     return (
       <button
         onClick={() => setState("chat")}
-        className="flex md:hidden fixed bottom-20 right-6 z-[60] w-14 h-14 rounded-full shadow-lg hover:scale-110 transition-transform duration-200 overflow-hidden items-center justify-center"
+        className="flex fixed bottom-20 right-6 z-[60] w-14 h-14 rounded-full shadow-lg hover:scale-110 transition-transform duration-200 overflow-hidden items-center justify-center md:bottom-6"
         aria-label="Открыть чат поддержки"
       >
         <img

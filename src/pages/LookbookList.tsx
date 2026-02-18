@@ -21,11 +21,11 @@ const LookbookList = () => {
   }
 
   return (
-    <div className="min-h-full lg:mt-[29px]">
+    <div className="min-h-full content-baseline">
       {shouldShowIntro && (introTitle?.value || introDescription?.value) && (
-        <div className="border-b border-border py-12 px-8 text-center max-w-3xl mx-auto">
+        <div className="border-b border-border py-2 lg:py-4 px-2 lg:px-8 text-center max-w-3xl mx-auto">
           {introTitle?.value && (
-            <h1 className="text-3xl md:text-4xl font-light mb-4 tracking-wide">
+            <h1 className="text-3xl md:text-4xl font-light mb-6 tracking-wide">
               {introTitle.value as string}
             </h1>
           )}
@@ -42,7 +42,7 @@ const LookbookList = () => {
           <p className="text-muted-foreground">Лукбуки скоро появятся</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6 md:p-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6 md:p-12 pb-20 md:pb-12">
           {activeSeasons.map((season) => (
             <Link
               key={season.id}

@@ -89,11 +89,11 @@ const Layout = ({ children, selectedCategory, onCategoryChange, selectedGender, 
               : 'bg-transparent border-b border-transparent'
             }`}>
             <Link to="/" className="flex justify-center">
-              <img src={logoMobile} alt="ANDO JV" className="w-36 h-auto" />
+              <img src={logoMobile} alt="ANDO JV" className="w-24 h-auto" />
             </Link>
           </div>
 
-          <main onScroll={handleMainScroll} className="flex-1 overflow-y-auto pb-20 md:pb-0">
+          <main onScroll={handleMainScroll} className="flex-1 overflow-y-auto pb-20 md:pb-0 md:pt-6">
             {children}
           </main>
         </div>

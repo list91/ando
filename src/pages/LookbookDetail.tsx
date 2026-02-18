@@ -60,9 +60,9 @@ const LookbookDetail = () => {
   }
 
   return (
-    <div className="min-h-full">
+    <div className="min-h-full content-baseline">
       {/* Кнопка назад */}
-      <div className="px-4 md:px-8 pt-4 md:pt-6">
+      <div className="px-4 md:px-8 pt-2 md:pt-2">
         <Link to="/lookbook" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ChevronLeft className="w-4 h-4 mr-1" />
           Назад к лукбукам
@@ -95,7 +95,7 @@ const LookbookDetail = () => {
           <p className="text-muted-foreground">Изображения скоро появятся</p>
         </div>
       ) : (
-        <div className="py-6 md:py-10 px-4 md:px-8 lg:px-12">
+        <div className="py-6 md:py-10 pb-20 md:pb-10 px-4 md:px-8 lg:px-12">
           <div className="max-w-7xl mx-auto">
             {/* Grid: 2 фото горизонтально слева, текст справа */}
             <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 md:gap-8 items-start">

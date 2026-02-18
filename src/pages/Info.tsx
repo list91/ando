@@ -51,7 +51,7 @@ const Info = ({ activeSection, setActiveSection }: InfoProps) => {
   // Try to find the active page from database
   const activePage = visiblePages?.find(p => p.page_key === activeSection);
   return (
-    <div className="flex-1 py-8 lg:py-20 px-4 lg:px-16 max-w-4xl min-h-full">
+    <div className="flex-1 pt-2 pb-8 lg:pt-2 lg:pb-20 px-4 lg:px-16 max-w-4xl min-h-full content-baseline">
       <InfoSectionToggle 
         sections={sections}
         activeSection={activeSection}

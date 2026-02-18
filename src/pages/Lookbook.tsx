@@ -35,8 +35,8 @@ const Lookbook = () => {
   }
 
   return (
-    <div className="min-h-full lg:mt-[29px]">
-      <div className="border-b border-border py-4 px-8 flex justify-end">
+    <div className="min-h-full content-baseline">
+      <div className="border-b border-border py-2 px-2 lg:px-8 flex justify-end">
         <div className="relative">
           <select
             value={currentSeasonId}
@@ -73,7 +73,7 @@ const Lookbook = () => {
           </div>
 
           {photographerCredit && (
-            <div className="py-16 text-center">
+            <div className="pt-8 pb-20 md:pb-8 text-center">
               <p className="text-sm tracking-wide text-muted-foreground">
                 Фотография: {photographerCredit}
               </p>

@@ -26,10 +26,10 @@ const Favorites = () => {
   );
 
   return (
-    <div className="min-h-[60vh] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-[60vh] pt-2 pb-8 px-4 sm:px-6 lg:px-8 content-baseline">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Избранное</h1>
+          <h1 className="text-3xl font-light mb-6 tracking-wide">Избранное</h1>
           <p className="text-muted-foreground">
             {favoriteProducts && favoriteProducts.length > 0
               ? `${favoriteProducts.length} ${favoriteProducts.length === 1 ? 'товар' : 'товара'}`
@@ -40,7 +40,7 @@ const Favorites = () => {
         {!favoriteProducts || favoriteProducts.length === 0 ? (
           <div className="text-center py-16">
             <Heart className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-xl font-semibold mb-2">Ваш список избранного пуст</h2>
+            <h2 className="text-xl font-semibold mb-4">Ваш список избранного пуст</h2>
             <p className="text-muted-foreground mb-6">
               Добавляйте товары в избранное, нажимая на сердечко
             </p>
@@ -59,7 +59,7 @@ const Favorites = () => {
                     <div className="aspect-[3/4] overflow-hidden bg-muted mb-3 relative">
                       {/* NEW badge - top left */}
                       {product.is_new && (
-                        <div className="absolute top-4 left-4 z-10 bg-black text-white px-3 py-1 text-xs font-normal uppercase tracking-wider rounded-full">
+                        <div className="absolute top-2 left-2 z-10 bg-black text-white px-1.5 py-0.5 text-[8px] font-normal uppercase tracking-wider rounded-full">
                           НОВОЕ
                         </div>
                       )}
@@ -76,7 +76,7 @@ const Favorites = () => {
                         </div>
                       )}
                       {product.is_sale && (
-                        <div className="absolute top-3 left-3 bg-[#C6121F] text-white w-8 h-8 flex items-center justify-center text-sm font-bold rounded-full">
+                        <div className="absolute top-2 left-2 bg-[#C6121F] text-white w-4 h-4 flex items-center justify-center text-[8px] font-bold rounded-full">
                           %
                         </div>
                       )}

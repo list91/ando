@@ -187,9 +187,9 @@ const Product = () => {
 
       <SchemaOrg type="product" data={product} />
 
-      <div className="flex flex-col lg:flex-row min-h-full">
+      <div className="flex flex-col lg:flex-row min-h-full content-baseline">
         {/* Left side - Product images */}
-        <div className="flex-1 flex items-start justify-center py-6 lg:py-16 px-4 lg:px-16 relative">
+        <div className="flex-1 flex items-start justify-center pt-2 pb-6 lg:pt-2 lg:pb-16 px-4 lg:px-16 relative">
           {/* Image container */}
           <div className="max-w-xl w-full relative">
             {/* Image with zoom */}
@@ -201,14 +201,14 @@ const Product = () => {
             >
               {/* NEW badge - inside image container */}
               {product.is_new && (
-                <div className="absolute top-3 left-[42px] z-20 bg-white text-black px-4 py-1.5 text-xs font-medium uppercase tracking-wider rounded-full">
+                <div className="absolute top-2 left-[42px] z-20 bg-black text-white px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider rounded-full">
                   НОВОЕ
                 </div>
               )}
 
               {/* SALE badge - inside image container */}
               {product.is_sale && discount > 0 && (
-                <div className={`absolute ${product.is_new ? 'top-12' : 'top-3'} left-[42px] z-20 bg-[#C6121F] text-white w-10 h-10 flex items-center justify-center text-base font-bold rounded-full`}>
+                <div className={`absolute ${product.is_new ? 'top-8' : 'top-2'} left-[42px] z-20 bg-[#C6121F] text-white w-5 h-5 flex items-center justify-center text-[10px] font-bold rounded-full`}>
                   %
                 </div>
               )}
@@ -308,7 +308,7 @@ const Product = () => {
               {product.name}
             </h1>
             {product.is_sale && discount > 0 && (
-              <div className="bg-[#C6121F] text-white px-4 py-1.5 text-xs font-medium rounded-full ml-[40px]">
+              <div className="bg-[#C6121F] text-white px-2 py-0.5 text-[10px] font-medium rounded-full ml-[40px]">
                 −{discount}%
               </div>
             )}
