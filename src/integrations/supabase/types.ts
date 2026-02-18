@@ -529,9 +529,49 @@ export type Database = {
           },
         ]
       }
+      promocodes: {
+        Row: {
+          id: string
+          code: string
+          discount_percent: number
+          description: string | null
+          expiry_date: string | null
+          is_active: boolean
+          max_uses: number | null
+          used_count: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          code: string
+          discount_percent: number
+          description?: string | null
+          expiry_date?: string | null
+          is_active?: boolean
+          max_uses?: number | null
+          used_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          code?: string
+          discount_percent?: number
+          description?: string | null
+          expiry_date?: string | null
+          is_active?: boolean
+          max_uses?: number | null
+          used_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
+          delivery_address: string | null
           email: string | null
           full_name: string | null
           id: string
@@ -540,6 +580,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          delivery_address?: string | null
           email?: string | null
           full_name?: string | null
           id: string
@@ -548,6 +589,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          delivery_address?: string | null
           email?: string | null
           full_name?: string | null
           id?: string

@@ -7,8 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Package, User, Settings } from "lucide-react";
+import { Package, User, Settings, Percent } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Navigate } from "react-router-dom";
 
@@ -16,6 +18,35 @@ const Orders = () => {
   const { user, loading: authLoading } = useAuth();
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
+  const [deliveryAddress, setDeliveryAddress] = useState("");
+
+  // Mock data for discounts (will be replaced with API later)
+  const mockDiscounts = [
+    {
+      id: "disc-1",
+      name: "Скидка на первый заказ",
+      value: 5,
+      description: "Персональная скидка для новых клиентов",
+      expiryDate: "2026-03-31",
+      status: "active" as const,
+    },
+    {
+      id: "disc-2",
+      name: "Приветственный бонус",
+      value: 10,
+      description: "Бонус за регистрацию в программе лояльности",
+      expiryDate: "2026-01-15",
+      status: "used" as const,
+    },
+    {
+      id: "disc-3",
+      name: "Скидка ко дню рождения",
+      value: 15,
+      description: "Специальное предложение в честь вашего дня рождения",
+      expiryDate: "2026-04-20",
+      status: "active" as const,
+    },
+  ];
 
   // Fetch user profile
   const { data: profile, isLoading: profileLoading } = useQuery({
@@ -32,6 +63,7 @@ const Orders = () => {
       if (data) {
         setFullName(data.full_name || '');
         setPhone(data.phone || '');
+        setDeliveryAddress(data.delivery_address || '');
       }
       return data;
     },
@@ -75,6 +107,7 @@ const Orders = () => {
           id: user.id,
           full_name: fullName,
           phone: phone,
+          delivery_address: deliveryAddress,
           email: user.email,
           updated_at: new Date().toISOString(),
         });
@@ -121,15 +154,37 @@ const Orders = () => {
     return colorMap[status] || 'text-muted-foreground';
   };
 
+  const getDiscountStatusText = (status: "active" | "used" | "expired") => {
+    const statusMap: Record<string, string> = {
+      active: 'Активна',
+      used: 'Использована',
+      expired: 'Истекла',
+    };
+    return statusMap[status] || status;
+  };
+
+  const getDiscountStatusVariant = (status: "active" | "used" | "expired"): "default" | "secondary" | "destructive" | "outline" => {
+    const variantMap: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+      active: 'default',
+      used: 'secondary',
+      expired: 'destructive',
+    };
+    return variantMap[status] || 'outline';
+  };
+
   return (
     <div className="container mx-auto px-4 pt-2 pb-8 max-w-6xl content-baseline">
       <h1 className="text-3xl font-light mb-8 tracking-wide">Личный кабинет</h1>
 
       <Tabs defaultValue="orders" className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-2 mb-8">
+        <TabsList className="grid w-full max-w-lg grid-cols-3 mb-8">
           <TabsTrigger value="orders" className="flex items-center gap-2">
             <Package className="h-4 w-4" />
             Мои заказы
+          </TabsTrigger>
+          <TabsTrigger value="discounts" className="flex items-center gap-2">
+            <Percent className="h-4 w-4" />
+            Мои скидки
           </TabsTrigger>
           <TabsTrigger value="profile" className="flex items-center gap-2">
             <User className="h-4 w-4" />
@@ -197,6 +252,54 @@ const Orders = () => {
           )}
         </TabsContent>
 
+        <TabsContent value="discounts" className="space-y-4">
+          {mockDiscounts.length > 0 ? (
+            mockDiscounts.map((discount) => (
+              <Card key={discount.id}>
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
+                        <span className="text-xl font-bold text-primary">{discount.value}%</span>
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">{discount.name}</CardTitle>
+                        <CardDescription>{discount.description}</CardDescription>
+                      </div>
+                    </div>
+                    <Badge variant={getDiscountStatusVariant(discount.status)}>
+                      {getDiscountStatusText(discount.status)}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">
+                      Действует до: {new Date(discount.expiryDate).toLocaleDateString('ru-RU', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </span>
+                    {discount.status === 'active' && (
+                      <Button variant="outline" size="sm">
+                        Применить
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <Card>
+              <CardContent className="py-12 text-center">
+                <Percent className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                <p className="text-muted-foreground">У вас пока нет активных скидок</p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
         <TabsContent value="profile">
           <Card>
             <CardHeader>
@@ -233,12 +336,23 @@ const Orders = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="phone">Телефон</Label>
-                <Input 
-                  id="phone" 
-                  type="tel" 
+                <Input
+                  id="phone"
+                  type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="+7 (___) ___-__-__"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="deliveryAddress">Адрес доставки по умолчанию</Label>
+                <Textarea
+                  id="deliveryAddress"
+                  value={deliveryAddress}
+                  onChange={(e) => setDeliveryAddress(e.target.value)}
+                  placeholder="Улица, дом, квартира"
+                  rows={3}
                 />
               </div>
 

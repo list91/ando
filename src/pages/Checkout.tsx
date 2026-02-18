@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
@@ -53,12 +54,42 @@ const COUNTRIES = [
 
 const DELIVERY_COST = 0; // Free delivery
 
+// P3: Payment methods array - if only one, hide selector
+const PAYMENT_METHODS = [
+  { value: 'card', label: 'Банковская карта' },
+  { value: 'cash', label: 'Наличные при получении' },
+] as const;
+
 const Checkout = () => {
   const { user } = useAuth();
   const { items, totalPrice } = useCart();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+
+  // ЛК-5: Promocode states
+  const [promocodeInput, setPromocodeInput] = useState('');
+  const [appliedPromocode, setAppliedPromocode] = useState<{code: string, discount_percent: number} | null>(null);
+  const [promocodeError, setPromocodeError] = useState('');
+  const [promocodeLoading, setPromocodeLoading] = useState(false);
+
+  // P7: Query to check if user has any orders (for first order discount)
+  const { data: userOrdersCount = 0 } = useQuery({
+    queryKey: ['user-orders-count', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return 0;
+      const { count, error } = await supabase
+        .from('orders')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id);
+      if (error) {
+        console.error('Error fetching orders count:', error);
+        return 0;
+      }
+      return count || 0;
+    },
+    enabled: !!user?.id,
+  });
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -69,7 +100,7 @@ const Checkout = () => {
     country: '',
     address: '',
     deliveryMethod: 'courier',
-    paymentMethod: 'card',
+    paymentMethod: PAYMENT_METHODS[0].value,
     notes: '',
   });
 
@@ -80,7 +111,43 @@ const Checkout = () => {
 
   const subtotal = totalPrice;
   const deliveryCost = formData.deliveryMethod === 'courier' ? DELIVERY_COST : 0;
-  const total = subtotal + deliveryCost;
+  // P7: 5% discount for first order of registered users (only if no promocode applied)
+  // ЛК-5: Promocode takes priority over first order discount
+  const isFirstOrderDiscount = user && userOrdersCount === 0 && !appliedPromocode;
+  const firstOrderDiscount = isFirstOrderDiscount ? Math.round(subtotal * 0.05) : 0;
+  const promocodeDiscount = appliedPromocode ? Math.round(subtotal * appliedPromocode.discount_percent / 100) : 0;
+  const totalDiscount = firstOrderDiscount + promocodeDiscount;
+  const total = subtotal + deliveryCost - totalDiscount;
+
+  // ЛК-5: Validate promocode function
+  const validatePromocode = async () => {
+    if (!promocodeInput.trim()) return;
+    setPromocodeLoading(true);
+    setPromocodeError('');
+
+    const { data, error } = await supabase
+      .from('promocodes')
+      .select('*')
+      .eq('code', promocodeInput.toUpperCase())
+      .eq('is_active', true)
+      .single();
+
+    if (error || !data) {
+      setPromocodeError('Промокод не найден или неактивен');
+      setAppliedPromocode(null);
+    } else if (data.expiry_date && new Date(data.expiry_date) < new Date()) {
+      setPromocodeError('Срок действия промокода истёк');
+      setAppliedPromocode(null);
+    } else if (data.max_uses && data.used_count >= data.max_uses) {
+      setPromocodeError('Лимит использований промокода исчерпан');
+      setAppliedPromocode(null);
+    } else {
+      setAppliedPromocode({ code: data.code, discount_percent: data.discount_percent });
+      setPromocodeError('');
+      toast({ title: 'Промокод применён!', description: `Скидка ${data.discount_percent}%` });
+    }
+    setPromocodeLoading(false);
+  };
 
   useEffect(() => {
     if (items.length === 0) {
@@ -110,6 +177,8 @@ const Checkout = () => {
             lastName,
             email: data.email || user.email || '',
             phone: data.phone || '',
+            // ЛК-2: Auto-fill delivery address from profile
+            address: data.delivery_address || prev.address || '',
           }));
         }
       };
@@ -468,32 +537,69 @@ const Checkout = () => {
                 </CardContent>
               </Card>
 
+              {/* ЛК-5: Promocode section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Промокод</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Введите промокод"
+                      value={promocodeInput}
+                      onChange={(e) => setPromocodeInput(e.target.value.toUpperCase())}
+                      className="flex-1"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={validatePromocode}
+                      disabled={promocodeLoading || !promocodeInput.trim()}
+                    >
+                      {promocodeLoading ? 'Проверка...' : 'Применить'}
+                    </Button>
+                  </div>
+                  {promocodeError && <p className="text-sm text-red-500 mt-2">{promocodeError}</p>}
+                  {appliedPromocode && (
+                    <div className="flex items-center justify-between mt-2 p-2 bg-green-50 rounded">
+                      <span className="text-sm text-green-700">Применён: {appliedPromocode.code} (-{appliedPromocode.discount_percent}%)</span>
+                      <Button type="button" variant="ghost" size="sm" onClick={() => setAppliedPromocode(null)}>
+                        Убрать
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
               <Card>
                 <CardHeader>
                   <CardTitle>Оплата</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* P3: Hide selector if only one payment method */}
                   <div>
                     <Label>Способ оплаты *</Label>
-                    <RadioGroup
-                      value={formData.paymentMethod}
-                      onValueChange={(value) =>
-                        setFormData({ ...formData, paymentMethod: value })
-                      }
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="card" id="card" />
-                        <Label htmlFor="card" className="font-normal">
-                          Банковская карта
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="cash" id="cash" />
-                        <Label htmlFor="cash" className="font-normal">
-                          Наличные при получении
-                        </Label>
-                      </div>
-                    </RadioGroup>
+                    {PAYMENT_METHODS.length === 1 ? (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {PAYMENT_METHODS[0].label}
+                      </p>
+                    ) : (
+                      <RadioGroup
+                        value={formData.paymentMethod}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, paymentMethod: value })
+                        }
+                      >
+                        {PAYMENT_METHODS.map((method) => (
+                          <div key={method.value} className="flex items-center space-x-2">
+                            <RadioGroupItem value={method.value} id={method.value} />
+                            <Label htmlFor={method.value} className="font-normal">
+                              {method.label}
+                            </Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    )}
                   </div>
                   <div>
                     <Label htmlFor="notes">Комментарий к заказу</Label>
@@ -617,6 +723,20 @@ const Checkout = () => {
                         <span className="text-muted-foreground">Доставка:</span>
                         <span>{formData.deliveryMethod === 'courier' ? 'Курьер' : 'Самовывоз'}</span>
                       </div>
+                      {/* P7: Show discount line for first order */}
+                      {firstOrderDiscount > 0 && (
+                        <div className="flex justify-between text-sm text-green-600">
+                          <span>Скидка 5% (первый заказ):</span>
+                          <span>-{firstOrderDiscount} ₽</span>
+                        </div>
+                      )}
+                      {/* ЛК-5: Show promocode discount */}
+                      {promocodeDiscount > 0 && (
+                        <div className="flex justify-between text-sm text-green-600">
+                          <span>Промокод {appliedPromocode?.code} (-{appliedPromocode?.discount_percent}%):</span>
+                          <span>-{promocodeDiscount} ₽</span>
+                        </div>
+                      )}
                       <div className="flex justify-between text-lg font-medium pt-2 border-t">
                         <span>Итого:</span>
                         <span>{total} ₽</span>
@@ -677,6 +797,20 @@ const Checkout = () => {
                       <span className="text-muted-foreground">Доставка:</span>
                       <span>{formData.deliveryMethod === 'courier' ? 'Курьер' : 'Самовывоз'}</span>
                     </div>
+                    {/* P7: Show discount line for first order */}
+                    {firstOrderDiscount > 0 && (
+                      <div className="flex justify-between text-sm text-green-600">
+                        <span>Скидка 5% (первый заказ):</span>
+                        <span>-{firstOrderDiscount} ₽</span>
+                      </div>
+                    )}
+                    {/* ЛК-5: Show promocode discount */}
+                    {promocodeDiscount > 0 && (
+                      <div className="flex justify-between text-sm text-green-600">
+                        <span>Промокод {appliedPromocode?.code} (-{appliedPromocode?.discount_percent}%):</span>
+                        <span>-{promocodeDiscount} ₽</span>
+                      </div>
+                    )}
                     <div className="flex justify-between text-lg font-medium pt-2 border-t">
                       <span>Итого:</span>
                       <span>{total} ₽</span>
