@@ -44,7 +44,7 @@ jobs:
         with:
           switches: -avzr --delete --checksum
           path: dist/
-          remote_path: /opt/ando/dist/
+          remote_path: /var/www/ando/
           remote_host: ${{ secrets.SERVER_HOST }}
           remote_user: ${{ secrets.SERVER_USER }}
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
