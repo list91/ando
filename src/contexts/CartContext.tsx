@@ -1,25 +1,19 @@
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import { createContext, useContext, useEffect, useCallback, ReactNode } from "react";
 import { useAuth } from "./AuthContext";
+import {
+  useCartStore,
+  selectCartItems,
+  selectTotalItems,
+  selectTotalPrice,
+  selectLastAddedProduct,
+  selectIsCartDrawerOpen,
+  selectHasMigrated,
+  CartItem,
+  AddedProduct,
+} from "@/stores/cartStore";
 
-const CART_STORAGE_KEY = 'ando_cart';
-
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  size: string;
-  color: string;
-  image: string;
-  quantity: number;
-}
-
-export interface AddedProduct {
-  name: string;
-  price: number;
-  size?: string;
-  color?: string;
-  image: string;
-}
+// Re-export types for backward compatibility
+export type { CartItem, AddedProduct } from "@/stores/cartStore";
 
 interface CartContextType {
   items: CartItem[];
@@ -41,62 +35,52 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-// ЛК-3: Вспомогательные функции для работы с localStorage
+// Helper to get guest cart from localStorage (before Zustand hydration)
 const getLocalStorageCart = (): CartItem[] => {
   try {
-    const stored = localStorage.getItem(CART_STORAGE_KEY);
+    const stored = localStorage.getItem('ando_cart');
     if (!stored) return [];
 
     const parsed = JSON.parse(stored);
 
-    // Validate: must be an array
-    if (!Array.isArray(parsed)) {
-      console.warn('Invalid cart format in localStorage, clearing...');
-      localStorage.removeItem(CART_STORAGE_KEY);
+    // Handle both old format (direct array) and new zustand persist format
+    let cartArray: unknown[];
+
+    if (Array.isArray(parsed)) {
+      cartArray = parsed;
+    } else if (parsed?.state?.items && Array.isArray(parsed.state.items)) {
+      // Zustand persist format: { state: { items: [...] } }
+      cartArray = parsed.state.items;
+    } else {
       return [];
     }
 
     // Validate each cart item has required fields
-    const validCart = parsed.filter((item): item is CartItem => {
+    const validCart = cartArray.filter((item): item is CartItem => {
       return (
         typeof item === 'object' &&
         item !== null &&
-        typeof item.id === 'string' &&
-        typeof item.name === 'string' &&
-        typeof item.price === 'number' &&
-        typeof item.size === 'string' &&
-        typeof item.color === 'string' &&
-        typeof item.image === 'string' &&
-        typeof item.quantity === 'number' &&
-        item.quantity > 0
+        typeof (item as CartItem).id === 'string' &&
+        typeof (item as CartItem).name === 'string' &&
+        typeof (item as CartItem).price === 'number' &&
+        typeof (item as CartItem).size === 'string' &&
+        typeof (item as CartItem).color === 'string' &&
+        typeof (item as CartItem).image === 'string' &&
+        typeof (item as CartItem).quantity === 'number' &&
+        (item as CartItem).quantity > 0
       );
     });
-
-    // If some items were filtered out, save the cleaned data
-    if (validCart.length !== parsed.length) {
-      console.warn(`Removed ${parsed.length - validCart.length} invalid cart items`);
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(validCart));
-    }
 
     return validCart;
   } catch (error) {
     console.error('Error parsing cart from localStorage:', error);
-    localStorage.removeItem(CART_STORAGE_KEY);
     return [];
-  }
-};
-
-const setLocalStorageCart = (items: CartItem[]) => {
-  try {
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
-  } catch (error) {
-    console.error('Error saving cart to localStorage:', error);
   }
 };
 
 const clearLocalStorageCart = () => {
   try {
-    localStorage.removeItem(CART_STORAGE_KEY);
+    localStorage.removeItem('ando_cart');
   } catch (error) {
     console.error('Error clearing localStorage cart:', error);
   }
@@ -104,28 +88,24 @@ const clearLocalStorageCart = () => {
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [lastAddedProduct, setLastAddedProduct] = useState<AddedProduct | null>(null);
-  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
-  const [hasMigrated, setHasMigrated] = useState(false);
 
-  const openCartDrawer = () => setIsCartDrawerOpen(true);
-  const closeCartDrawer = () => setIsCartDrawerOpen(false);
+  // Use Zustand store
+  const items = useCartStore(selectCartItems);
+  const totalItems = useCartStore(selectTotalItems);
+  const totalPrice = useCartStore(selectTotalPrice);
+  const lastAddedProduct = useCartStore(selectLastAddedProduct);
+  const isCartDrawerOpen = useCartStore(selectIsCartDrawerOpen);
+  const hasMigrated = useCartStore(selectHasMigrated);
 
-  // ЛК-3: Загрузка корзины из localStorage при инициализации
-  useEffect(() => {
-    const savedCart = getLocalStorageCart();
-    if (savedCart.length > 0) {
-      setItems(savedCart);
-    }
-  }, []);
-
-  // ЛК-3: Сохранение корзины в localStorage при изменениях (для гостей)
-  useEffect(() => {
-    if (!user) {
-      setLocalStorageCart(items);
-    }
-  }, [items, user]);
+  const addToCart = useCartStore((state) => state.addToCart);
+  const removeFromCart = useCartStore((state) => state.removeFromCart);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const clearCart = useCartStore((state) => state.clearCart);
+  const clearLastAdded = useCartStore((state) => state.clearLastAdded);
+  const openCartDrawer = useCartStore((state) => state.openCartDrawer);
+  const closeCartDrawer = useCartStore((state) => state.closeCartDrawer);
+  const migrateGuestCartStore = useCartStore((state) => state.migrateGuestCart);
+  const resetMigrationState = useCartStore((state) => state.resetMigrationState);
 
   // ЛК-4: Миграция корзины гостя при авторизации
   const migrateGuestCart = useCallback(async () => {
@@ -133,45 +113,19 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
     const guestCart = getLocalStorageCart();
     if (guestCart.length === 0) {
-      setHasMigrated(true);
+      migrateGuestCartStore([]);
       return;
     }
 
     try {
-      // CART-7 FIX: Используем functional setState для избежания race condition
-      setItems(prevItems => {
-        const mergedItems = [...prevItems];
-
-        for (const guestItem of guestCart) {
-          const existingIndex = mergedItems.findIndex(
-            item => item.id === guestItem.id && item.size === guestItem.size
-          );
-
-          if (existingIndex >= 0) {
-            // Увеличиваем количество существующего товара
-            mergedItems[existingIndex] = {
-              ...mergedItems[existingIndex],
-              quantity: mergedItems[existingIndex].quantity + guestItem.quantity
-            };
-          } else {
-            // Добавляем новый товар
-            mergedItems.push(guestItem);
-          }
-        }
-
-        return mergedItems;
-      });
-
-      // CART-6 FIX: clearLocalStorageCart теперь внутри try блока,
-      // очистка происходит только после успешного обновления состояния
+      migrateGuestCartStore(guestCart);
+      // CART-6 FIX: Clear localStorage only after successful migration
       clearLocalStorageCart();
-      setHasMigrated(true);
-
       console.log('Guest cart migrated successfully');
     } catch (error) {
       console.error('Error migrating guest cart:', error);
     }
-  }, [user, hasMigrated]);
+  }, [user, hasMigrated, migrateGuestCartStore]);
 
   // Автоматическая миграция при авторизации
   useEffect(() => {
@@ -179,88 +133,28 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       migrateGuestCart();
     }
     if (!user) {
-      setHasMigrated(false);
+      resetMigrationState();
     }
-  }, [user, hasMigrated, migrateGuestCart]);
+  }, [user, hasMigrated, migrateGuestCart, resetMigrationState]);
 
+  // Handle clearCart event (for checkout completion, etc.)
   useEffect(() => {
     const handleClearCart = () => {
-      setItems([]);
+      clearCart();
       clearLocalStorageCart();
     };
 
     window.addEventListener('clearCart', handleClearCart);
     return () => window.removeEventListener('clearCart', handleClearCart);
-  }, []);
-
-  const addToCart = (item: Omit<CartItem, "quantity">) => {
-    setItems((currentItems) => {
-      const existingItem = currentItems.find(
-        (i) => i.id === item.id && i.size === item.size
-      );
-
-      if (existingItem) {
-        return currentItems.map((i) =>
-          i.id === item.id && i.size === item.size
-            ? { ...i, quantity: i.quantity + 1 }
-            : i
-        );
-      }
-
-      return [...currentItems, { ...item, quantity: 1 }];
-    });
-
-    // Set last added product for modal
-    setLastAddedProduct({
-      name: item.name,
-      price: item.price,
-      size: item.size,
-      color: item.color,
-      image: item.image,
-    });
-  };
-
-  const clearLastAdded = () => {
-    setLastAddedProduct(null);
-  };
-
-  const removeFromCart = (id: string, size: string) => {
-    setItems((currentItems) =>
-      currentItems.filter((i) => !(i.id === id && i.size === size))
-    );
-  };
-
-  const updateQuantity = (id: string, size: string, quantity: number) => {
-    if (quantity <= 0) {
-      removeFromCart(id, size);
-      return;
-    }
-
-    setItems((currentItems) =>
-      currentItems.map((i) =>
-        i.id === id && i.size === size ? { ...i, quantity } : i
-      )
-    );
-  };
-
-  const clearCart = () => {
-    setItems([]);
-    clearLocalStorageCart();
-  };
+  }, [clearCart]);
 
   // Геттер для гостевой корзины (используется при миграции)
-  const getGuestCart = () => getLocalStorageCart();
+  const getGuestCart = useCallback(() => getLocalStorageCart(), []);
 
   // Очистка гостевой корзины
-  const clearGuestCart = () => {
+  const clearGuestCart = useCallback(() => {
     clearLocalStorageCart();
-  };
-
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  }, []);
 
   return (
     <CartContext.Provider

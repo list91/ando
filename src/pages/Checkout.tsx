@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { z } from 'zod';
+import { API_CONFIG } from '@/config/api';
 
 const checkoutSchema = z.object({
   firstName: z.string().min(2, 'Имя должно содержать минимум 2 символа').max(50),
@@ -186,7 +187,7 @@ const Checkout = () => {
 
       // Send email notification to order@andojv.com
       try {
-        await fetch('https://andojv.com/send-order.php', {
+        await fetch(API_CONFIG.ORDER_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -267,10 +268,10 @@ const Checkout = () => {
                 </div>
                 <div className="flex gap-2 flex-shrink-0">
                   <Button variant="outline" asChild>
-                    <Link to="/login?redirect=/checkout">Войти</Link>
+                    <Link to="/auth?redirect=/checkout">Войти</Link>
                   </Button>
                   <Button variant="outline" asChild>
-                    <Link to="/register?redirect=/checkout">Регистрация</Link>
+                    <Link to="/auth?redirect=/checkout">Регистрация</Link>
                   </Button>
                 </div>
               </div>
@@ -300,7 +301,7 @@ const Checkout = () => {
                   className="bg-amber-500 hover:bg-amber-600 text-white flex-shrink-0 w-full sm:w-auto"
                   asChild
                 >
-                  <Link to="/register?redirect=/checkout">Получить скидку</Link>
+                  <Link to="/auth?redirect=/checkout">Получить скидку</Link>
                 </Button>
               </div>
               <button

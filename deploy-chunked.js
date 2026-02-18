@@ -10,6 +10,19 @@ const __dirname = dirname(__filename);
 
 dotenv.config();
 
+// Validate required environment variables
+const requiredEnvVars = ['FTP_HOST', 'FTP_USER', 'FTP_PASSWORD', 'FTP_REMOTE_PATH'];
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingVars.length > 0) {
+  console.error('❌ Missing required environment variables:');
+  missingVars.forEach(v => console.error(`   - ${v}`));
+  console.error('\n   Set them in .env file or export them before running this script');
+  process.exit(1);
+}
+
+const DEPLOY_HOST = process.env.DEPLOY_HOST || 'andojv.com';
+
 const CHUNK_SIZE = 200 * 1024; // 200KB chunks
 const MAX_FILE_SIZE = 300 * 1024; // Files larger than 300KB will be chunked
 
@@ -19,7 +32,7 @@ const config = {
   password: process.env.FTP_PASSWORD,
   port: parseInt(process.env.FTP_PORT) || 21,
   localRoot: resolve(__dirname, './dist'),
-  remoteRoot: process.env.FTP_REMOTE_PATH || '/www/andojv.com/',
+  remoteRoot: process.env.FTP_REMOTE_PATH,
 };
 
 // PHP script to merge chunks on server
@@ -220,7 +233,7 @@ async function deploy() {
         }
 
         // Call PHP script to merge chunks
-        const mergeUrl = `http://andojv.com/assets/merge-chunks.php?file=${encodeURIComponent(fileName)}&chunks=${chunks.length}`;
+        const mergeUrl = `https://${DEPLOY_HOST}/assets/merge-chunks.php?file=${encodeURIComponent(fileName)}&chunks=${chunks.length}`;
         console.log(`   🔗 Собираю файл на сервере...`);
 
         try {
@@ -246,7 +259,7 @@ async function deploy() {
     }
 
     console.log('\n✅ Деплой завершен!');
-    console.log('🌍 Сайт: http://andojv.com');
+    console.log(`🌍 Сайт: https://${DEPLOY_HOST}`);
 
   } catch (err) {
     console.error('❌ Ошибка:', err.message);

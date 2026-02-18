@@ -1,6 +1,20 @@
 import { execSync } from 'child_process';
+import dotenv from 'dotenv';
 
-const DEPLOY_URL = 'https://andojv.com/deploy.php?token=ando-deploy-2024&action=pull';
+// Load environment variables
+dotenv.config();
+
+// Validate required environment variables
+const DEPLOY_TOKEN = process.env.DEPLOY_TOKEN;
+const DEPLOY_HOST = process.env.DEPLOY_HOST || 'andojv.com';
+
+if (!DEPLOY_TOKEN) {
+  console.error('❌ DEPLOY_TOKEN environment variable is required');
+  console.error('   Set it in .env file or export DEPLOY_TOKEN=your-token');
+  process.exit(1);
+}
+
+const DEPLOY_URL = `https://${DEPLOY_HOST}/deploy.php?token=${DEPLOY_TOKEN}&action=pull`;
 
 console.log('🚀 ANDO Git Deploy\n');
 
@@ -35,7 +49,7 @@ try {
   console.log(response);
 
   console.log('\n✅ Deploy complete!');
-  console.log('🌍 Site: https://andojv.com');
+  console.log(`🌍 Site: https://${DEPLOY_HOST}`);
 
 } catch (error) {
   console.error('\n❌ Deploy failed:', error.message);

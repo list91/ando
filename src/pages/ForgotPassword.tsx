@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft } from 'lucide-react';
+import { API_CONFIG } from '@/config/api';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -28,7 +29,7 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('https://andojv.com/reset-password.php', {
+      const response = await fetch(API_CONFIG.PASSWORD_RESET_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -11,6 +11,7 @@ lerna-debug.log*
 .env
 .env.*
 !.env.example
+!.env.*.example
 docker/.env
 docker/.env.production
 docker/nginx/.htpasswd
@@ -46,6 +47,18 @@ nul
 # Playwright test results
 test-results/
 playwright-report/
+
+# SQL files with potential schema/data
+*.sql
+add-lookbook-data.sql
+complete-site-setup.sql
+
+# Scripts with potential sensitive data
+scripts/fix-lookbook-images.js
+
+# Debug and test artifacts
+debug-session/
+dev-server.log
 
 # Temporary debug files
 test-catalog.html
@@ -90,3 +103,48 @@ tests/screenshots-output/bugfix-verification/sidebar-full-page.png
 tests/screenshots-output/bugfix-verification/test-results.json
 tests/screenshots-output/bugfix-verification/zoom-before-hover.png
 tests/screenshots-output/bugfix-verification/zoom-with-magnifier.png
+.refactor-snapshots/20260216_171358/use-mobile.tsx
+.refactor-snapshots/20260216_171358/use-toast.ts
+.refactor-snapshots/20260216_171358/useAboutPage.ts
+.refactor-snapshots/20260216_171358/useColorMap.ts
+.refactor-snapshots/20260216_171358/useHeroSlides.ts
+.refactor-snapshots/20260216_171358/useInfoPages.ts
+.refactor-snapshots/20260216_171358/useLookbook.ts
+.refactor-snapshots/20260216_171358/usePageTracking.ts
+.refactor-snapshots/20260216_171358/useProducts.ts
+.refactor-snapshots/20260216_171358/useSiteSettings.ts
+
+# Debug scripts
+check-*.mjs
+tests/screenshots-tools-llm/screenshots/checkout-1771340286834.png
+tests/screenshots-tools-llm/screenshots/e2e-auth-1771339889261.png
+tests/screenshots-tools-llm/screenshots/e2e-auth-1771339954550.png
+tests/screenshots-tools-llm/screenshots/e2e-auth-1771340085498.png
+temp_config.txt
+tests/screenshots-tools-llm/screenshots/catalog-cards-1771341005264.png
+tests/screenshots-tools-llm/screenshots/catalog-cards-1771341123371.png
+tests/screenshots-tools-llm/screenshots/catalog-colors-large-1771341160644.png
+tests/screenshots-tools-llm/screenshots/checkout-after-click-1771340355504.png
+tests/screenshots-tools-llm/screenshots/checkout-after-click-1771340433105.png
+tests/screenshots-tools-llm/screenshots/checkout-before-click-1771340355504.png
+tests/screenshots-tools-llm/screenshots/checkout-before-click-1771340433105.png
+tests/screenshots-tools-llm/screenshots/color-filter-1771340772283.png
+tests/screenshots-tools-llm/screenshots/color-filter-open-1771340812000.png
+tests/screenshots-tools-llm/screenshots/color-filter-open-1771340898260.png
+tests/screenshots-tools-llm/screenshots/color-filter-open-1771340964590.png
+tests/screenshots-tools-llm/screenshots/debug-colors-1771341265379.png
+tests/screenshots-tools-llm/screenshots/final-1-home-1771341495979.png
+tests/screenshots-tools-llm/screenshots/final-1-home-1771392876093.png
+tests/screenshots-tools-llm/screenshots/final-2-auth-1771341495979.png
+tests/screenshots-tools-llm/screenshots/final-2-auth-1771392876093.png
+tests/screenshots-tools-llm/screenshots/final-3-catalog-colors-1771341495979.png
+tests/screenshots-tools-llm/screenshots/final-3-catalog-colors-1771392876093.png
+tests/screenshots-tools-llm/screenshots/final-4-checkout-1771392876093.png
+tests/screenshots-tools-llm/screenshots/final-5-mobile-1771392876093.png
+tests/screenshots-tools-llm/screenshots/home-hero-1771341328576.png
+tests/screenshots-tools-llm/screenshots/home-hero-1771341444633.png
+tests/screenshots-tools-llm/screenshots/mobile-catalog-support-1771340634752.png
+tests/screenshots-tools-llm/screenshots/mobile-product-support-1771340634752.png
+tests/screenshots-tools-llm/screenshots/mobile-support-1771340601422.png
+tests/screenshots-tools-llm/screenshots/product-page-1771341005264.png
+tests/screenshots-tools-llm/screenshots/product-page-1771341123371.png
