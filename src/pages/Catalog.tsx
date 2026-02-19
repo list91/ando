@@ -817,11 +817,14 @@ const Catalog = ({ selectedCategory, setSelectedCategory, selectedGender, setSel
           </div>
 
           {/* Sorting and Grid View */}
-          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-2 lg:gap-2">
-            {/* Mobile: Found count and Sorting */}
-            <div className="flex items-center gap-2 lg:gap-2 lg:w-auto order-1 lg:order-2">
+          <div className="flex flex-row items-center justify-between gap-2">
+            {/* Found count - left side */}
+            <div className="flex items-center gap-2">
               <ProductCount products={products} searchQuery={searchQuery} />
-              
+            </div>
+
+            {/* Sorting - right side */}
+            <div className="flex items-center gap-2">
               <Popover modal={true}>
                 <PopoverTrigger asChild>
                   <button className="flex items-center gap-1.5 hover:opacity-60 transition-opacity text-xs lg:text-sm min-h-[44px] px-2 lg:px-3">
