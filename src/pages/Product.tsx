@@ -333,8 +333,8 @@ const Product = () => {
             </div>
           )}
 
-          {/* Color circles */}
-          {product.available_colors?.length > 0 && (
+          {/* Color circles - убраны по требованию заказчика */}
+          {/* {product.available_colors?.length > 0 && (
             <div className="flex items-center gap-2 mb-4">
               <span className="text-sm">Цвет:</span>
               <div className="flex gap-1.5">
@@ -348,7 +348,7 @@ const Product = () => {
                 ))}
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Composition */}
           {(product.composition || product.material) && (

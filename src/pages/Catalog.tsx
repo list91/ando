@@ -325,7 +325,8 @@ const ProductGrid = memo(({ products, gridCols, getColorHex, user, isFavorite, t
                     </span>
                   )}
                 </div>
-                {product.available_colors && product.available_colors.length > 0 && (
+                {/* Цветные кружочки убраны по требованию заказчика */}
+                {/* {product.available_colors && product.available_colors.length > 0 && (
                   <div className="flex items-center gap-1.5">
                     {product.available_colors.slice(0, 4).map((color: string, idx: number) => {
                       const colorHex = getColorHex(color);
@@ -341,7 +342,7 @@ const ProductGrid = memo(({ products, gridCols, getColorHex, user, isFavorite, t
                       );
                     })}
                   </div>
-                )}
+                )} */}
               </div>
             </Link>
           </div>
@@ -761,10 +762,11 @@ const Catalog = ({ selectedCategory, setSelectedCategory, selectedGender, setSel
                         htmlFor={`color-${color}`}
                         className="text-sm cursor-pointer flex items-center gap-2"
                       >
-                        <div 
+                        {/* Цветной кружок убран */}
+                        {/* <div
                           className="w-5 h-5 rounded-full border border-border flex-shrink-0"
                           style={{ backgroundColor: getColorHex(color) }}
-                        />
+                        /> */}
                         {color}
                       </label>
                     </div>

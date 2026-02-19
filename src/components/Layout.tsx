@@ -88,8 +88,8 @@ const Layout = ({ children, selectedCategory, onCategoryChange, selectedGender, 
               ? 'bg-background border-b border-border shadow-sm'
               : 'bg-transparent border-b border-transparent'
             }`}>
-            <Link to="/" className="flex justify-center">
-              <img src={logoMobile} alt="ANDO JV" className="w-24 h-auto" />
+            <Link to="/" className="flex justify-center py-2">
+              <img src={logoMobile} alt="ANDO JV" className="w-36 h-auto" />
             </Link>
           </div>
 
