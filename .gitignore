@@ -52,6 +52,7 @@ playwright-report/
 
 # SQL files with potential schema/data
 *.sql
+!supabase/migrations/*.sql
 add-lookbook-data.sql
 complete-site-setup.sql
 
