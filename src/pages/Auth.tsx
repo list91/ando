@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -307,6 +307,15 @@ const Auth = () => {
               {isSignUp ? 'Войти' : 'Зарегистрироваться'}
             </Button>
           </div>
+          {!isSignUp && (
+            <div className="mt-2 text-center">
+              <Link to="/forgot-password">
+                <Button variant="link" className="text-sm text-muted-foreground">
+                  Забыли пароль?
+                </Button>
+              </Link>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
