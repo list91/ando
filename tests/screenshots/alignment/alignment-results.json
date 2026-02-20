@@ -1,0 +1,49 @@
+{
+  "catalog-women": {
+    "logo": {
+      "width": 150,
+      "height": 150,
+      "top": -8,
+      "left": 55,
+      "bottom": 142
+    },
+    "sidebar": {
+      "width": 260,
+      "left": 0
+    },
+    "menuFirstItem": {
+      "top": 100,
+      "left": 84,
+      "text": "NEW"
+    },
+    "headerNav": {
+      "top": 46,
+      "left": 292,
+      "text": "ЖЕНСКОЕ"
+    },
+    "alignment": {
+      "menuTop": 100,
+      "headerNavTop": 46,
+      "difference": 54,
+      "aligned": false
+    }
+  },
+  "home": {
+    "logo": {
+      "width": 150,
+      "height": 150,
+      "top": -8,
+      "left": 55,
+      "bottom": 142
+    },
+    "sidebar": {
+      "width": 260,
+      "left": 0
+    },
+    "headerNav": {
+      "top": 46,
+      "left": 292,
+      "text": "ЖЕНСКОЕ"
+    }
+  }
+}
