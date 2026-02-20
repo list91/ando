@@ -69,7 +69,7 @@ const Checkout = () => {
 
   // ЛК-5: Promocode states
   const [promocodeInput, setPromocodeInput] = useState('');
-  const [appliedPromocode, setAppliedPromocode] = useState<{code: string, discount_percent: number} | null>(null);
+  const [appliedPromocode, setAppliedPromocode] = useState<{code: string, discount_amount: number} | null>(null);
   const [promocodeError, setPromocodeError] = useState('');
   const [promocodeLoading, setPromocodeLoading] = useState(false);
 
@@ -87,6 +87,22 @@ const Checkout = () => {
         return 0;
       }
       return count || 0;
+    },
+    enabled: !!user?.id,
+  });
+// Проверка активности скидки первого заказа в user_discounts
+  const { data: firstOrderDiscountActive } = useQuery({
+    queryKey: ["first-order-discount-active", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data } = await supabase
+        .from("user_discounts")
+        .select("is_active, discount_amount")
+        .eq("user_id", user.id)
+        .eq("discount_type", "first_order")
+        .eq("is_active", true)
+        .maybeSingle();
+      return data;
     },
     enabled: !!user?.id,
   });
@@ -111,11 +127,12 @@ const Checkout = () => {
 
   const subtotal = totalPrice;
   const deliveryCost = formData.deliveryMethod === 'courier' ? DELIVERY_COST : 0;
-  // P7: 5% discount for first order of registered users (only if no promocode applied)
-  // ЛК-5: Promocode takes priority over first order discount
-  const isFirstOrderDiscount = user && userOrdersCount === 0 && !appliedPromocode;
-  const firstOrderDiscount = isFirstOrderDiscount ? Math.round(subtotal * 0.05) : 0;
-  const promocodeDiscount = appliedPromocode ? Math.round(subtotal * appliedPromocode.discount_percent / 100) : 0;
+  // P7: 5% discount for first order of registered users
+  // ЛК-5: Скидки складываются (первый заказ 5% + промокод)
+  const isFirstOrderDiscount = user && userOrdersCount === 0 && firstOrderDiscountActive; // Скидки складываются
+  const firstOrderDiscountPercent = firstOrderDiscountActive?.discount_amount || 5;
+  const firstOrderDiscount = isFirstOrderDiscount ? Math.round(subtotal * firstOrderDiscountPercent / 100) : 0;
+  const promocodeDiscount = appliedPromocode ? Math.round(subtotal * appliedPromocode.discount_amount / 100) : 0;
   const totalDiscount = firstOrderDiscount + promocodeDiscount;
   const total = subtotal + deliveryCost - totalDiscount;
 
@@ -126,7 +143,7 @@ const Checkout = () => {
     setPromocodeError('');
 
     const { data, error } = await supabase
-      .from('promocodes')
+      .from('promo_codes')
       .select('*')
       .eq('code', promocodeInput.toUpperCase())
       .eq('is_active', true)
@@ -135,16 +152,16 @@ const Checkout = () => {
     if (error || !data) {
       setPromocodeError('Промокод не найден или неактивен');
       setAppliedPromocode(null);
-    } else if (data.expiry_date && new Date(data.expiry_date) < new Date()) {
+    } else if (data.valid_until && new Date(data.valid_until) < new Date()) {
       setPromocodeError('Срок действия промокода истёк');
       setAppliedPromocode(null);
     } else if (data.max_uses && data.used_count >= data.max_uses) {
       setPromocodeError('Лимит использований промокода исчерпан');
       setAppliedPromocode(null);
     } else {
-      setAppliedPromocode({ code: data.code, discount_percent: data.discount_percent });
+      setAppliedPromocode({ code: data.code, discount_amount: data.discount_amount });
       setPromocodeError('');
-      toast({ title: 'Промокод применён!', description: `Скидка ${data.discount_percent}%` });
+      toast({ title: 'Промокод применён!', description: `Скидка ${data.discount_amount}%` });
     }
     setPromocodeLoading(false);
   };
@@ -232,6 +249,7 @@ const Checkout = () => {
           delivery_method: formData.deliveryMethod === 'courier' ? 'Курьер' : 'Самовывоз',
           payment_method: formData.paymentMethod === 'card' ? 'Карта' : 'Наличные',
           notes: formData.notes,
+          promo_code: promocodeInput.trim() || null,
         })
         .select()
         .single();
@@ -272,6 +290,7 @@ const Checkout = () => {
             deliveryMethod: formData.deliveryMethod === 'courier' ? 'Курьер' : 'Самовывоз',
             paymentMethod: formData.paymentMethod === 'card' ? 'Карта' : 'Наличные',
             notes: formData.notes,
+          promo_code: promocodeInput.trim() || null,
             totalAmount: total,
             deliveryCost,
             subscribedToNewsletter: agreedToNewsletter,
@@ -562,7 +581,7 @@ const Checkout = () => {
                   {promocodeError && <p className="text-sm text-red-500 mt-2">{promocodeError}</p>}
                   {appliedPromocode && (
                     <div className="flex items-center justify-between mt-2 p-2 bg-green-50 rounded">
-                      <span className="text-sm text-green-700">Применён: {appliedPromocode.code} (-{appliedPromocode.discount_percent}%)</span>
+                      <span className="text-sm text-green-700">Применён: {appliedPromocode.code} (-{appliedPromocode.discount_amount}%)</span>
                       <Button type="button" variant="ghost" size="sm" onClick={() => setAppliedPromocode(null)}>
                         Убрать
                       </Button>
@@ -733,7 +752,7 @@ const Checkout = () => {
                       {/* ЛК-5: Show promocode discount */}
                       {promocodeDiscount > 0 && (
                         <div className="flex justify-between text-sm text-green-600">
-                          <span>Промокод {appliedPromocode?.code} (-{appliedPromocode?.discount_percent}%):</span>
+                          <span>Промокод {appliedPromocode?.code} (-{appliedPromocode?.discount_amount}%):</span>
                           <span>-{promocodeDiscount} ₽</span>
                         </div>
                       )}
@@ -807,7 +826,7 @@ const Checkout = () => {
                     {/* ЛК-5: Show promocode discount */}
                     {promocodeDiscount > 0 && (
                       <div className="flex justify-between text-sm text-green-600">
-                        <span>Промокод {appliedPromocode?.code} (-{appliedPromocode?.discount_percent}%):</span>
+                        <span>Промокод {appliedPromocode?.code} (-{appliedPromocode?.discount_amount}%):</span>
                         <span>-{promocodeDiscount} ₽</span>
                       </div>
                     )}

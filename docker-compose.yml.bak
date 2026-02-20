@@ -4,7 +4,6 @@ networks:
 services:
   analytics:
     container_name: supabase-analytics
-    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
@@ -28,7 +27,6 @@ services:
     - supabase-network
   auth:
     container_name: supabase-auth
-    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
@@ -83,7 +81,6 @@ services:
     - -c
     - log_min_messages=fatal
     container_name: supabase-db
-    restart: unless-stopped
     environment:
       JWT_EXP: ${JWT_EXPIRY:-3600}
       JWT_SECRET: ${JWT_SECRET}
@@ -122,7 +119,6 @@ services:
       dockerfile: Dockerfile
       target: ${FRONTEND_BUILD_TARGET:-production}
     container_name: ando-frontend
-    restart: unless-stopped
     depends_on:
       kong:
         condition: service_healthy
@@ -134,7 +130,6 @@ services:
     - --main-service
     - /home/deno/functions/main
     container_name: supabase-edge-functions
-    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
@@ -152,7 +147,6 @@ services:
     - ./docker/volumes/functions:/home/deno/functions:Z
   imgproxy:
     container_name: supabase-imgproxy
-    restart: unless-stopped
     environment:
       IMGPROXY_BIND: :8080
       IMGPROXY_ENABLE_WEBP_DETECTION: 'true'
@@ -165,7 +159,6 @@ services:
     - ${STORAGE_DATA_PATH}:/var/lib/storage:ro
   kong:
     container_name: supabase-kong
-    restart: unless-stopped
     depends_on:
       auth:
         condition: service_started
@@ -206,7 +199,6 @@ services:
     - ./docker/kong/kong.yml:/var/lib/kong/kong.yml:ro
   meta:
     container_name: supabase-meta
-    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
@@ -222,7 +214,6 @@ services:
     - supabase-network
   nginx:
     container_name: ando-nginx
-    restart: unless-stopped
     depends_on:
     - frontend
     - kong
@@ -242,7 +233,6 @@ services:
 
       '
     container_name: supabase-realtime
-    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
@@ -268,7 +258,6 @@ services:
   rest:
     command: postgrest
     container_name: supabase-rest
-    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
@@ -285,7 +274,6 @@ services:
     - supabase-network
   storage:
     container_name: supabase-storage
-    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
@@ -314,7 +302,6 @@ services:
     - ${STORAGE_DATA_PATH}:/var/lib/storage:z
   studio:
     container_name: supabase-studio
-    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy

@@ -49,7 +49,7 @@ const Auth = () => {
       authSchema.parse(data);
 
       if (isSignUp) {
-        const { error } = await signUp(email, password, fullName);
+        const { error, userExists } = await signUp(email, password, fullName);
 
         if (error) {
           if (error.message.includes('already registered')) {
@@ -65,6 +65,14 @@ const Auth = () => {
               variant: 'destructive',
             });
           }
+        } else if (userExists) {
+          // User already exists and is confirmed
+          toast({
+            title: 'Пользователь существует',
+            description: 'Аккаунт с этим email уже зарегистрирован. Пожалуйста, войдите.',
+            variant: 'destructive',
+          });
+          setIsSignUp(false); // Switch to login form
         } else {
           // Show OTP input after successful signup
           setPendingEmail(email);

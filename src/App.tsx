@@ -42,6 +42,7 @@ import AdminHeroSlides from "./pages/admin/HeroSlides";
 import AdminHeroImage from "./pages/admin/HeroImage";
 import AdminAboutPage from "./pages/admin/AboutPage";
 import AdminUserDiscounts from "./pages/admin/UserDiscounts";
+import AdminPromoCodes from "./pages/admin/PromoCodes";
 import Favorites from "./pages/Favorites";
 import Orders from "./pages/Orders";
 import Install from "./pages/Install";
@@ -135,6 +136,7 @@ const AppContent = () => {
             <Route path="hero-image" element={<AdminHeroImage />} />
             <Route path="about-page" element={<AdminAboutPage />} />
             <Route path="user-discounts" element={<AdminUserDiscounts />} />
+            <Route path="promo-codes" element={<AdminPromoCodes />} />
           </Route>
           
           <Route path="*" element={<NotFound />} />

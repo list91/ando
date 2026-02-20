@@ -26,6 +26,7 @@ const AdminLayout = () => {
       items: [
         { path: '/admin/orders', label: 'Заказы', icon: ShoppingCart },
         { path: '/admin/user-discounts', label: 'Скидки клиентов', icon: Percent },
+        { path: '/admin/promo-codes', label: 'Промокоды', icon: Percent },
       ]
     },
     {
