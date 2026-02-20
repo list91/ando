@@ -45,18 +45,7 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    # Supabase Storage API - PUBLIC objects (auto-inject apikey)
-    location /storage/v1/object/public/ {
-        proxy_pass http://supabase_kong;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header apikey eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0;
-        client_max_body_size 50M;
-    }
-
-    # Supabase Storage API - other requests
+    # Supabase Storage API
     location /storage/v1/ {
         proxy_pass http://supabase_kong;
         proxy_set_header Host $host;
