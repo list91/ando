@@ -83,13 +83,13 @@ const Layout = ({ children, selectedCategory, onCategoryChange, selectedGender, 
           <Header />
 
           {/* Mobile Header with Logo - only on mobile */}
-          <div className={`md:hidden sticky top-0 z-40 transition-all duration-200 -mt-[50px]
+          <div className={`md:hidden sticky top-0 z-40 transition-all duration-200 
             ${isScrolled
               ? 'bg-background border-b border-border shadow-sm'
-              : 'bg-transparent border-b border-transparent'
+              : 'bg-background border-b border-border'
             }`}>
             <Link to="/" className="flex justify-center py-2">
-              <img src={logoMobile} alt="ANDO JV" style={{ width: '144px', height: 'auto' }} />
+              <img src={logoMobile} alt="ANDO JV" style={{ width: "144px", height: "auto" }} />
             </Link>
           </div>
 
