@@ -96,11 +96,6 @@ export function SupportChat() {
           {/* Header */}
           <div className="bg-neutral-900 px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img
-                src="/support-logo.png"
-                alt="ANDO JV"
-                className="h-6 object-contain brightness-0 invert"
-              />
             </div>
             <button
               onClick={handleClose}
