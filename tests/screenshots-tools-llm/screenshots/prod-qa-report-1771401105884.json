@@ -1,0 +1,36 @@
+{
+  "production_url": "http://83.166.246.253",
+  "timestamp": "2026-02-18T07:53:02.214Z",
+  "screenshots": [
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-home-desktop-1771401105884.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-home-mobile-1771401105884.png"
+  ],
+  "verdict": [
+    {
+      "task": "DOR-16",
+      "status": "NEEDS_CHECK",
+      "notes": "Support button visibility"
+    },
+    {
+      "task": "DOR-2",
+      "status": "NEEDS_CHECK",
+      "notes": "Logo area captured"
+    },
+    {
+      "task": "DOR-5",
+      "status": "NEEDS_CHECK",
+      "notes": "Logo proportions in screenshot"
+    },
+    {
+      "task": "DOR-11",
+      "status": "NEEDS_CHECK",
+      "notes": "Check screenshot for black/white blocks with red circle"
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 0,
+    "needs_visual_check": 4,
+    "issues": []
+  }
+}

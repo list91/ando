@@ -1,1 +1,43 @@
-project_id = "REDACTED_PROJECT_ID"
+# Supabase Local Development Configuration
+project_id = "ando-local"
+
+[api]
+enabled = true
+port = 8000
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+# Use ports outside Windows reserved range (54156-54755)
+port = 5432
+shadow_port = 5433
+major_version = 15
+
+[db.pooler]
+enabled = false
+port = 6543
+
+[studio]
+enabled = true
+port = 3001
+
+[inbucket]
+enabled = true
+port = 2500
+
+[storage]
+enabled = true
+
+[auth]
+enabled = true
+site_url = "http://localhost:8080"
+additional_redirect_urls = ["http://localhost:8080"]
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = false
+enable_confirmations = false
+
+[analytics]
+enabled = false

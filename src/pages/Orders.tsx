@@ -13,6 +13,8 @@ import { Package, User, Settings, Percent } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Navigate } from "react-router-dom";
+import { useUserDiscounts } from "@/hooks/useUserDiscounts";
+import { DiscountCard, EmptyDiscounts, DiscountCardSkeleton } from "@/components/DiscountCard";
 
 const Orders = () => {
   const { user, loading: authLoading } = useAuth();
@@ -20,33 +22,8 @@ const Orders = () => {
   const [phone, setPhone] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
 
-  // Mock data for discounts (will be replaced with API later)
-  const mockDiscounts = [
-    {
-      id: "disc-1",
-      name: "Скидка на первый заказ",
-      value: 5,
-      description: "Персональная скидка для новых клиентов",
-      expiryDate: "2026-03-31",
-      status: "active" as const,
-    },
-    {
-      id: "disc-2",
-      name: "Приветственный бонус",
-      value: 10,
-      description: "Бонус за регистрацию в программе лояльности",
-      expiryDate: "2026-01-15",
-      status: "used" as const,
-    },
-    {
-      id: "disc-3",
-      name: "Скидка ко дню рождения",
-      value: 15,
-      description: "Специальное предложение в честь вашего дня рождения",
-      expiryDate: "2026-04-20",
-      status: "active" as const,
-    },
-  ];
+  // Получение скидок пользователя из API
+  const { data: discounts = [], isLoading: discountsLoading, error: discountsError } = useUserDiscounts();
 
   // Fetch user profile
   const { data: profile, isLoading: profileLoading } = useQuery({
@@ -154,23 +131,6 @@ const Orders = () => {
     return colorMap[status] || 'text-muted-foreground';
   };
 
-  const getDiscountStatusText = (status: "active" | "used" | "expired") => {
-    const statusMap: Record<string, string> = {
-      active: 'Активна',
-      used: 'Использована',
-      expired: 'Истекла',
-    };
-    return statusMap[status] || status;
-  };
-
-  const getDiscountStatusVariant = (status: "active" | "used" | "expired"): "default" | "secondary" | "destructive" | "outline" => {
-    const variantMap: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-      active: 'default',
-      used: 'secondary',
-      expired: 'destructive',
-    };
-    return variantMap[status] || 'outline';
-  };
 
   return (
     <div className="container mx-auto px-4 pt-2 pb-8 max-w-6xl content-baseline">
@@ -253,50 +213,30 @@ const Orders = () => {
         </TabsContent>
 
         <TabsContent value="discounts" className="space-y-4">
-          {mockDiscounts.length > 0 ? (
-            mockDiscounts.map((discount) => (
-              <Card key={discount.id}>
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
-                        <span className="text-xl font-bold text-primary">{discount.value}%</span>
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg">{discount.name}</CardTitle>
-                        <CardDescription>{discount.description}</CardDescription>
-                      </div>
-                    </div>
-                    <Badge variant={getDiscountStatusVariant(discount.status)}>
-                      {getDiscountStatusText(discount.status)}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">
-                      Действует до: {new Date(discount.expiryDate).toLocaleDateString('ru-RU', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                    </span>
-                    {discount.status === 'active' && (
-                      <Button variant="outline" size="sm">
-                        Применить
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          ) : (
+          {discountsLoading ? (
+            <>
+              <DiscountCardSkeleton />
+              <DiscountCardSkeleton />
+              <DiscountCardSkeleton />
+            </>
+          ) : discountsError ? (
             <Card>
               <CardContent className="py-12 text-center">
-                <Percent className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <p className="text-muted-foreground">У вас пока нет активных скидок</p>
+                <p className="text-destructive mb-4">Ошибка при загрузке скидок</p>
+                <Button
+                  variant="outline"
+                  onClick={() => window.location.reload()}
+                >
+                  Повторить
+                </Button>
               </CardContent>
             </Card>
+          ) : discounts.length > 0 ? (
+            discounts.map((discount) => (
+              <DiscountCard key={discount.id} discount={discount} />
+            ))
+          ) : (
+            <EmptyDiscounts />
           )}
         </TabsContent>
 

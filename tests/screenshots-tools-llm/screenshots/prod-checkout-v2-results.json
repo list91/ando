@@ -1,0 +1,32 @@
+{
+  "test_file": "prod-checkout-e2e-test-v2.mjs",
+  "screenshots": [
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-checkout-v2-01-catalog.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-checkout-v2-02-product.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-checkout-v2-03-cart-modal.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-checkout-v2-04-checkout.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-checkout-v2-05-final.png"
+  ],
+  "results": {
+    "DOR-8": {
+      "status": "PASS",
+      "details": "No \"бесплатно\" in courier label: \"Курьер\""
+    },
+    "DOR-9": {
+      "status": "PASS",
+      "details": "Summary shows delivery name, not price"
+    },
+    "DOR-10": {
+      "status": "PASS",
+      "details": "1 scrollable area(s) - no nested scroll"
+    },
+    "DOR-11": {
+      "status": "PASS",
+      "details": "Black top banner with red circle found"
+    },
+    "DOR-12": {
+      "status": "PASS",
+      "details": "Button text: \"Оформить заказ\""
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Package, ShoppingCart, LayoutDashboard, LogOut, Settings, Image as ImageIcon, FileText, Folder, ImagePlay, Info } from 'lucide-react';
+import { Package, ShoppingCart, LayoutDashboard, LogOut, Settings, Image as ImageIcon, FileText, Folder, ImagePlay, Info, Percent } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 
@@ -25,6 +25,7 @@ const AdminLayout = () => {
       title: 'Управление заказами',
       items: [
         { path: '/admin/orders', label: 'Заказы', icon: ShoppingCart },
+        { path: '/admin/user-discounts', label: 'Скидки клиентов', icon: Percent },
       ]
     },
     {

@@ -1,0 +1,107 @@
+{
+  "production_url": "http://83.166.246.253",
+  "timestamp": "2026-02-18T07:55:09.580Z",
+  "screenshots": [
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-home-desktop-1771401234891.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-home-mobile-1771401234891.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-catalog-desktop-1771401234891.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-catalog-fullpage-1771401234891.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-favorites-desktop-1771401234891.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-checkout-desktop-1771401234891.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-checkout-fullpage-1771401234891.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-lookbook-desktop-1771401234891.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-lookbook-fullpage-1771401234891.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-info-desktop-1771401234891.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-info-fullpage-1771401234891.png"
+  ],
+  "verdict": [
+    {
+      "task": "DOR-1",
+      "status": "N/A",
+      "notes": "0 badges found - check size reduction"
+    },
+    {
+      "task": "DOR-2",
+      "status": "NEEDS_CHECK",
+      "notes": "Check logo overlap in screenshot"
+    },
+    {
+      "task": "DOR-3",
+      "status": "NEEDS_CHECK",
+      "notes": "Check letter-spacing on Favorites title"
+    },
+    {
+      "task": "DOR-4",
+      "status": "NEEDS_CHECK",
+      "notes": "Check NOVOE badge: black bg, white text"
+    },
+    {
+      "task": "DOR-5",
+      "status": "NEEDS_CHECK",
+      "notes": "Check logo proportions in screenshot"
+    },
+    {
+      "task": "DOR-6",
+      "status": "NEEDS_CHECK",
+      "notes": "Verify unified title spacing"
+    },
+    {
+      "task": "DOR-7",
+      "status": "NEEDS_CHECK",
+      "notes": "Verify categories aligned with filters"
+    },
+    {
+      "task": "DOR-8",
+      "status": "PASS",
+      "notes": "No \"free\" word in delivery"
+    },
+    {
+      "task": "DOR-9",
+      "status": "NEEDS_CHECK",
+      "notes": "Check delivery name on right side"
+    },
+    {
+      "task": "DOR-10",
+      "status": "NEEDS_CHECK",
+      "notes": "Verify no nested scroll"
+    },
+    {
+      "task": "DOR-11",
+      "status": "NEEDS_CHECK",
+      "notes": "Check black/white blocks with red circle"
+    },
+    {
+      "task": "DOR-12",
+      "status": "NEEDS_CHECK",
+      "notes": "Place Order button"
+    },
+    {
+      "task": "DOR-13",
+      "status": "NEEDS_CHECK",
+      "notes": "Verify content baseline alignment"
+    },
+    {
+      "task": "DOR-14",
+      "status": "NEEDS_CHECK",
+      "notes": "Verify photos aligned to baseline"
+    },
+    {
+      "task": "DOR-15",
+      "status": "NEEDS_CHECK",
+      "notes": "Verify content aligned to baseline"
+    },
+    {
+      "task": "DOR-16",
+      "status": "NEEDS_CHECK",
+      "notes": "Support/WhatsApp button"
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 0,
+    "needs_visual_check": 14,
+    "not_checked": 0,
+    "issues": []
+  },
+  "errors": []
+}

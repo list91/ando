@@ -1,0 +1,33 @@
+{
+  "test_file": "C:/sts/projects/ando/tests/screenshots-tools-llm/prod-checkout-e2e-test.mjs",
+  "screenshots": [
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-checkout-01-catalog.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-checkout-02-product.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-checkout-03-checkout-viewport.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-checkout-04b-checkout-bottom.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-checkout-04-checkout-fullpage.png",
+    "C:\\sts\\projects\\ando\\tests\\screenshots-tools-llm\\screenshots\\prod-checkout-05-final.png"
+  ],
+  "results": {
+    "DOR-8": {
+      "status": "SKIP",
+      "details": "Not on checkout page"
+    },
+    "DOR-9": {
+      "status": "SKIP",
+      "details": "Not on checkout page"
+    },
+    "DOR-10": {
+      "status": "SKIP",
+      "details": "Not on checkout page"
+    },
+    "DOR-11": {
+      "status": "SKIP",
+      "details": "Not on checkout page"
+    },
+    "DOR-12": {
+      "status": "SKIP",
+      "details": "Not on checkout page"
+    }
+  }
+}

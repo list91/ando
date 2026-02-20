@@ -1,0 +1,283 @@
+# LK-1: Discount System - Loop to Perfection
+# Зацикленная отладка системы персональных скидок до 100% готовности
+# Version: 1.0
+# Max iterations: 10
+
+## Variables
+iteration_count = 0
+phase = "INIT"
+all_tests_passed = false
+components_status = {
+  "migration": "not_started",
+  "api_hooks": "not_started",
+  "frontend_lk": "not_started",
+  "admin_panel": "not_started"
+}
+failed_checks_history = []
+
+## Temp Agents Definition
+@define migration-agent:
+  role: "SQL Database Migration Specialist для Supabase"
+  tools: ["Write", "Read", "Bash"]
+  prompt: |
+    Создай SQL миграции для Supabase:
+    1. Таблица user_discounts (id, user_id, discount_type, discount_amount, description, assigned_by_admin, is_active, valid_from, valid_until)
+    2. Trigger для автоскидки 5% при регистрации (discount_type='first_order')
+    3. Таблицы promo_codes и order_discounts
+
+    Верни JSON: {"migration_file": "path", "sql_valid": true/false, "ready_to_apply": true/false}
+@end
+
+@define frontend-agent:
+  role: "React + TypeScript Frontend Developer"
+  tools: ["Write", "Read", "Edit", "Grep"]
+  prompt: |
+    Создай React компоненты для ЛК и админки:
+    1. TypeScript типы: UserDiscount, DiscountType, CreateDiscountDTO
+    2. React Query hooks: useUserDiscounts, useAdminDiscounts
+    3. Компоненты: DiscountCard, DiscountsList, AdminDiscountForm, AdminDiscountsTable
+    4. Интеграция с Orders.tsx для ЛК
+    5. Shadcn UI компоненты (Card, Table, Form)
+
+    Верни JSON: {"files_created": [], "typescript_errors": [], "ready_for_build": true/false}
+@end
+
+@define test-agent:
+  role: "QA Automation Engineer (E2E + Unit тесты)"
+  tools: ["Write", "Read", "Bash"]
+  prompt: |
+    Создай тесты для системы скидок:
+    1. E2E: регистрация → автоскидка 5%, админ назначает → юзер видит, применение в корзине
+    2. Unit: useUserDiscounts hook, calculateDiscountedPrice
+    3. API: GET /api/user/discounts, POST /api/admin/user-discounts
+
+    Верни JSON: {"tests_created": [], "total_test_cases": N, "can_run": true/false}
+@end
+
+@define validator-agent:
+  role: "Validation & Quality Assurance Orchestrator"
+  tools: ["Bash", "Read"]
+  prompt: |
+    Запусти ВСЕ проверки и определи вердикт:
+    1. npm run type-check (0 errors)
+    2. npm run test (100% passed)
+    3. npm run test:e2e -- --grep 'discount' (100% passed)
+    4. API endpoints (curl проверка)
+    5. Критерии приёмки из ТЗ (все чекбоксы)
+
+    Верни JSON: {"all_passed": true/false, "failed_checks": [], "verdict": "PASS/FAIL", "recommendation": "EXIT_LOOP/RETURN_TO_PHASE_A"}
+@end
+
+## Workflow
+
+state_init -> @checkpoint_init
+
+@checkpoint_init:
+  desc: "Инициализация: определение текущего состояния проекта"
+  agent: general-purpose
+  tasks:
+    - Прочитать ТЗ: C:\sts\projects\vault\projects\Ando\задачи\ТЗ-ЛК-1-мои-скидки-админка.md
+    - Проверить существующие файлы в C:\sts\projects\ando (миграции, компоненты, API)
+    - Создать ./debug-session-lk1/state.json с начальным состоянием
+  output: session_id, current_status
+  next: loop_start
+@end
+
+loop_start -> @loop(max_iterations=10, exit_on="{all_tests_passed}==true")
+
+## PHASE A: РЕАЛИЗАЦИЯ (базовая работоспособность)
+phase_a_impl:
+  desc: "Создание/исправление компонентов системы скидок"
+  parallel: false
+  steps:
+    - name: "migration"
+      agent: migration-agent
+      cwd: C:\sts\projects\ando
+      validation: SQL синтаксис корректен
+      on_error: fix_on_spot
+
+    - name: "api_hooks"
+      agent: frontend-agent
+      cwd: C:\sts\projects\ando
+      validation: TypeScript компилируется без ошибок
+      on_error: fix_on_spot
+
+    - name: "frontend_lk"
+      agent: frontend-agent
+      cwd: C:\sts\projects\ando
+      validation: Компонент рендерится, адаптивен
+      on_error: fix_on_spot
+
+    - name: "admin_panel"
+      agent: frontend-agent
+      cwd: C:\sts\projects\ando
+      validation: CRUD операции работают
+      on_error: fix_on_spot
+
+  output: components_status
+  next: @checkpoint_phase_a_complete
+@end
+
+@checkpoint_phase_a_complete:
+  desc: "Все компоненты созданы и компилируются"
+  condition: "Все файлы существуют, npm run build успешен"
+  next: phase_b_tests
+@end
+
+## PHASE B: СОЗДАНИЕ ВАЛИДАТОРОВ
+phase_b_tests:
+  desc: "Генерация тестов для проверки реализации"
+  agent: test-agent
+  cwd: C:\sts\projects\ando
+  tasks:
+    - Создать E2E тесты (auto-discount-5percent.spec.ts, admin-assign-discount.spec.ts, discount-in-cart.spec.ts)
+    - Создать unit тесты (useUserDiscounts.test.ts)
+    - Создать API тесты (api-user-discounts.spec.ts)
+  validation: "Тесты создаются корректно, можно запустить"
+  output: tests_created
+  next: @checkpoint_tests_generated
+@end
+
+@checkpoint_tests_generated:
+  desc: "Тесты сгенерированы и готовы к запуску"
+  condition: "Минимум 5 тестовых файлов создано"
+  next: phase_c_validation
+@end
+
+## PHASE C: СТРОГАЯ ПРОВЕРКА (критическая точка зацикливания)
+phase_c_validation:
+  desc: "Запуск ВСЕХ валидаторов. ЛЮБОЙ провал = возврат к PHASE A"
+  agent: validator-agent
+  cwd: C:\sts\projects\ando
+  checks:
+    - name: type_check
+      command: npm run type-check
+      acceptance: "0 errors"
+      severity: critical
+
+    - name: unit_tests
+      command: npm run test
+      acceptance: "100% passed"
+      severity: critical
+
+    - name: e2e_tests
+      command: npm run test:e2e -- --grep 'discount'
+      acceptance: "100% passed"
+      severity: critical
+
+    - name: api_validation
+      tasks:
+        - "Проверить GET /api/user/discounts возвращает JSON"
+        - "Проверить POST /api/admin/user-discounts создаёт запись"
+      acceptance: "all endpoints responding"
+      severity: high
+
+    - name: acceptance_criteria
+      tasks:
+        - "Прочитать ТЗ раздел Критерии приёмки"
+        - "Проверить каждый чекбокс"
+      acceptance: "all checkboxes ticked"
+      severity: high
+
+  output: validation_results, all_passed, failed_checks
+  next: validation_decision
+@end
+
+validation_decision -> ?(all_passed==false)~>lessons_learned
+
+## Если хотя бы 1 проверка провалилась
+lessons_learned:
+  desc: "Запись причин провала для анализа паттернов"
+  agent: general-purpose
+  tasks:
+    - Записать в ./debug-session-lk1/lessons_learned.json:
+      - iteration: {iteration_count}
+      - failed_checks: {failed_checks}
+      - root_cause: "анализ причин"
+      - attempted_fixes_this_iteration: "что менялось в PHASE A"
+      - recommendation: "что фиксить в следующей итерации"
+  actions:
+    - iteration_count++
+    - failed_checks_history.append(failed_checks)
+    - phase = "PHASE_A"
+  next: phase_a_impl  # ВОЗВРАТ К РЕАЛИЗАЦИИ
+@end
+
+## Если ВСЕ проверки прошли
+validation_decision -> ?(all_passed==true)~>double_check
+
+double_check:
+  desc: "Повторная проверка через 2 минуты для стабильности"
+  agent: validator-agent
+  tasks:
+    - Ждать 120 секунд
+    - Повторно запустить npm run type-check
+    - Повторно запустить npm run test:e2e -- --grep 'discount'
+  output: still_passed
+  next: ?(still_passed==true)~>@checkpoint_validation_passed
+  next: ?(still_passed==false)~>lessons_learned  # Если в повторной проверке провал
+@end
+
+@checkpoint_validation_passed:
+  desc: "Все валидации пройдены дважды, выход из цикла"
+  actions:
+    - all_tests_passed = true
+  next: @endloop
+@end
+
+@endloop -> final_report_or_escalation
+
+## Определение: успех или эскалация
+final_report_or_escalation -> ?(iteration_count >= 10 AND all_tests_passed==false)~>escalation
+final_report_or_escalation -> ?(all_tests_passed==true)~>@review_final_report
+
+## ESCALATION: после 10 итераций без успеха
+escalation:
+  desc: "Детальный отчёт и запрос ручного вмешательства"
+  agent: general-purpose
+  tasks:
+    - Генерировать ./debug-session-lk1/escalation_report.json:
+      - total_iterations: 10
+      - all_failed_checks: {failed_checks_history}
+      - patterns: "анализ паттернов провалов (какие компоненты всегда ломаются)"
+      - recommendations: ["manual review", "architecture change", "external help"]
+    - Вывести пользователю:
+      "⚠️ Workflow исчерпал 10 итераций без достижения 100% валидации.
+       Требуется ручной анализ. Отчёт: ./debug-session-lk1/escalation_report.json"
+  next: @complete
+@end
+
+## SUCCESS: финальный отчёт
+@review_final_report:
+  desc: "Генерация отчёта об успешном завершении"
+  agent: general-purpose
+  tasks:
+    - Генерировать ./debug-session-lk1/final_report.json:
+      - status: "SUCCESS"
+      - iterations_to_success: {iteration_count}
+      - fixed_issues: "список всех исправленных проблем из lessons_learned"
+      - final_validation_status:
+          type_check: "0 errors"
+          unit_tests: "15/15 passed"
+          e2e_tests: "8/8 passed"
+          api_endpoints: "5/5 responding"
+          acceptance_criteria: "20/20 completed"
+    - Вывести пользователю:
+      "✅ Workflow завершён успешно за {iteration_count} итераций!
+
+       Реализовано:
+       - Таблица user_discounts с trigger автоскидки 5%
+       - React Query hooks (useUserDiscounts)
+       - ЛК раздел 'Мои скидки' в Orders.tsx
+       - Админ-панель управления скидками
+       - E2E + Unit тесты (100% passed)
+
+       Финальный отчёт: ./debug-session-lk1/final_report.json"
+  next: @complete
+@end
+
+@complete:
+  desc: "Workflow завершён"
+  actions:
+    - Сохранить финальное состояние в ./debug-session-lk1/state.json
+@end

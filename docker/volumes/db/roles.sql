@@ -6,7 +6,7 @@
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'supabase_admin') THEN
-        CREATE ROLE supabase_admin WITH LOGIN PASSWORD 'your-super-secret-password' SUPERUSER CREATEDB CREATEROLE REPLICATION BYPASSRLS;
+        CREATE ROLE supabase_admin WITH LOGIN PASSWORD 'postgres' SUPERUSER CREATEDB CREATEROLE REPLICATION BYPASSRLS;
     END IF;
 END
 $$;
@@ -16,7 +16,7 @@ $$;
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'authenticator') THEN
-        CREATE ROLE authenticator WITH LOGIN PASSWORD 'your-super-secret-password' NOINHERIT;
+        CREATE ROLE authenticator WITH LOGIN PASSWORD 'postgres' NOINHERIT;
     END IF;
 END
 $$;
@@ -53,7 +53,7 @@ $$;
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'supabase_auth_admin') THEN
-        CREATE ROLE supabase_auth_admin WITH LOGIN PASSWORD 'your-super-secret-password' NOINHERIT CREATEROLE;
+        CREATE ROLE supabase_auth_admin WITH LOGIN PASSWORD 'postgres' NOINHERIT CREATEROLE;
     END IF;
 END
 $$;
@@ -63,7 +63,7 @@ $$;
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'supabase_storage_admin') THEN
-        CREATE ROLE supabase_storage_admin WITH LOGIN PASSWORD 'your-super-secret-password' NOINHERIT;
+        CREATE ROLE supabase_storage_admin WITH LOGIN PASSWORD 'postgres' NOINHERIT;
     END IF;
 END
 $$;
@@ -73,7 +73,7 @@ $$;
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'supabase_realtime_admin') THEN
-        CREATE ROLE supabase_realtime_admin WITH LOGIN PASSWORD 'your-super-secret-password' NOINHERIT;
+        CREATE ROLE supabase_realtime_admin WITH LOGIN PASSWORD 'postgres' NOINHERIT;
     END IF;
 END
 $$;
